@@ -87,3 +87,43 @@ export async function requireUser(roles?: string[]): Promise<User> {
   }
   return user;
 }
+
+// ---------------------------------------------------------------------------
+// Password reset tokens (HMAC-signed, 30 min, no DB table).
+// ---------------------------------------------------------------------------
+
+const RESET_MAX_AGE_SECONDS = 30 * 60;
+
+export function encodeResetToken(userId: string): string {
+  const payload = {
+    p: "reset",
+    userId,
+    exp: Math.floor(Date.now() / 1000) + RESET_MAX_AGE_SECONDS,
+  };
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  return `${body}.${sign(`reset:${body}`)}`;
+}
+
+export function decodeResetToken(token: string): { userId: string } | null {
+  const dot = token.lastIndexOf(".");
+  if (dot < 0) return null;
+  const body = token.slice(0, dot);
+  const mac = token.slice(dot + 1);
+  const expected = sign(`reset:${body}`);
+  const a = Buffer.from(mac);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString()) as {
+      p?: string;
+      userId?: string;
+      exp?: number;
+    };
+    if (payload.p !== "reset" || typeof payload.userId !== "string" || typeof payload.exp !== "number")
+      return null;
+    if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return { userId: payload.userId };
+  } catch {
+    return null;
+  }
+}

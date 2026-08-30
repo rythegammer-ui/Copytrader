@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <circle cx="200" cy="130" r="64" fill="#2563eb" opacity="0.15"/>
+  <circle cx="200" cy="130" r="40" fill="none" stroke="#2563eb" stroke-width="10"/>
+  <circle cx="200" cy="130" r="12" fill="#2563eb"/>
+  <g stroke="#2563eb" stroke-width="8" stroke-linecap="round">
+    <line x1="200" y1="74" x2="200" y2="90"/><line x1="200" y1="170" x2="200" y2="186"/>
+    <line x1="144" y1="130" x2="160" y2="130"/><line x1="240" y1="130" x2="256" y2="130"/>
+    <line x1="161" y1="91" x2="172" y2="102"/><line x1="228" y1="158" x2="239" y2="169"/>
+    <line x1="239" y1="91" x2="228" y2="102"/><line x1="172" y1="158" x2="161" y2="169"/>
+  </g>
+  <text x="200" y="245" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="600" fill="#334155">Cooling</text>
+</svg>

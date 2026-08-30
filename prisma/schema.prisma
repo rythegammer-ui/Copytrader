@@ -1,0 +1,505 @@
+// PartsPro schema — SQLite provider.
+// CONVENTIONS:
+//  - All money fields are integer US CENTS (Int). All labor is integer TENTHS of an hour.
+//  - SQLite has no enums: enum-like columns are String; canonical values + zod
+//    validators live in src/lib/enums.ts. Always import from there.
+//  - Order/OrderItem/PurchaseOrder carry immutable snapshots taken at checkout;
+//    post-checkout code must never reprice from live catalog tables.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ IDENTITY & AUTH ============
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique // stored lowercased
+  passwordHash String
+  name         String
+  phone        String?
+  role         String  @default("CUSTOMER") // Role: CUSTOMER | ADMIN | SUPPLIER | INSTALLER
+  supplierId   String? // set iff role=SUPPLIER (portal scope)
+  installerId  String? // set iff role=INSTALLER (portal scope)
+
+  supplier      Supplier?         @relation(fields: [supplierId], references: [id])
+  installer     Installer?        @relation(fields: [installerId], references: [id])
+  addresses     Address[]
+  vehicles      CustomerVehicle[]
+  carts         Cart[]
+  orders        Order[]
+  notifications Notification[]
+  refundsMade   Refund[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String  @default("Home")
+  line1     String
+  line2     String?
+  city      String
+  state     String // 2-letter
+  zip       String
+  country   String  @default("US")
+  isDefault Boolean @default(false)
+}
+
+// ============ SUPPLY SIDE ============
+
+model Supplier {
+  id                   String  @id @default(cuid())
+  name                 String
+  slug                 String  @unique
+  contactEmail         String
+  phone                String?
+  city                 String
+  state                String
+  leadTimeDays         Int     @default(3)
+  shippingFlatCents    Int     @default(999) // per-shipment-group flat fee
+  shippingPerItemCents Int     @default(0) // per unit in the group
+  active               Boolean @default(true)
+
+  parts          Part[]
+  purchaseOrders PurchaseOrder[]
+  users          User[]
+  createdAt      DateTime        @default(now())
+}
+
+// An installer SHOP (location). Portal users link via User.installerId.
+model Installer {
+  id              String  @id @default(cuid())
+  name            String
+  slug            String  @unique
+  hourlyRateCents Int // e.g. 12000 = $120.00/hr
+  line1           String
+  city            String
+  state           String
+  zip             String
+  phone           String?
+  bays            Int     @default(2) // capacity per time block
+  openMinutes     Int     @default(480) // 08:00, minutes from local midnight
+  closeMinutes    Int     @default(1080) // 18:00
+  slotMinutes     Int     @default(120) // appointment block length
+  daysOpenMask    Int     @default(62) // bitmask Sun=1..Sat=64; 62 = Mon-Fri
+  tzOffsetMinutes Int     @default(-360) // fixed UTC offset (DST out of scope, documented)
+  active          Boolean @default(true)
+
+  appointments Appointment[]
+  users        User[]
+  createdAt    DateTime      @default(now())
+}
+
+// ============ CATALOG & FITMENT ============
+
+model Category {
+  id       String     @id @default(cuid())
+  name     String
+  slug     String     @unique
+  parentId String?
+  parent   Category?  @relation("CatTree", fields: [parentId], references: [id])
+  children Category[] @relation("CatTree")
+  parts    Part[]
+}
+
+model Brand {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  parts Part[]
+}
+
+model Part {
+  id                   String  @id @default(cuid())
+  sku                  String  @unique
+  slug                 String  @unique
+  name                 String
+  description          String
+  imageUrl             String // /images/placeholders/<category>.svg is fine
+  categoryId           String
+  brandId              String
+  supplierId           String // dropship owner; ONE supplier per part
+  priceCents           Int // retail
+  supplierCostCents    Int // our cost (PO totals, margin KPIs)
+  weightGrams          Int     @default(1000)
+  installEligible      Boolean @default(true)
+  laborHoursTenths     Int     @default(10) // 10 = 1.0h
+  installFixedFeeCents Int? // when set, overrides labor calc (per unit)
+  universalFit         Boolean @default(false) // true = fits everything, no Fitment rows
+  inStock              Boolean @default(true) // supplier-toggled stock signal
+  active               Boolean @default(true)
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  brand      Brand       @relation(fields: [brandId], references: [id])
+  supplier   Supplier    @relation(fields: [supplierId], references: [id])
+  fitments   Fitment[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([brandId])
+}
+
+model Make {
+  id     String         @id @default(cuid())
+  name   String         @unique // "Toyota"
+  models VehicleModel[]
+}
+
+model VehicleModel {
+  id     String @id @default(cuid())
+  makeId String
+  name   String // "Camry"
+
+  make             Make              @relation(fields: [makeId], references: [id])
+  engines          Engine[]
+  fitments         Fitment[]
+  customerVehicles CustomerVehicle[]
+
+  @@unique([makeId, name])
+}
+
+model Engine {
+  id      String @id @default(cuid())
+  modelId String
+  name    String // "2.5L I4"
+
+  model            VehicleModel      @relation(fields: [modelId], references: [id])
+  fitments         Fitment[]
+  customerVehicles CustomerVehicle[]
+
+  @@unique([modelId, name])
+}
+
+// FITMENT = year-RANGE rule per part. NULL engineId = all engines of that model.
+model Fitment {
+  id       String  @id @default(cuid())
+  partId   String
+  modelId  String
+  yearFrom Int // inclusive
+  yearTo   Int // inclusive
+  engineId String?
+  notes    String? // "Excl. TRD trim"
+
+  part   Part         @relation(fields: [partId], references: [id], onDelete: Cascade)
+  model  VehicleModel @relation(fields: [modelId], references: [id])
+  engine Engine?      @relation(fields: [engineId], references: [id])
+
+  @@unique([partId, modelId, engineId, yearFrom, yearTo])
+  @@index([modelId, yearFrom, yearTo])
+}
+
+model CustomerVehicle {
+  id       String  @id @default(cuid())
+  userId   String
+  modelId  String
+  year     Int
+  engineId String?
+  nickname String?
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model  VehicleModel @relation(fields: [modelId], references: [id])
+  engine Engine?      @relation(fields: [engineId], references: [id])
+}
+
+// ============ CART ============
+
+model Cart {
+  id          String  @id @default(cuid())
+  userId      String? // null = guest; signed cookie holds cart id
+  ctxModelId  String? // active vehicle fitment context
+  ctxYear     Int?
+  ctxEngineId String?
+
+  user  User?      @relation(fields: [userId], references: [id])
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id          String    @id @default(cuid())
+  cartId      String
+  partId      String
+  qty         Int       @default(1) // 1..10
+  withInstall Boolean   @default(false)
+  installerId String? // required if withInstall
+  apptStartAt DateTime? // requested slot (UTC instant of local block start)
+  shipTo      String    @default("HOME") // ShipTo: HOME | INSTALLER
+
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  part Part @relation(fields: [partId], references: [id])
+
+  @@unique([cartId, partId])
+}
+
+// ============ ORDER (immutable financial snapshot) ============
+
+model Order {
+  id             String  @id @default(cuid())
+  orderNumber    String  @unique // "ORD-100042"
+  idempotencyKey String? @unique // client checkout key; replay returns same order
+  userId         String
+  status         String  @default("PENDING_PAYMENT") // OrderStatus
+  currency       String  @default("usd")
+
+  // money snapshot (integer cents)
+  partsSubtotalCents   Int
+  installSubtotalCents Int
+  shippingTotalCents   Int
+  taxRateBps           Int // snapshot of env TAX_RATE_BPS
+  taxCents             Int
+  totalCents           Int
+  refundedTotalCents   Int @default(0) // running sum of succeeded refunds
+
+  // shipping address snapshot (copied at checkout — never FK'd live)
+  shipName     String
+  shipLine1    String
+  shipLine2    String?
+  shipCity     String
+  shipState    String
+  shipZip      String
+  contactEmail String
+  contactPhone String?
+  vehicleDesc  String? // "2019 Toyota Camry 2.5L I4" — fitment context at purchase
+
+  // Snapshot of shipment groups from the checkout quote (JSON array of
+  // {key, supplierId, shipTo, installerId, shippingCents, supplierCostTotalCents}).
+  // PO fan-out at PAID reads THIS, never live supplier config.
+  shippingGroupsJson String @default("[]")
+
+  user           User            @relation(fields: [userId], references: [id])
+  items          OrderItem[]
+  purchaseOrders PurchaseOrder[]
+  appointments   Appointment[]
+  payments       Payment[]
+  refunds        Refund[]
+  events         EventLog[]
+
+  placedAt     DateTime  @default(now())
+  paidAt       DateTime?
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+
+  @@index([userId, placedAt])
+}
+
+// Human-readable order/PO numbers; incremented inside the same tx.
+model Counter {
+  key   String @id // "order" | "po"
+  value Int    @default(100000)
+}
+
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  partId     String
+  supplierId String // snapshot of part.supplierId at purchase
+
+  // catalog snapshots
+  skuSnapshot               String
+  nameSnapshot              String
+  imageUrlSnapshot          String
+  unitPriceCents            Int
+  supplierCostCentsSnapshot Int
+  qty                       Int
+  lineTotalCents            Int // unitPriceCents * qty
+
+  // install snapshot
+  withInstall              Boolean @default(false)
+  laborHoursTenthsSnapshot Int?
+  shopRateCentsSnapshot    Int? // installer.hourlyRateCents at purchase
+  installUnitCents         Int? // per-unit computed install price
+  installTotalCents        Int     @default(0) // installUnitCents * qty (0 if none)
+  installRefunded          Boolean @default(false) // install portion refunded (install-only cancel)
+
+  shipTo               String    @default("HOME") // ShipTo
+  installerIdSnapshot  String? // chosen shop at checkout (install and/or ship-to-shop)
+  requestedApptStartAt DateTime? // slot requested at checkout; Appointment created at PAID
+  appointmentId        String?
+  purchaseOrderId      String?
+  itemStatus           String    @default("PENDING") // OrderItemStatus: PENDING | CANCELLED | REFUNDED
+
+  order         Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  part          Part           @relation(fields: [partId], references: [id])
+  appointment   Appointment?   @relation(fields: [appointmentId], references: [id])
+  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+
+  @@index([orderId])
+}
+
+// ============ DROPSHIP PURCHASE ORDERS ============
+// SPLIT KEY: one PO per (orderId, supplierId, destinationKey) where
+// destinationKey = "HOME" or "INSTALLER:<installerId>". Same function used for
+// shipping-group pricing and PO fan-out.
+
+model PurchaseOrder {
+  id          String  @id @default(cuid())
+  poNumber    String  @unique // "PO-100311"
+  orderId     String
+  supplierId  String
+  status      String  @default("PENDING_CONFIRMATION") // POStatus
+  shipTo      String // ShipTo
+  installerId String? // set iff shipTo=INSTALLER
+
+  // destination snapshot (SHOP address for INSTALLER dests — never customer home)
+  destName  String
+  destLine1 String
+  destLine2 String?
+  destCity  String
+  destState String
+  destZip   String
+
+  supplierCostTotalCents Int // what WE owe the supplier
+  shippingFeeCents       Int // customer-facing shipping charged for this group
+
+  carrier        String?
+  trackingNumber String?
+  trackingUrl    String?
+  rejectReason   String?
+
+  order    Order       @relation(fields: [orderId], references: [id])
+  supplier Supplier    @relation(fields: [supplierId], references: [id])
+  items    OrderItem[]
+
+  dueAt       DateTime? // paidAt + leadTimeDays — SLA clock for admin attention queue
+  confirmedAt DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  receivedAt  DateTime? // installer confirmed physical receipt (INSTALLER dests)
+  cancelledAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([supplierId, status])
+}
+
+// ============ INSTALLATION ============
+// One Appointment per (orderId, installerId, startAt); items at the same
+// shop+slot share it.
+
+model Appointment {
+  id                    String  @id @default(cuid())
+  orderId               String
+  installerId           String
+  startAt               DateTime // block start (UTC instant)
+  durationMinutes       Int // blocks * slotMinutes (labor-scaled)
+  status                String  @default("PENDING_PARTS") // AppointmentStatus
+  totalLaborHoursTenths Int
+  vehicleDesc           String? // what car the job is for (installer view)
+  customerName          String
+  customerPhone         String?
+  notes                 String?
+
+  order     Order       @relation(fields: [orderId], references: [id])
+  installer Installer   @relation(fields: [installerId], references: [id])
+  items     OrderItem[]
+
+  partsReadyAt DateTime?
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([installerId, startAt])
+}
+
+// ============ PAYMENTS ============
+
+model Payment {
+  id               String  @id @default(cuid())
+  orderId          String
+  provider         String // PayProvider: STRIPE | MOCK
+  providerIntentId String  @unique // pi_xxx or mock_pi_xxx
+  clientSecret     String? // stripe client secret / mock_cs_xxx
+  amountCents      Int
+  currency         String  @default("usd")
+  status           String  @default("REQUIRES_PAYMENT") // PaymentStatus
+  lastError        String?
+
+  order   Order    @relation(fields: [orderId], references: [id])
+  refunds Refund[]
+
+  createdAt   DateTime  @default(now())
+  succeededAt DateTime?
+}
+
+model Refund {
+  id               String  @id @default(cuid())
+  orderId          String
+  paymentId        String
+  amountCents      Int
+  reason           String
+  providerRefundId String? // re_xxx or mock_re_xxx
+  status           String  @default("SUCCEEDED") // RefundStatus (mock instant; stripe PENDING->SUCCEEDED)
+  createdByUserId  String?
+
+  order     Order    @relation(fields: [orderId], references: [id])
+  payment   Payment  @relation(fields: [paymentId], references: [id])
+  createdBy User?    @relation(fields: [createdByUserId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// Idempotency ledger for stripe webhooks + mock confirms.
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  provider    String // PayProvider
+  eventId     String // stripe evt id or "mock:<intentId>:succeeded"
+  type        String
+  payloadJson String   @default("{}")
+  processedAt DateTime @default(now())
+
+  @@unique([provider, eventId])
+}
+
+// ============ AUDIT & NOTIFICATIONS ============
+
+// APPEND-ONLY. Written in the SAME transaction as every state change.
+model EventLog {
+  id          String  @id @default(cuid())
+  orderId     String? // denormalized for the order-timeline query
+  entityType  String // EntityType
+  entityId    String
+  action      String // "status_change" | "created" | "tracking_added" | "admin_override" | ...
+  fromStatus  String?
+  toStatus    String?
+  actorUserId String? // null = system
+  actorRole   String? // role snapshot at time of action
+  internal    Boolean @default(false) // true = hidden from the customer timeline
+  message     String // human line: "Supplier AutoMax confirmed PO-100311"
+  metaJson    String  @default("{}")
+
+  order     Order?   @relation(fields: [orderId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([orderId, createdAt])
+  @@index([entityType, entityId])
+}
+
+model Notification {
+  id     String  @id @default(cuid())
+  userId String
+  type   String // "order_paid" | "po_new" | "po_shipped" | "parts_received" | ...
+  title  String
+  body   String
+  href   String? // role-appropriate deep link
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, readAt])
+}
