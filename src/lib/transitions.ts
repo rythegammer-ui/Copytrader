@@ -135,6 +135,18 @@ export async function transitionPO(
   if (to === POStatus.RECEIVED && po.shipTo !== ShipTo.INSTALLER) {
     throw new TransitionError("Only ship-to-shop POs can be received by an installer");
   }
+  // Even with admin override: a cancelled PO whose items were all refunded or
+  // cancelled must stay dead — reviving it would count refunded items back
+  // into the fulfillment rollup.
+  if (
+    po.status === POStatus.CANCELLED &&
+    to !== POStatus.CANCELLED &&
+    !po.items.some((i) => i.itemStatus === OrderItemStatus.PENDING)
+  ) {
+    throw new TransitionError(
+      "Cannot revive a cancelled purchase order whose items were refunded or cancelled",
+    );
+  }
 
   assertAllowed(PO_TABLE, po.status, to, actor, opts.override ?? false);
 

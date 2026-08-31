@@ -36,7 +36,8 @@ export function AccountRegisterForm() {
       setBusy(false);
       return;
     }
-    router.push(next ?? "/account");
+    const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
+    router.push(safeNext ?? "/account");
     router.refresh();
   }
 

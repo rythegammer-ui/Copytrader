@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { api, jsonOk, parseBody } from "@/lib/api";
+import { api, clientIp, jsonOk, parseBody, rateLimitHit, rateLimited } from "@/lib/api";
 import { db } from "@/lib/db";
 import { ApiError } from "@/lib/errors";
 import { Role } from "@/lib/enums";
@@ -19,6 +19,14 @@ const zRegister = z.object({
 export const POST = api(async (req) => {
   const body = await parseBody(req, zRegister);
   const email = body.email.toLowerCase();
+
+  // The EMAIL_TAKEN response is standard registration UX but doubles as an
+  // account-existence oracle — throttle per IP to keep bulk enumeration slow.
+  const ipKey = `register:${clientIp(req)}`;
+  if (rateLimited(ipKey, 10)) {
+    throw new ApiError("RATE_LIMITED", "Too many registration attempts. Try again later.", 429);
+  }
+  rateLimitHit(ipKey);
 
   const existing = await db.user.findUnique({ where: { email } });
   if (existing) {

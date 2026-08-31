@@ -20,6 +20,8 @@ export default async function VehiclesPage() {
   const vehicles: GarageVehicle[] = rows.map((v) => ({
     id: v.id,
     year: v.year,
+    modelId: v.modelId,
+    engineId: v.engineId,
     makeName: v.model.make.name,
     modelName: v.model.name,
     engineName: v.engine?.name ?? null,

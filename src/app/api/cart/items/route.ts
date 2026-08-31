@@ -82,29 +82,28 @@ export const POST = api(async (req) => {
     throw new ApiError("SHIP_TO_SHOP_NEEDS_INSTALL", "Ship-to-shop requires installation", 400);
   }
 
+  // Upsert on the (cartId, partId) unique key so a concurrent double-add of
+  // the same part combines instead of tripping the constraint with a 500.
   const existing = cart.items.find((i) => i.partId === part.id);
-  const item = existing
-    ? await db.cartItem.update({
-        where: { id: existing.id },
-        data: {
-          qty: Math.min(10, existing.qty + body.qty),
-          withInstall,
-          installerId,
-          apptStartAt,
-          shipTo,
-        },
-      })
-    : await db.cartItem.create({
-        data: {
-          cartId: cart.id,
-          partId: part.id,
-          qty: body.qty,
-          withInstall,
-          installerId,
-          apptStartAt,
-          shipTo,
-        },
-      });
+  const item = await db.cartItem.upsert({
+    where: { cartId_partId: { cartId: cart.id, partId: part.id } },
+    create: {
+      cartId: cart.id,
+      partId: part.id,
+      qty: body.qty,
+      withInstall,
+      installerId,
+      apptStartAt,
+      shipTo,
+    },
+    update: {
+      qty: Math.min(10, (existing?.qty ?? 0) + body.qty),
+      withInstall,
+      installerId,
+      apptStartAt,
+      shipTo,
+    },
+  });
 
   return jsonOk({ item }, existing ? 200 : 201);
 });

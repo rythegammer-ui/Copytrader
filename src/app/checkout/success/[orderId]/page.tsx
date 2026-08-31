@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { OrderStatus, Role, ShipTo } from "@/lib/enums";
@@ -22,6 +22,12 @@ export default async function CheckoutSuccessPage({ params }: { params: { orderI
     },
   });
   if (!order || order.userId !== user.id) notFound();
+
+  // Never celebrate a dead order (stale pay tab after a cancellation) — the
+  // order page tells the real story.
+  if (order.status === OrderStatus.CANCELLED || order.status === OrderStatus.REFUNDED) {
+    redirect(`/account/orders/${order.id}`);
+  }
 
   const stillUnpaid =
     order.status === OrderStatus.PENDING_PAYMENT || order.status === OrderStatus.PAYMENT_FAILED;

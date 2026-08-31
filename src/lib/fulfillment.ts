@@ -19,6 +19,8 @@ import { blocksNeeded, isSlotAvailable } from "@/lib/slots";
 import {
   SYSTEM_ACTOR,
   TransitionError,
+  recomputeReadinessForOrder,
+  rollUpOrderStatus,
   transitionAppointment,
   transitionPO,
   type Actor,
@@ -92,6 +94,25 @@ export async function executeRefund(
     if (customAmountCents <= 0 || customAmountCents > remaining) {
       throw new ApiError("BAD_AMOUNT", `Refund must be between 1 and ${remaining} cents`, 400);
     }
+    // A full-balance custom refund with no item selection would flip the order
+    // to REFUNDED while POs/appointments stay live (suppliers keep fulfilling).
+    // Force the flows that clean those up instead.
+    if (selection == null && customAmountCents === remaining) {
+      const liveWork =
+        order.items.some((i) => i.itemStatus === OrderItemStatus.PENDING) ||
+        order.purchaseOrders.some((po) => CANCELLABLE_PO_STATUSES.includes(po.status)) ||
+        order.appointments.some(
+          (a) =>
+            a.status === AppointmentStatus.PENDING_PARTS || a.status === AppointmentStatus.READY,
+        );
+      if (liveWork) {
+        throw new ApiError(
+          "USE_CANCEL",
+          "A full refund on an order with live items would leave suppliers fulfilling it — use Cancel order, or select the items to refund",
+          409,
+        );
+      }
+    }
     amountCents = customAmountCents;
   } else if (selection) {
     amountCents = computeRefund(toRefundSnapshot(order), selection).amountCents;
@@ -112,13 +133,28 @@ export async function executeRefund(
 
       let mismatch = false;
       let deadPoIds: string[] = [];
-      if (selection && customAmountCents == null) {
-        const recomputed = computeRefund(toRefundSnapshot(fresh), selection);
-        if (recomputed.amountCents !== amountCents) {
+      if (selection) {
+        try {
+          const recomputed = computeRefund(toRefundSnapshot(fresh), selection);
+          if (customAmountCents == null && recomputed.amountCents !== amountCents) {
+            mismatch = true;
+          } else {
+            // Custom amounts override only the money — item flips and dead-PO
+            // cancellation still follow the selection.
+            deadPoIds = recomputed.deadPoIds;
+          }
+        } catch {
+          // A concurrent refund invalidated the selection AFTER the provider
+          // already moved money. Never abort here: record the provider amount
+          // and alert admins instead of losing the refund from the books.
           mismatch = true;
-        } else {
-          deadPoIds = recomputed.deadPoIds;
         }
+      }
+      // Custom amounts: the pre-tx bound check raced any concurrent refund —
+      // re-check against the fresh row. Money already moved, so flag, don't throw.
+      if (customAmountCents != null && amountCents > fresh.totalCents - fresh.refundedTotalCents) {
+        mismatch = true;
+        deadPoIds = [];
       }
 
       const refund = await tx.refund.create({
@@ -192,17 +228,24 @@ export async function executeRefund(
           }
         }
 
-        // Cancel appointments with no remaining live install work.
+        // Cancel appointments with no remaining live install work. NO_SHOW is
+        // included: refunding the labor resolves the no-show, and CANCELLED
+        // lets the order roll up to COMPLETED instead of sticking forever.
         const touchedApptIds = new Set(
           fresh.items
             .filter((i) => selection.itemIds.includes(i.id) || installOnly.includes(i.id))
             .map((i) => i.appointmentId)
             .filter((x): x is string => Boolean(x)),
         );
+        const cancellableApptStatuses: string[] = [
+          AppointmentStatus.PENDING_PARTS,
+          AppointmentStatus.READY,
+          AppointmentStatus.NO_SHOW,
+        ];
         for (const apptId of touchedApptIds) {
           const appt = fresh.appointments.find((a) => a.id === apptId);
           if (!appt) continue;
-          if (appt.status !== AppointmentStatus.PENDING_PARTS && appt.status !== AppointmentStatus.READY) continue;
+          if (!cancellableApptStatuses.includes(appt.status)) continue;
           const liveInstall = await tx.orderItem.findMany({
             where: {
               appointmentId: apptId,
@@ -217,6 +260,11 @@ export async function executeRefund(
             });
           }
         }
+
+        // Item/PO/appointment state changed — re-derive readiness and order
+        // status (no-op for orders outside the rollup-managed progression).
+        await recomputeReadinessForOrder(tx, orderId);
+        await rollUpOrderStatus(tx, orderId);
       }
 
       await notify(tx, {
@@ -289,7 +337,9 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
       ? [OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.PARTIALLY_FULFILLED]
       : [OrderStatus.PAID, OrderStatus.PROCESSING];
 
-  await db.$transaction(
+  // `remaining` is computed from the IN-TX read so a refund that committed
+  // between our initial load and this transaction can't be double-paid.
+  const remaining = await db.$transaction(
     async (tx) => {
       const fresh = await tx.order.findUniqueOrThrow({
         where: { id: orderId },
@@ -309,6 +359,25 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
         }
       }
 
+      // Flip the order to CANCELLED FIRST: rollUpOrderStatus (triggered by the
+      // PO cancellations below) then early-returns instead of transiently
+      // rolling a partially-delivered order up to COMPLETED mid-cancellation.
+      await tx.order.update({
+        where: { id: orderId },
+        data: { status: OrderStatus.CANCELLED, cancelledAt: new Date(), cancelReason: reason },
+      });
+      await logEvent(tx, {
+        orderId,
+        entityType: EntityType.ORDER,
+        entityId: orderId,
+        action: "status_change",
+        fromStatus: fresh.status,
+        toStatus: OrderStatus.CANCELLED,
+        actorUserId: actor.userId,
+        actorRole: actor.role,
+        message: `Order cancelled — ${reason}`,
+      });
+
       for (const po of fresh.purchaseOrders) {
         if (CANCELLABLE_PO_STATUSES.includes(po.status)) {
           await transitionPO(tx, po.id, POStatus.CANCELLED, SYSTEM_ACTOR);
@@ -325,21 +394,6 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
         where: { orderId, itemStatus: OrderItemStatus.PENDING },
         data: { itemStatus: OrderItemStatus.CANCELLED },
       });
-      await tx.order.update({
-        where: { id: orderId },
-        data: { status: OrderStatus.CANCELLED, cancelledAt: new Date(), cancelReason: reason },
-      });
-      await logEvent(tx, {
-        orderId,
-        entityType: EntityType.ORDER,
-        entityId: orderId,
-        action: "status_change",
-        fromStatus: fresh.status,
-        toStatus: OrderStatus.CANCELLED,
-        actorUserId: actor.userId,
-        actorRole: actor.role,
-        message: `Order cancelled — ${reason}`,
-      });
       const suppliers = await tx.user.findMany({
         where: { supplierId: { in: fresh.purchaseOrders.map((po) => po.supplierId) }, role: Role.SUPPLIER },
         select: { id: true },
@@ -350,11 +404,12 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
         body: `Order ${fresh.orderNumber} was cancelled — do not fulfill.`,
         href: `/supplier/pos`,
       });
+
+      return fresh.totalCents - fresh.refundedTotalCents;
     },
     { timeout: 30_000, maxWait: 10_000 },
   );
 
-  const remaining = order.totalCents - order.refundedTotalCents;
   if (remaining > 0) {
     const payment = succeededPayment(order);
     try {
@@ -372,9 +427,19 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
             createdByUserId: actor.userId ?? null,
           },
         });
+        // Guarded increment (never an absolute write): a concurrent refund
+        // recorded between the phases must not be overwritten.
+        const current = await tx.order.findUniqueOrThrow({
+          where: { id: orderId },
+          select: { totalCents: true, refundedTotalCents: true },
+        });
+        const newTotal = current.refundedTotalCents + remaining;
         await tx.order.update({
           where: { id: orderId },
-          data: { refundedTotalCents: order.totalCents, status: OrderStatus.REFUNDED },
+          data: {
+            refundedTotalCents: { increment: remaining },
+            ...(newTotal >= current.totalCents ? { status: OrderStatus.REFUNDED } : {}),
+          },
         });
         await logEvent(tx, {
           orderId,

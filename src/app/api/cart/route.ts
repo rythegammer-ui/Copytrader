@@ -94,5 +94,18 @@ export const GET = api(async () => {
     }
   }
 
-  return jsonOk({ cart: { id: cart.id, vehicle, items }, quote, quoteError });
+  // Never expose wholesale costs to shoppers: strip supplier cost fields from
+  // the internal Quote before it leaves the API.
+  const publicQuote = quote && {
+    lines: quote.lines.map(({ supplierCostCents: _cost, ...line }) => line),
+    groups: quote.groups.map(({ supplierCostTotalCents: _total, ...group }) => group),
+    partsSubtotalCents: quote.partsSubtotalCents,
+    installSubtotalCents: quote.installSubtotalCents,
+    shippingTotalCents: quote.shippingTotalCents,
+    taxRateBps: quote.taxRateBps,
+    taxCents: quote.taxCents,
+    totalCents: quote.totalCents,
+  };
+
+  return jsonOk({ cart: { id: cart.id, vehicle, items }, quote: publicQuote, quoteError });
 });

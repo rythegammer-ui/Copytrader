@@ -328,6 +328,18 @@ export async function createRetryPayment(orderId: string, userId: string): Promi
     throw new ApiError("ALREADY_PAID", "This order is already paid", 409);
   }
 
+  // Cancel every stale attempt at the provider BEFORE issuing a new intent —
+  // an old intent left confirmable in another tab is a double-charge waiting
+  // to happen. (FAILED Stripe intents remain confirmable until cancelled.)
+  const staleStatuses: string[] = [PaymentStatus.REQUIRES_PAYMENT, PaymentStatus.FAILED];
+  for (const p of order.payments.filter((p) => staleStatuses.includes(p.status))) {
+    await getProvider(p.provider).cancelIntent(p.providerIntentId);
+  }
+  await db.payment.updateMany({
+    where: { orderId, status: PaymentStatus.REQUIRES_PAYMENT },
+    data: { status: PaymentStatus.CANCELLED },
+  });
+
   const providerName = activeProviderName();
   const provider = getProvider(providerName);
   const intent = await provider.createIntent(order.totalCents, order.currency, { orderId });

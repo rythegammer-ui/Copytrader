@@ -7,6 +7,8 @@ import { sendJson } from "./account-api";
 export type GarageVehicle = {
   id: string;
   year: number;
+  modelId: string;
+  engineId: string | null;
   makeName: string;
   modelName: string;
   engineName: string | null;
@@ -53,6 +55,7 @@ export function AccountVehicles({ vehicles }: { vehicles: GarageVehicle[] }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [shoppingId, setShoppingId] = useState<string | null>(null);
 
   const years = useMemo(() => {
     const ys: number[] = [];
@@ -136,6 +139,22 @@ export function AccountVehicles({ vehicles }: { vehicles: GarageVehicle[] }) {
     router.refresh();
   }
 
+  // Make this vehicle the catalog's fitment context, then jump to shopping.
+  async function onShopFor(v: GarageVehicle) {
+    setShoppingId(v.id);
+    const res = await sendJson("/api/cart/vehicle", "PUT", {
+      modelId: v.modelId,
+      year: v.year,
+      engineId: v.engineId,
+    });
+    setShoppingId(null);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    router.push("/parts");
+  }
+
   return (
     <div className="space-y-6">
       <div className="card divide-y divide-slate-100">
@@ -158,14 +177,24 @@ export function AccountVehicles({ vehicles }: { vehicles: GarageVehicle[] }) {
                 </p>
               )}
             </div>
-            <button
-              type="button"
-              className="btn-secondary text-red-600"
-              onClick={() => onDelete(v.id)}
-              disabled={deletingId === v.id}
-            >
-              {deletingId === v.id ? "Removing…" : "Remove"}
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => onShopFor(v)}
+                disabled={shoppingId === v.id}
+              >
+                {shoppingId === v.id ? "Loading…" : "Shop parts"}
+              </button>
+              <button
+                type="button"
+                className="btn-secondary text-red-600"
+                onClick={() => onDelete(v.id)}
+                disabled={deletingId === v.id}
+              >
+                {deletingId === v.id ? "Removing…" : "Remove"}
+              </button>
+            </div>
           </div>
         ))}
       </div>

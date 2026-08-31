@@ -219,7 +219,7 @@ model CustomerVehicle {
 
 model Cart {
   id          String  @id @default(cuid())
-  userId      String? // null = guest; signed cookie holds cart id
+  userId      String? @unique // null = guest (multiple NULLs allowed); one cart per user
   ctxModelId  String? // active vehicle fitment context
   ctxYear     Int?
   ctxEngineId String?

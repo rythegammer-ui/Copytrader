@@ -44,6 +44,12 @@ export async function getCart(): Promise<CartWithItems | null> {
   return cart && cart.userId === null ? cart : null;
 }
 
+function isUniqueViolation(err: unknown): boolean {
+  return (
+    typeof err === "object" && err !== null && (err as { code?: string }).code === "P2002"
+  );
+}
+
 /**
  * Get or create the current cart. Sets the guest cookie when creating a guest
  * cart — call from route handlers or server actions only.
@@ -52,10 +58,20 @@ export async function getOrCreateCart(): Promise<CartWithItems> {
   const existing = await getCart();
   if (existing) return existing;
   const user = await getCurrentUser();
-  const cart = await db.cart.create({
-    data: { userId: user?.id ?? null },
-    include: CART_INCLUDE,
-  });
+  let cart: CartWithItems;
+  try {
+    cart = await db.cart.create({
+      data: { userId: user?.id ?? null },
+      include: CART_INCLUDE,
+    });
+  } catch (err) {
+    // Concurrent request won the race on Cart.userId's unique — use its cart.
+    if (isUniqueViolation(err) && user) {
+      const raced = await db.cart.findFirst({ where: { userId: user.id }, include: CART_INCLUDE });
+      if (raced) return raced;
+    }
+    throw err;
+  }
   if (!user) {
     cookies().set(CART_COOKIE, signCartId(cart.id), {
       httpOnly: true,
@@ -79,13 +95,21 @@ export async function mergeGuestCartIntoUser(userId: string): Promise<void> {
   const guest = await db.cart.findUnique({ where: { id: guestId }, include: { items: true } });
   if (!guest || guest.userId !== null) return;
 
-  const userCart = await db.cart.findFirst({ where: { userId }, include: { items: true } });
+  let userCart = await db.cart.findFirst({ where: { userId }, include: { items: true } });
   if (!userCart) {
-    await db.cart.update({ where: { id: guest.id }, data: { userId } });
-  } else {
+    try {
+      await db.cart.update({ where: { id: guest.id }, data: { userId } });
+    } catch (err) {
+      // A concurrent request claimed the user's cart slot — merge into it.
+      if (!isUniqueViolation(err)) throw err;
+      userCart = await db.cart.findFirst({ where: { userId }, include: { items: true } });
+    }
+  }
+  if (userCart) {
+    const target = userCart;
     await db.$transaction(async (tx) => {
       for (const gi of guest.items) {
-        const existing = userCart.items.find((ui) => ui.partId === gi.partId);
+        const existing = target.items.find((ui) => ui.partId === gi.partId);
         if (existing) {
           await tx.cartItem.update({
             where: { id: existing.id },
@@ -98,13 +122,13 @@ export async function mergeGuestCartIntoUser(userId: string): Promise<void> {
             },
           });
         } else {
-          await tx.cartItem.update({ where: { id: gi.id }, data: { cartId: userCart.id } });
+          await tx.cartItem.update({ where: { id: gi.id }, data: { cartId: target.id } });
         }
       }
       // Carry the guest's vehicle context if the user cart has none.
-      if (!userCart.ctxModelId && guest.ctxModelId) {
+      if (!target.ctxModelId && guest.ctxModelId) {
         await tx.cart.update({
-          where: { id: userCart.id },
+          where: { id: target.id },
           data: {
             ctxModelId: guest.ctxModelId,
             ctxYear: guest.ctxYear,

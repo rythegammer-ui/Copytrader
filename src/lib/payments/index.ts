@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import {
   AppointmentStatus,
@@ -7,6 +7,7 @@ import {
   OrderStatus,
   PaymentStatus,
   PayProvider,
+  RefundStatus,
   Role,
   ShipTo,
 } from "@/lib/enums";
@@ -58,14 +59,101 @@ export interface PaymentEventInput {
   providerCurrency?: string;
 }
 
+function isUniqueViolation(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002";
+}
+
+interface StrayCapture {
+  paymentId: string;
+  provider: string;
+  intentId: string;
+  amountCents: number;
+  orderId: string;
+  orderNumber: string;
+}
+
+type SucceededResult = { ok: boolean; duplicate?: boolean; error?: string; strayCapture?: StrayCapture };
+
 /**
  * The single idempotent entry point that flips an order to PAID and fans out
  * dropship POs + install appointments. Called by the Stripe webhook AND the
- * mock confirm endpoint. Replays are no-ops (WebhookEvent ledger + status guard).
+ * mock confirm endpoint. Replays are no-ops (WebhookEvent ledger + status
+ * guard). A REAL capture on an order that can no longer accept it (paid via
+ * another intent, cancelled, refunded) is never swallowed: it is recorded and
+ * automatically refunded, with admins alerted.
  */
 export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<{ ok: boolean; duplicate?: boolean; error?: string }> {
+  let result: SucceededResult;
+  try {
+    result = await runPaymentSucceededTx(input);
+  } catch (err) {
+    // Two concurrent confirms of the same event: the loser's ledger insert
+    // hits the unique constraint — that's a duplicate, not an error.
+    if (isUniqueViolation(err)) return { ok: true, duplicate: true };
+    throw err;
+  }
+
+  if (result.strayCapture) {
+    const stray = result.strayCapture;
+    // Money genuinely moved on a dead order — refund it in full. This charge
+    // was never part of the order's books, so refundedTotalCents is untouched.
+    try {
+      const providerRefund = await getProvider(stray.provider).createRefund(
+        stray.intentId,
+        stray.amountCents,
+      );
+      await db.$transaction(async (tx) => {
+        const refund = await tx.refund.create({
+          data: {
+            orderId: stray.orderId,
+            paymentId: stray.paymentId,
+            amountCents: stray.amountCents,
+            reason: "Automatic refund — payment captured after the order was closed",
+            providerRefundId: providerRefund.refundId,
+            status: providerRefund.status,
+          },
+        });
+        await logEvent(tx, {
+          orderId: stray.orderId,
+          entityType: EntityType.REFUND,
+          entityId: refund.id,
+          action: "created",
+          actorRole: "SYSTEM",
+          message: `Automatic refund of a payment captured after ${stray.orderNumber} was closed`,
+        });
+      });
+    } catch (refundErr) {
+      await db.$transaction(async (tx) => {
+        await tx.refund.create({
+          data: {
+            orderId: stray.orderId,
+            paymentId: stray.paymentId,
+            amountCents: stray.amountCents,
+            reason: "Automatic refund — payment captured after the order was closed",
+            status: RefundStatus.FAILED,
+          },
+        });
+        const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
+        await notifyMany(tx, admins.map((u) => u.id), {
+          type: "refund_failed",
+          title: "Stray capture refund FAILED",
+          body: `Order ${stray.orderNumber}: a late capture could not be auto-refunded (${refundErr instanceof Error ? refundErr.message : "unknown error"}). Refund manually.`,
+          href: `/admin/orders/${stray.orderId}`,
+        });
+      });
+    }
+    return {
+      ok: false,
+      error: "This order can no longer accept payment — the charge was automatically refunded",
+    };
+  }
+
+  return { ok: result.ok, duplicate: result.duplicate, error: result.error };
+}
+
+function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResult> {
   return db.$transaction(
-    async (tx) => {
+    async (tx): Promise<SucceededResult> => {
       const seen = await tx.webhookEvent.findUnique({
         where: { provider_eventId: { provider: input.provider, eventId: input.eventId } },
       });
@@ -86,11 +174,51 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
       if (!payment) return { ok: false, error: "Unknown payment intent" };
       const order = payment.order;
 
-      if (payment.status === PaymentStatus.SUCCEEDED || order.paidAt) {
-        return { ok: true, duplicate: true }; // already processed via another event
+      if (payment.status === PaymentStatus.SUCCEEDED) {
+        return { ok: true, duplicate: true }; // true replay of this same capture
       }
-      if (order.status !== OrderStatus.PENDING_PAYMENT && order.status !== OrderStatus.PAYMENT_FAILED) {
-        return { ok: true, duplicate: true };
+      const payable =
+        order.status === OrderStatus.PENDING_PAYMENT || order.status === OrderStatus.PAYMENT_FAILED;
+      if (order.paidAt || !payable) {
+        // A REAL capture on an order that can't accept it. Record the truth
+        // (money was captured) and hand back a stray-capture marker; the
+        // caller auto-refunds outside this transaction.
+        await tx.payment.update({
+          where: { id: payment.id },
+          data: {
+            status: PaymentStatus.SUCCEEDED,
+            succeededAt: new Date(),
+            lastError: `Captured while order was ${order.status} — auto-refunding`,
+          },
+        });
+        await logEvent(tx, {
+          orderId: order.id,
+          entityType: EntityType.PAYMENT,
+          entityId: payment.id,
+          action: "orphaned_capture",
+          internal: true,
+          actorRole: "SYSTEM",
+          message: `Payment captured on ${order.orderNumber} while it was ${order.status}; issuing automatic refund`,
+        });
+        const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
+        await notifyMany(tx, admins.map((u) => u.id), {
+          type: "orphaned_capture",
+          title: `Late capture on ${order.orderNumber}`,
+          body: `A payment was captured while the order was ${order.status}. An automatic refund is being issued — verify it landed.`,
+          href: `/admin/orders/${order.id}`,
+        });
+        return {
+          ok: false,
+          error: "Order not payable",
+          strayCapture: {
+            paymentId: payment.id,
+            provider: payment.provider,
+            intentId: input.intentId,
+            amountCents: payment.amountCents,
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+          },
+        };
       }
 
       // AMOUNT VERIFICATION — never mark an order paid for the wrong amount.
@@ -261,6 +389,7 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
         const blocks = blocksNeeded(totalLaborTenths, shop.slotMinutes);
         let startAt = groupItemList[0].requestedApptStartAt!;
         let rescheduled = false;
+        let overbooked = false;
         const available = await isSlotAvailable(tx, shop, startAt, blocks);
         if (!available) {
           // Documented behavior: never fail a successful payment over a slot
@@ -274,6 +403,10 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
           if (fallback) {
             startAt = fallback;
             rescheduled = true;
+          } else {
+            // No free slot for 30 days: keep the requested time (payment must
+            // not fail) but flag the deliberate overbook loudly.
+            overbooked = true;
           }
         }
 
@@ -317,6 +450,24 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
           where: { installerId, role: Role.INSTALLER },
           select: { id: true },
         });
+        if (overbooked) {
+          await logEvent(tx, {
+            orderId: order.id,
+            entityType: EntityType.APPOINTMENT,
+            entityId: appt.id,
+            action: "overbooked",
+            internal: true,
+            actorRole: "SYSTEM",
+            message: `Appointment for ${order.orderNumber} exceeds bay capacity at ${shop.name} (no free slot within 30 days) — needs manual rescheduling`,
+          });
+          const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
+          await notifyMany(tx, [...admins.map((u) => u.id), ...installerUsers.map((u) => u.id)], {
+            type: "appt_overbooked",
+            title: "Overbooked appointment needs rescheduling",
+            body: `Order ${order.orderNumber} booked over capacity at ${shop.name} — reschedule it manually.`,
+            href: `/admin/orders/${order.id}`,
+          });
+        }
         await notifyMany(tx, installerUsers.map((u) => u.id), {
           type: "appt_new",
           title: "New installation booked",
@@ -345,9 +496,14 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
         href: `/account/orders/${order.id}`,
       });
 
-      // Clear the customer's cart now that the order is paid.
+      // Clear the ORDERED items from the customer's cart (anything they added
+      // after checkout stays in the cart).
       const cart = await tx.cart.findFirst({ where: { userId: order.userId } });
-      if (cart) await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
+      if (cart) {
+        await tx.cartItem.deleteMany({
+          where: { cartId: cart.id, partId: { in: order.items.map((i) => i.partId) } },
+        });
+      }
 
       return { ok: true };
     },
@@ -356,6 +512,15 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
 }
 
 export async function handlePaymentFailed(input: PaymentEventInput & { errorMessage?: string }): Promise<{ ok: boolean; duplicate?: boolean }> {
+  try {
+    return await runPaymentFailedTx(input);
+  } catch (err) {
+    if (isUniqueViolation(err)) return { ok: true, duplicate: true };
+    throw err;
+  }
+}
+
+function runPaymentFailedTx(input: PaymentEventInput & { errorMessage?: string }): Promise<{ ok: boolean; duplicate?: boolean }> {
   return db.$transaction(async (tx) => {
     const seen = await tx.webhookEvent.findUnique({
       where: { provider_eventId: { provider: input.provider, eventId: input.eventId } },

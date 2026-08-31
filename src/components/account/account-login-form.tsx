@@ -30,7 +30,10 @@ export function AccountLoginForm() {
       setBusy(false);
       return;
     }
-    router.push(res.data.home ?? next ?? "/account");
+    // Honor the return path first (same-site only — never an open redirect),
+    // falling back to the role's home surface.
+    const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
+    router.push(safeNext ?? res.data.home ?? "/account");
     router.refresh();
   }
 

@@ -1,28 +1,22 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/enums";
+import { getCart } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/session";
 import { roleHome } from "@/lib/page-auth";
 
 export const dynamic = "force-dynamic";
 
-async function cartCount(userId: string | null): Promise<number> {
-  if (!userId) return 0;
-  const cart = await db.cart.findFirst({
-    where: { userId },
-    include: { items: { select: { qty: true } } },
-  });
-  return cart?.items.reduce((s, i) => s + i.qty, 0) ?? 0;
-}
-
 export async function SiteHeader() {
   const user = await getCurrentUser();
-  const [count, unread] = await Promise.all([
-    cartCount(user?.id ?? null),
+  // getCart resolves the guest cookie cart too, so the badge works signed out.
+  const [cart, unread] = await Promise.all([
+    getCart(),
     user
       ? db.notification.count({ where: { userId: user.id, readAt: null } })
       : Promise.resolve(0),
   ]);
+  const count = cart?.items.reduce((s, i) => s + i.qty, 0) ?? 0;
 
   const portalLink =
     user && user.role !== Role.CUSTOMER ? { href: roleHome(user.role), label: portalLabel(user.role) } : null;
