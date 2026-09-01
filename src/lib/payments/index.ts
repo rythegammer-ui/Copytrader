@@ -12,6 +12,7 @@ import {
   ShipTo,
 } from "@/lib/enums";
 import { logEvent, notify, notifyMany } from "@/lib/events";
+import { formatShopTime } from "@/lib/format";
 import { blocksNeeded, isSlotAvailable, nextFreeSlot } from "@/lib/slots";
 import type { PaymentProviderApi } from "@/lib/payments/provider";
 import { mockProvider } from "@/lib/payments/mock";
@@ -434,8 +435,8 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
           toStatus: AppointmentStatus.PENDING_PARTS,
           actorRole: "SYSTEM",
           message: rescheduled
-            ? `Requested time was taken — appointment booked at ${shop.name} for ${startAt.toISOString()} instead`
-            : `Installation booked at ${shop.name} for ${startAt.toISOString()} (awaiting parts)`,
+            ? `Requested time was taken — appointment booked at ${shop.name} for ${formatShopTime(startAt, shop.tzOffsetMinutes)} instead`
+            : `Installation booked at ${shop.name} for ${formatShopTime(startAt, shop.tzOffsetMinutes)} (awaiting parts)`,
         });
         if (rescheduled) {
           await notify(tx, {

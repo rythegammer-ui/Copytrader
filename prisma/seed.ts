@@ -28,6 +28,7 @@ import {
   Role,
   ShipTo,
 } from "../src/lib/enums";
+import { formatShopTime } from "../src/lib/format";
 import { priceQuote, taxRateBps, type QuoteItemInput } from "../src/lib/pricing";
 import { blockStartsForDate, blocksNeeded } from "../src/lib/slots";
 import { carrierTrackingUrl } from "../src/lib/transitions";
@@ -1580,7 +1581,7 @@ async function main(): Promise<void> {
           action: "created",
           toStatus: AppointmentStatus.PENDING_PARTS,
           actorRole: "SYSTEM",
-          message: `Installation booked at ${a.installer.name} for ${a.startAt.toISOString()} (awaiting parts)`,
+          message: `Installation booked at ${a.installer.name} for ${formatShopTime(a.startAt, a.installer.tzOffsetMinutes)} (awaiting parts)`,
           createdAt: paidAt,
         });
         const installerUserId = installerUserIdByInstallerId.get(a.installer.id);

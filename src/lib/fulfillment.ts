@@ -13,6 +13,7 @@ import {
 } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 import { logEvent, notify, notifyMany } from "@/lib/events";
+import { formatShopTime } from "@/lib/format";
 import { getProvider } from "@/lib/payments";
 import { computeRefund, type RefundOrderSnapshot, type RefundSelection } from "@/lib/refunds";
 import { blocksNeeded, isSlotAvailable } from "@/lib/slots";
@@ -576,7 +577,7 @@ export async function rescheduleAppointment(
       action: "rescheduled",
       actorUserId: actor.userId,
       actorRole: actor.role,
-      message: `Appointment moved from ${appt.startAt.toISOString()} to ${newStartAt.toISOString()}`,
+      message: `Appointment moved from ${formatShopTime(appt.startAt, appt.installer.tzOffsetMinutes)} to ${formatShopTime(newStartAt, appt.installer.tzOffsetMinutes)}`,
     });
     const otherParty =
       actor.role === Role.CUSTOMER

@@ -10,6 +10,7 @@ import {
   poTerminalDelivered,
 } from "@/lib/enums";
 import { logEvent, notify, notifyMany } from "@/lib/events";
+import { formatShopTime } from "@/lib/format";
 import { blocksNeeded, isSlotAvailable, nextFreeSlot } from "@/lib/slots";
 
 export type DbClient = PrismaClient | Prisma.TransactionClient;
@@ -320,7 +321,7 @@ export async function transitionAppointment(
         );
         if (!ok) throw new TransitionError("That slot is no longer available");
         data.startAt = opts.newStartAt;
-        message = `Appointment rebooked for ${opts.newStartAt.toISOString()}`;
+        message = `Appointment rebooked for ${formatShopTime(opts.newStartAt, appt.installer.tzOffsetMinutes)}`;
       } else {
         data.partsReadyAt = now;
         message = `All parts ready — appointment at ${appt.installer.name} confirmed`;
@@ -436,7 +437,7 @@ export async function recomputeReadinessForOrder(
             fromStatus: appt.status,
             toStatus: AppointmentStatus.READY,
             actorRole: "SYSTEM",
-            message: `Parts arrived after the original time — appointment moved to ${slot.toISOString()}`,
+            message: `Parts arrived after the original time — appointment moved to ${formatShopTime(slot, appt.installer.tzOffsetMinutes)}`,
           });
           await notify(tx, {
             userId: appt.order.userId,
