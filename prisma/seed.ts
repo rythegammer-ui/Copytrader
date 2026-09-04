@@ -439,6 +439,13 @@ const LABOR_RANGE: Record<string, [number, number]> = {
 // ---------------------------------------------------------------------------
 
 async function main(): Promise<void> {
+  if (process.env.SEED_IF_EMPTY === "1") {
+    const existing = await db.user.count();
+    if (existing > 0) {
+      console.log(`Database already has ${existing} users — skipping seed (SEED_IF_EMPTY=1).`);
+      return;
+    }
+  }
   console.log("Seeding PartsPro…");
 
   // ---- wipe everything in dependency order --------------------------------
@@ -925,7 +932,11 @@ async function main(): Promise<void> {
   };
 
   // ---- users --------------------------------------------------------------
-  const passwordHash = bcrypt.hashSync("password123", 10); // hash once, reuse
+  const demoPassword = process.env.DEMO_PASSWORD || "password123";
+  if (process.env.VERCEL_ENV === "production" && demoPassword === "password123") {
+    throw new Error("Refusing to seed production with the default demo password — set DEMO_PASSWORD.");
+  }
+  const passwordHash = bcrypt.hashSync(demoPassword, 10); // hash once, reuse
 
   const admin = await db.user.create({
     data: {
@@ -2224,7 +2235,7 @@ async function main(): Promise<void> {
     notifications: await db.notification.count(),
   };
   console.log("Seed complete:", counts);
-  console.log("\nDemo accounts (password: password123)");
+  console.log(process.env.DEMO_PASSWORD ? "\nDemo accounts (password: from DEMO_PASSWORD)" : "\nDemo accounts (password: password123)");
   console.log("  admin@demo.test           (ADMIN)");
   console.log("  customer@demo.test        (CUSTOMER — historical orders in every state)");
   console.log("  jordan@demo.test          (CUSTOMER)");

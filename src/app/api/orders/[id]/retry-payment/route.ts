@@ -3,6 +3,8 @@ import { createRetryPayment } from "@/lib/checkout";
 import { Role } from "@/lib/enums";
 
 export const dynamic = "force-dynamic";
+// Multi-step transactions + payment-provider calls: allow more than the 10s serverless default.
+export const maxDuration = 30;
 
 /**
  * POST /api/orders/[id]/retry-payment — CUSTOMER.

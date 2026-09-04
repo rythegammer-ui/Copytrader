@@ -78,3 +78,30 @@ STRIPE_WEBHOOK_SECRET=whsec_...   # stripe listen --forward-to localhost:3000/ap
 
 See **SPEC.md** for the full system design: data model, state machines, pricing and
 refund formulas, route map, and security policies.
+
+## Deploying (Vercel + Postgres)
+
+SQLite is for local development only — a deployed app needs Postgres. The
+repo already contains everything Vercel needs (`vercel.json` runs
+`scripts/vercel-build.sh`, which derives the Postgres Prisma schema, pushes it,
+seeds demo data into an empty database, and builds).
+
+1. **Import the repo** in Vercel (Add New → Project → this repository). The
+   framework is auto-detected; leave the build command as configured.
+2. **Add a database**: Project → Storage → Create Database → **Neon (Postgres)**,
+   free tier is fine. Connecting it sets `DATABASE_URL` and
+   `DATABASE_URL_UNPOOLED` on the project automatically. (Any Postgres works —
+   set `DATABASE_URL`, and `DATABASE_URL_UNPOOLED` if your provider pools.)
+3. **Set secrets** under Settings → Environment Variables (Production):
+   - `SESSION_SECRET` — any long random string (the build refuses to run
+     production without it)
+   - `DEMO_PASSWORD` — the password for the seeded demo accounts (the seed
+     refuses the default `password123` in production)
+   - optionally `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`,
+     `STRIPE_WEBHOOK_SECRET` (webhook endpoint: `/api/webhooks/stripe`)
+4. **Redeploy.** The first build creates the tables and seeds the catalog,
+   shops, suppliers, and demo accounts; later builds leave data alone.
+
+Notes for production: the schema is applied with `prisma db push` (fine to
+launch; switch to `prisma migrate` once you have real data), the login
+throttle is per serverless instance, and shop timezones are fixed offsets.

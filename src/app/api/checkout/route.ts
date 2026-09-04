@@ -7,6 +7,8 @@ import { Role } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 
 export const dynamic = "force-dynamic";
+// Multi-step transactions + payment-provider calls: allow more than the 10s serverless default.
+export const maxDuration = 30;
 
 const zInlineAddress = z.object({
   name: z.string().trim().min(1).max(80),

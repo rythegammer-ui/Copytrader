@@ -5,6 +5,8 @@ import { executeRefund } from "@/lib/fulfillment";
 import type { RefundSelection } from "@/lib/refunds";
 
 export const dynamic = "force-dynamic";
+// Multi-step transactions + payment-provider calls: allow more than the 10s serverless default.
+export const maxDuration = 30;
 
 const zRefundBody = z.object({
   /** An entry means a FULL line refund (parts + install); `install` is informational. */

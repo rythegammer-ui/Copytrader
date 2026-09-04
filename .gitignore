@@ -33,3 +33,6 @@ prisma/*.db-journal
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated for Vercel/Postgres builds
+prisma/schema.postgres.prisma

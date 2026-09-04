@@ -8,6 +8,8 @@ import { handlePaymentFailed, handlePaymentSucceeded, stripeConfigured } from "@
 import { getStripe } from "@/lib/payments/stripe";
 
 export const dynamic = "force-dynamic";
+// Multi-step transactions + payment-provider calls: allow more than the 10s serverless default.
+export const maxDuration = 30;
 
 // Refund lifecycle events vary by Stripe API version; match all spellings.
 function isRefundStatusEvent(type: string): boolean {

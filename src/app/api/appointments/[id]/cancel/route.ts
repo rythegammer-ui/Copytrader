@@ -4,6 +4,8 @@ import { Role } from "@/lib/enums";
 import { cancelInstallOnly } from "@/lib/fulfillment";
 
 export const dynamic = "force-dynamic";
+// Multi-step transactions + payment-provider calls: allow more than the 10s serverless default.
+export const maxDuration = 30;
 
 const zCancelBody = z.object({
   reason: z.string().trim().min(1).max(500).optional(),

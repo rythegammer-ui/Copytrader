@@ -6,6 +6,8 @@ import { ApiError } from "@/lib/errors";
 import { handlePaymentFailed, handlePaymentSucceeded, stripeConfigured } from "@/lib/payments";
 
 export const dynamic = "force-dynamic";
+// Multi-step transactions + payment-provider calls: allow more than the 10s serverless default.
+export const maxDuration = 30;
 
 const zConfirm = z.object({
   intentId: z.string().min(1),
