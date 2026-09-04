@@ -31,7 +31,7 @@ export const POST = api(async (req) => {
   const key = `login:${email}:${clientIp(req)}`;
   const emailKey = `login-email:${email}`;
 
-  if (rateLimited(key) || rateLimited(emailKey, 20)) {
+  if ((await rateLimited(key)) || (await rateLimited(emailKey, 20))) {
     throw new ApiError(
       "RATE_LIMITED",
       "Too many failed sign-in attempts. Try again in 15 minutes.",
@@ -42,13 +42,13 @@ export const POST = api(async (req) => {
   const user = await db.user.findUnique({ where: { email } });
   const valid = user ? await verifyPassword(body.password, user.passwordHash) : false;
   if (!user || !valid) {
-    rateLimitHit(key);
-    rateLimitHit(emailKey);
+    await rateLimitHit(key);
+    await rateLimitHit(emailKey);
     throw new ApiError("INVALID_CREDENTIALS", "Invalid email or password", 401);
   }
 
-  rateLimitClear(key);
-  rateLimitClear(emailKey);
+  await rateLimitClear(key);
+  await rateLimitClear(emailKey);
   createSessionCookie(user.id);
   await mergeGuestCartIntoUser(user.id);
 

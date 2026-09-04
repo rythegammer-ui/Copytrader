@@ -5,8 +5,6 @@ import { getCart } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/session";
 import { roleHome } from "@/lib/page-auth";
 
-export const dynamic = "force-dynamic";
-
 export async function SiteHeader() {
   const user = await getCurrentUser();
   // getCart resolves the guest cookie cart too, so the badge works signed out.

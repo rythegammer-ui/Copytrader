@@ -23,10 +23,10 @@ export const POST = api(async (req) => {
   // The EMAIL_TAKEN response is standard registration UX but doubles as an
   // account-existence oracle — throttle per IP to keep bulk enumeration slow.
   const ipKey = `register:${clientIp(req)}`;
-  if (rateLimited(ipKey, 10)) {
+  if (await rateLimited(ipKey, 10)) {
     throw new ApiError("RATE_LIMITED", "Too many registration attempts. Try again later.", 429);
   }
-  rateLimitHit(ipKey);
+  await rateLimitHit(ipKey);
 
   const existing = await db.user.findUnique({ where: { email } });
   if (existing) {

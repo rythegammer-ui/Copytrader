@@ -18,8 +18,8 @@ function loadOrder(id: string) {
         orderBy: { createdAt: "asc" },
       },
       appointments: { include: { installer: true }, orderBy: { startAt: "asc" } },
-      payments: { orderBy: { createdAt: "desc" } },
-      refunds: { orderBy: { createdAt: "desc" } },
+      payments: { orderBy: [{ createdAt: "desc" }, { id: "desc" }] },
+      refunds: { orderBy: [{ createdAt: "desc" }, { id: "desc" }] },
     },
   });
 }
@@ -44,7 +44,7 @@ export const GET = api(
 
     const events = await db.eventLog.findMany({
       where: { orderId: order.id, ...(user.role === Role.ADMIN ? {} : { internal: false }) },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: 100,
     });
 

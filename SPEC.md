@@ -111,7 +111,7 @@ picker disables chips before `today + supplier.leadTimeDays + TRANSIT_BUFFER_DAY
 - HMAC-signed session cookie (`src/lib/session.ts`), SameSite=Lax, httpOnly.
 - **CSRF**: every mutating API route rejects requests whose `Origin` (or `Referer`)
   host differs from the request host (helper in `src/lib/api.ts`). 403 on mismatch.
-- **Login throttle**: in-memory 5 failures per email+IP → 15 min lockout.
+- **Login throttle**: persisted (RateLimit table) 5 failures per email+IP → 15 min lockout, plus a wider per-email bucket.
 - Password reset: `/api/auth/forgot` issues an HMAC-signed, 30-min token, logged to
   console (mail stub) + notification; `/reset/[token]` sets a new password.
 - Portal scoping: every supplier/installer query filters by `user.supplierId /

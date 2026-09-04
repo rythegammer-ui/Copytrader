@@ -16,7 +16,7 @@ import { logEvent, notify, notifyMany } from "@/lib/events";
 import { formatShopTime } from "@/lib/format";
 import { getProvider } from "@/lib/payments";
 import { computeRefund, type RefundOrderSnapshot, type RefundSelection } from "@/lib/refunds";
-import { blocksNeeded, isSlotAvailable } from "@/lib/slots";
+import { blocksNeeded, isSlotAvailable, lockShop } from "@/lib/slots";
 import {
   SYSTEM_ACTOR,
   TransitionError,
@@ -169,13 +169,15 @@ export async function executeRefund(
           createdByUserId: actor.userId ?? null,
         },
       });
-      const newRefundedTotal = fresh.refundedTotalCents + amountCents;
+      // Atomic increment (never an absolute write) plus a guarded status flip,
+      // so concurrent refunds cannot lose each other's updates.
       await tx.order.update({
         where: { id: orderId },
-        data: {
-          refundedTotalCents: newRefundedTotal,
-          ...(newRefundedTotal >= fresh.totalCents ? { status: OrderStatus.REFUNDED } : {}),
-        },
+        data: { refundedTotalCents: { increment: amountCents } },
+      });
+      await tx.order.updateMany({
+        where: { id: orderId, refundedTotalCents: { gte: fresh.totalCents } },
+        data: { status: OrderStatus.REFUNDED },
       });
       await logEvent(tx, {
         orderId,
@@ -303,10 +305,13 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
       if (fresh.status !== OrderStatus.PENDING_PAYMENT && fresh.status !== OrderStatus.PAYMENT_FAILED) {
         throw new TransitionError("Order state changed — refresh and try again");
       }
-      await tx.order.update({
-        where: { id: orderId },
+      const cancelled = await tx.order.updateMany({
+        where: { id: orderId, status: fresh.status },
         data: { status: OrderStatus.CANCELLED, cancelledAt: new Date(), cancelReason: reason },
       });
+      if (cancelled.count !== 1) {
+        throw new TransitionError("Order changed concurrently — refresh and try again");
+      }
       await tx.payment.updateMany({
         where: { orderId, status: PaymentStatus.REQUIRES_PAYMENT },
         data: { status: PaymentStatus.CANCELLED },
@@ -363,10 +368,13 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
       // Flip the order to CANCELLED FIRST: rollUpOrderStatus (triggered by the
       // PO cancellations below) then early-returns instead of transiently
       // rolling a partially-delivered order up to COMPLETED mid-cancellation.
-      await tx.order.update({
-        where: { id: orderId },
+      const cancelled = await tx.order.updateMany({
+        where: { id: orderId, status: fresh.status },
         data: { status: OrderStatus.CANCELLED, cancelledAt: new Date(), cancelReason: reason },
       });
+      if (cancelled.count !== 1) {
+        throw new TransitionError("Order changed concurrently — refresh and try again");
+      }
       await logEvent(tx, {
         orderId,
         entityType: EntityType.ORDER,
@@ -566,6 +574,7 @@ export async function rescheduleAppointment(
       throw new ApiError("BAD_TIME", "Pick a future time", 400);
     }
     const blocks = blocksNeeded(appt.totalLaborHoursTenths, appt.installer.slotMinutes);
+    await lockShop(tx, appt.installerId);
     const ok = await isSlotAvailable(tx, appt.installer, newStartAt, blocks, appt.id);
     if (!ok) throw new ApiError("SLOT_TAKEN", "That time is not available", 409);
 

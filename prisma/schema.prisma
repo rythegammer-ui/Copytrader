@@ -503,3 +503,10 @@ model Notification {
 
   @@index([userId, readAt])
 }
+
+// Login/registration throttling, persisted: serverless instances share no memory.
+model RateLimit {
+  key     String   @id
+  count   Int      @default(0)
+  resetAt DateTime
+}

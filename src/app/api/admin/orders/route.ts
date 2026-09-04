@@ -1,4 +1,5 @@
 import { api, jsonOk } from "@/lib/api";
+import { ci } from "@/lib/search";
 import { db } from "@/lib/db";
 import { Role, zOrderStatus } from "@/lib/enums";
 
@@ -24,9 +25,9 @@ export const GET = api(
       ...(q
         ? {
             OR: [
-              { orderNumber: { contains: q } },
-              { user: { email: { contains: q.toLowerCase() } } },
-              { user: { name: { contains: q } } },
+              { orderNumber: ci(q) },
+              { user: { email: ci(q.toLowerCase()) } },
+              { user: { name: ci(q) } },
             ],
           }
         : {}),

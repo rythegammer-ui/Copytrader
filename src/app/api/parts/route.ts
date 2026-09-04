@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { ci } from "@/lib/search";
 import { api, jsonOk } from "@/lib/api";
 import { db } from "@/lib/db";
 import { compatibleWhere, fitmentVerdict, type VehicleContext } from "@/lib/fitment";
@@ -42,9 +43,9 @@ export const GET = api(async (req) => {
   if (q) {
     and.push({
       OR: [
-        { name: { contains: q } },
-        { sku: { contains: q } },
-        { brand: { name: { contains: q } } },
+        { name: ci(q) },
+        { sku: ci(q) },
+        { brand: { name: ci(q) } },
       ],
     });
   }

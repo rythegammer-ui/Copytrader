@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ci } from "@/lib/search";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { OrderStatus, Role, statusLabel, zOrderStatus } from "@/lib/enums";
@@ -43,9 +44,9 @@ export default async function AdminOrdersPage({
     ...(q
       ? {
           OR: [
-            { orderNumber: { contains: q } },
-            { user: { email: { contains: q.toLowerCase() } } },
-            { user: { name: { contains: q } } },
+            { orderNumber: ci(q) },
+            { user: { email: ci(q.toLowerCase()) } },
+            { user: { name: ci(q) } },
           ],
         }
       : {}),

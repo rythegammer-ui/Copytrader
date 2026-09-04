@@ -170,3 +170,19 @@ export async function nextFreeSlot(
   const found = grid.find((s) => s.available && s.startAt >= notBefore);
   return found ? found.startAt : null;
 }
+
+/** True when DATABASE_URL points at Postgres (production); SQLite locally. */
+export function isPostgres(): boolean {
+  return /^postgres(ql)?:/.test(process.env.DATABASE_URL ?? "");
+}
+
+/**
+ * Serialize bookings per shop for the rest of the transaction. Capacity is a
+ * count (bays can be > 1), so no unique constraint can enforce it; under
+ * Postgres READ COMMITTED two concurrent check-then-insert bookings would both
+ * see a free bay. SQLite already serializes writers, so this is a no-op there.
+ */
+export async function lockShop(tx: DbClient, installerId: string): Promise<void> {
+  if (!isPostgres()) return;
+  await tx.$executeRaw`SELECT id FROM "Installer" WHERE id = ${installerId} FOR UPDATE`;
+}

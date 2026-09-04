@@ -42,8 +42,8 @@ function loadOrder(id: string) {
       items: true,
       purchaseOrders: { orderBy: { createdAt: "asc" } },
       appointments: { include: { installer: true }, orderBy: { startAt: "asc" } },
-      payments: { orderBy: { createdAt: "desc" } },
-      refunds: { orderBy: { createdAt: "desc" } },
+      payments: { orderBy: [{ createdAt: "desc" }, { id: "desc" }] },
+      refunds: { orderBy: [{ createdAt: "desc" }, { id: "desc" }] },
     },
   });
 }
@@ -62,7 +62,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
 
   const events = await db.eventLog.findMany({
     where: { orderId: order.id, ...(user.role === Role.ADMIN ? {} : { internal: false }) },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: 100,
   });
 

@@ -13,7 +13,7 @@ import {
 } from "@/lib/enums";
 import { logEvent, notify, notifyMany } from "@/lib/events";
 import { formatShopTime } from "@/lib/format";
-import { blocksNeeded, isSlotAvailable, nextFreeSlot } from "@/lib/slots";
+import { blocksNeeded, isSlotAvailable, lockShop, nextFreeSlot } from "@/lib/slots";
 import type { PaymentProviderApi } from "@/lib/payments/provider";
 import { mockProvider } from "@/lib/payments/mock";
 import { stripeProvider } from "@/lib/payments/stripe";
@@ -152,6 +152,56 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
   return { ok: result.ok, duplicate: result.duplicate, error: result.error };
 }
 
+/**
+ * A REAL capture landed on an order that can no longer accept it (paid via
+ * another intent, cancelled, refunded, or lost the PAID compare-and-set).
+ * Record the truth (money was captured) and hand back a stray-capture marker;
+ * the caller auto-refunds outside the transaction.
+ */
+async function recordStrayCapture(
+  tx: Prisma.TransactionClient,
+  payment: { id: string; provider: string; amountCents: number },
+  order: { id: string; status: string; orderNumber: string },
+  intentId: string,
+): Promise<SucceededResult> {
+  await tx.payment.update({
+    where: { id: payment.id },
+    data: {
+      status: PaymentStatus.SUCCEEDED,
+      succeededAt: new Date(),
+      lastError: `Captured while order was ${order.status} — auto-refunding`,
+    },
+  });
+  await logEvent(tx, {
+    orderId: order.id,
+    entityType: EntityType.PAYMENT,
+    entityId: payment.id,
+    action: "orphaned_capture",
+    internal: true,
+    actorRole: "SYSTEM",
+    message: `Payment captured on ${order.orderNumber} while it was ${order.status}; issuing automatic refund`,
+  });
+  const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
+  await notifyMany(tx, admins.map((u) => u.id), {
+    type: "orphaned_capture",
+    title: `Late capture on ${order.orderNumber}`,
+    body: `A payment was captured while the order was ${order.status}. An automatic refund is being issued — verify it landed.`,
+    href: `/admin/orders/${order.id}`,
+  });
+  return {
+    ok: false,
+    error: "Order not payable",
+    strayCapture: {
+      paymentId: payment.id,
+      provider: payment.provider,
+      intentId,
+      amountCents: payment.amountCents,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+    },
+  };
+}
+
 function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResult> {
   return db.$transaction(
     async (tx): Promise<SucceededResult> => {
@@ -181,45 +231,7 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
       const payable =
         order.status === OrderStatus.PENDING_PAYMENT || order.status === OrderStatus.PAYMENT_FAILED;
       if (order.paidAt || !payable) {
-        // A REAL capture on an order that can't accept it. Record the truth
-        // (money was captured) and hand back a stray-capture marker; the
-        // caller auto-refunds outside this transaction.
-        await tx.payment.update({
-          where: { id: payment.id },
-          data: {
-            status: PaymentStatus.SUCCEEDED,
-            succeededAt: new Date(),
-            lastError: `Captured while order was ${order.status} — auto-refunding`,
-          },
-        });
-        await logEvent(tx, {
-          orderId: order.id,
-          entityType: EntityType.PAYMENT,
-          entityId: payment.id,
-          action: "orphaned_capture",
-          internal: true,
-          actorRole: "SYSTEM",
-          message: `Payment captured on ${order.orderNumber} while it was ${order.status}; issuing automatic refund`,
-        });
-        const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
-        await notifyMany(tx, admins.map((u) => u.id), {
-          type: "orphaned_capture",
-          title: `Late capture on ${order.orderNumber}`,
-          body: `A payment was captured while the order was ${order.status}. An automatic refund is being issued — verify it landed.`,
-          href: `/admin/orders/${order.id}`,
-        });
-        return {
-          ok: false,
-          error: "Order not payable",
-          strayCapture: {
-            paymentId: payment.id,
-            provider: payment.provider,
-            intentId: input.intentId,
-            amountCents: payment.amountCents,
-            orderId: order.id,
-            orderNumber: order.orderNumber,
-          },
-        };
+        return recordStrayCapture(tx, payment, order, input.intentId);
       }
 
       // AMOUNT VERIFICATION — never mark an order paid for the wrong amount.
@@ -257,10 +269,21 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
         where: { id: payment.id },
         data: { status: PaymentStatus.SUCCEEDED, succeededAt: now },
       });
-      await tx.order.update({
-        where: { id: order.id },
+      // Compare-and-set: under Postgres READ COMMITTED a concurrent capture on a
+      // different intent could flip this order between our read and this write.
+      // Losing that race means THIS capture is the stray one.
+      const flipped = await tx.order.updateMany({
+        where: {
+          id: order.id,
+          paidAt: null,
+          status: { in: [OrderStatus.PENDING_PAYMENT, OrderStatus.PAYMENT_FAILED] },
+        },
         data: { status: OrderStatus.PAID, paidAt: now },
       });
+      if (flipped.count === 0) {
+        const current = await tx.order.findUniqueOrThrow({ where: { id: order.id } });
+        return recordStrayCapture(tx, payment, current, input.intentId);
+      }
       await logEvent(tx, {
         orderId: order.id,
         entityType: EntityType.ORDER,
@@ -374,8 +397,12 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
         apptGroups.set(key, list);
       }
 
-      for (const [, groupItemList] of apptGroups) {
+      // Lock shops in a consistent order (keys start with installerId) so two
+      // multi-shop orders can never deadlock, and capacity checks are serialized.
+      const apptEntries = [...apptGroups.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+      for (const [, groupItemList] of apptEntries) {
         const installerId = groupItemList[0].installerIdSnapshot!;
+        await lockShop(tx, installerId);
         let shop = installerById.get(installerId);
         if (!shop) {
           shop = (await tx.installer.findUnique({ where: { id: installerId } })) ?? undefined;

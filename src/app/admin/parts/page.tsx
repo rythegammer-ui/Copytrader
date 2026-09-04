@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ci } from "@/lib/search";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/enums";
@@ -27,7 +28,7 @@ export default async function AdminPartsPage({
     ...(categoryId ? { categoryId } : {}),
     ...(supplierId ? { supplierId } : {}),
     ...(q
-      ? { OR: [{ name: { contains: q } }, { sku: { contains: q } }, { slug: { contains: q } }] }
+      ? { OR: [{ name: ci(q) }, { sku: ci(q) }, { slug: ci(q) }] }
       : {}),
   };
 

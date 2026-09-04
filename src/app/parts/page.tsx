@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ci } from "@/lib/search";
 import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
 import { getCart } from "@/lib/cart";
@@ -68,7 +69,7 @@ export default async function PartsPage({ searchParams }: { searchParams: Search
   const and: Prisma.PartWhereInput[] = [{ active: true }];
   if (q) {
     and.push({
-      OR: [{ name: { contains: q } }, { sku: { contains: q } }, { brand: { name: { contains: q } } }],
+      OR: [{ name: ci(q) }, { sku: ci(q) }, { brand: { name: ci(q) } }],
     });
   }
   if (categorySlug) {

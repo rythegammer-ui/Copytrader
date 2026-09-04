@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ci } from "@/lib/search";
 import { api, jsonOk, parseBody } from "@/lib/api";
 import { db } from "@/lib/db";
 import { EntityType, Role } from "@/lib/enums";
@@ -71,7 +72,7 @@ export const GET = api(
       ...(supplierId ? { supplierId } : {}),
       ...(q
         ? {
-            OR: [{ name: { contains: q } }, { sku: { contains: q } }, { slug: { contains: q } }],
+            OR: [{ name: ci(q) }, { sku: ci(q) }, { slug: ci(q) }],
           }
         : {}),
     };

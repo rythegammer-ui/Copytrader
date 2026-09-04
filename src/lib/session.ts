@@ -6,8 +6,17 @@ import type { User } from "@prisma/client";
 const COOKIE_NAME = "pp_session";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 14; // 14 days
 
-function secret(): string {
-  return process.env.SESSION_SECRET || "dev-only-insecure-session-secret";
+/**
+ * HMAC key for session/cart/reset cookies. Fails closed in deployed
+ * environments: a placeholder secret would make every cookie forgeable.
+ */
+export function secret(): string {
+  const configured = process.env.SESSION_SECRET;
+  if (configured) return configured;
+  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET must be set in deployed environments");
+  }
+  return "dev-only-insecure-session-secret";
 }
 
 function sign(payload: string): string {

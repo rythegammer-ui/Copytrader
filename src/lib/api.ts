@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError, type ZodSchema } from "zod";
 import type { User } from "@prisma/client";
+import { db } from "@/lib/db";
 import { ApiError } from "@/lib/errors";
 import { AuthError, requireUser } from "@/lib/session";
 import { TransitionError, type Actor } from "@/lib/transitions";
@@ -121,37 +122,34 @@ export function actorFor(user: User): Actor {
 }
 
 // ---------------------------------------------------------------------------
-// Simple in-memory rate limiter (login brute-force protection).
+// Rate limiter (login brute-force / registration enumeration protection).
+// Persisted in the database: serverless instances share no memory, so an
+// in-process Map would reset on every cold start and per concurrent instance.
 // ---------------------------------------------------------------------------
 
-const buckets = new Map<string, { count: number; resetAt: number }>();
-
 /**
- * Sliding-window-ish limiter: `limit` failures per `windowMs`, keyed by
- * caller-provided string (e.g. `login:<email>:<ip>`). Returns true if the
- * action is currently blocked. Call `rateLimitHit` on each FAILURE only.
+ * Is `key` currently blocked? `limit` failures within the window lock it.
+ * Call `rateLimitHit` on each FAILURE only, `rateLimitClear` on success.
  */
-export function rateLimited(key: string, limit = 5, windowMs = 15 * 60_000): boolean {
-  const bucket = buckets.get(key);
-  if (!bucket) return false;
-  if (Date.now() > bucket.resetAt) {
-    buckets.delete(key);
-    return false;
-  }
-  return bucket.count >= limit;
+export async function rateLimited(key: string, limit = 5): Promise<boolean> {
+  const row = await db.rateLimit.findUnique({ where: { key } });
+  if (!row || row.resetAt.getTime() < Date.now()) return false;
+  return row.count >= limit;
 }
 
-export function rateLimitHit(key: string, windowMs = 15 * 60_000): void {
-  const bucket = buckets.get(key);
-  if (!bucket || Date.now() > bucket.resetAt) {
-    buckets.set(key, { count: 1, resetAt: Date.now() + windowMs });
+export async function rateLimitHit(key: string, windowMs = 15 * 60_000): Promise<void> {
+  const now = Date.now();
+  const row = await db.rateLimit.findUnique({ where: { key } });
+  if (!row || row.resetAt.getTime() < now) {
+    const fresh = { count: 1, resetAt: new Date(now + windowMs) };
+    await db.rateLimit.upsert({ where: { key }, create: { key, ...fresh }, update: fresh });
   } else {
-    bucket.count += 1;
+    await db.rateLimit.update({ where: { key }, data: { count: { increment: 1 } } });
   }
 }
 
-export function rateLimitClear(key: string): void {
-  buckets.delete(key);
+export async function rateLimitClear(key: string): Promise<void> {
+  await db.rateLimit.deleteMany({ where: { key } });
 }
 
 export function clientIp(req: NextRequest): string {

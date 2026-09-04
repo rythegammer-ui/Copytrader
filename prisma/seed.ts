@@ -933,7 +933,7 @@ async function main(): Promise<void> {
 
   // ---- users --------------------------------------------------------------
   const demoPassword = process.env.DEMO_PASSWORD || "password123";
-  if (process.env.VERCEL_ENV === "production" && demoPassword === "password123") {
+  if (process.env.VERCEL && demoPassword === "password123") {
     throw new Error("Refusing to seed production with the default demo password — set DEMO_PASSWORD.");
   }
   const passwordHash = bcrypt.hashSync(demoPassword, 10); // hash once, reuse

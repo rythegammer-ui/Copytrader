@@ -42,10 +42,10 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
       items: true,
       purchaseOrders: { include: { supplier: { select: { name: true } } }, orderBy: { createdAt: "asc" } },
       appointments: { include: { installer: true }, orderBy: { startAt: "asc" } },
-      payments: { orderBy: { createdAt: "desc" } },
+      payments: { orderBy: [{ createdAt: "desc" }, { id: "desc" }] },
       refunds: {
         include: { createdBy: { select: { name: true } } },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       },
     },
   });
@@ -53,7 +53,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
 
   const events = await db.eventLog.findMany({
     where: { orderId: order.id },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: 200,
   });
 

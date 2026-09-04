@@ -11,7 +11,7 @@ import {
 } from "@/lib/enums";
 import { logEvent, notify, notifyMany } from "@/lib/events";
 import { formatShopTime } from "@/lib/format";
-import { blocksNeeded, isSlotAvailable, nextFreeSlot } from "@/lib/slots";
+import { blocksNeeded, isSlotAvailable, lockShop, nextFreeSlot } from "@/lib/slots";
 
 export type DbClient = PrismaClient | Prisma.TransactionClient;
 
@@ -152,7 +152,7 @@ export async function transitionPO(
   assertAllowed(PO_TABLE, po.status, to, actor, opts.override ?? false);
 
   const now = new Date();
-  const data: Prisma.PurchaseOrderUpdateInput = { status: to };
+  const data: Prisma.PurchaseOrderUpdateManyMutationInput = { status: to };
   let message = "";
 
   switch (to) {
@@ -178,6 +178,7 @@ export async function transitionPO(
     }
     case POStatus.DELIVERED:
       data.deliveredAt = now;
+      if (!po.shippedAt) data.shippedAt = now; // admin override may skip SHIPPED
       message =
         po.shipTo === ShipTo.INSTALLER
           ? `${po.poNumber} delivered to ${po.destName}`
@@ -186,6 +187,7 @@ export async function transitionPO(
     case POStatus.RECEIVED:
       data.receivedAt = now;
       if (!po.deliveredAt) data.deliveredAt = now; // SHIPPED -> RECEIVED shortcut
+      if (!po.shippedAt) data.shippedAt = now;
       message = `${po.destName} received parts from ${po.poNumber}`;
       break;
     case POStatus.CANCELLED:
@@ -196,7 +198,12 @@ export async function transitionPO(
       throw new TransitionError(`Unknown PO status ${to}`, 400);
   }
 
-  await tx.purchaseOrder.update({ where: { id: po.id }, data });
+  // Compare-and-set on the status we validated against: a concurrent transition
+  // (Postgres READ COMMITTED) must not be silently overwritten.
+  const poUpdated = await tx.purchaseOrder.updateMany({ where: { id: po.id, status: po.status }, data });
+  if (poUpdated.count !== 1) {
+    throw new TransitionError("Purchase order changed concurrently — refresh and retry");
+  }
   await logEvent(tx, {
     orderId: po.orderId,
     entityType: EntityType.PURCHASE_ORDER,
@@ -306,12 +313,13 @@ export async function transitionAppointment(
   }
 
   const now = new Date();
-  const data: Prisma.AppointmentUpdateInput = { status: to };
+  const data: Prisma.AppointmentUpdateManyMutationInput = { status: to };
   let message = "";
   switch (to) {
     case AppointmentStatus.READY:
       if (appt.status === AppointmentStatus.NO_SHOW) {
         if (!opts.newStartAt) throw new TransitionError("Rebooking requires a new time", 400);
+        await lockShop(tx, appt.installerId);
         const ok = await isSlotAvailable(
           tx,
           appt.installer,
@@ -346,7 +354,10 @@ export async function transitionAppointment(
       throw new TransitionError(`Unknown appointment status ${to}`, 400);
   }
 
-  await tx.appointment.update({ where: { id: appt.id }, data });
+  const apptUpdated = await tx.appointment.updateMany({ where: { id: appt.id, status: appt.status }, data });
+  if (apptUpdated.count !== 1) {
+    throw new TransitionError("Appointment changed concurrently — refresh and retry");
+  }
   await logEvent(tx, {
     orderId: appt.orderId,
     entityType: EntityType.APPOINTMENT,
@@ -423,10 +434,11 @@ export async function recomputeReadinessForOrder(
         // Slot already passed — auto-rebook the next free feasible slot.
         const tomorrow = new Date(now.getTime() + 24 * 60 * 60_000);
         const blocks = blocksNeeded(appt.totalLaborHoursTenths, appt.installer.slotMinutes);
+        await lockShop(tx, appt.installerId);
         const slot = await nextFreeSlot(tx, appt.installer, tomorrow, blocks);
         if (slot) {
-          await tx.appointment.update({
-            where: { id: appt.id },
+          await tx.appointment.updateMany({
+            where: { id: appt.id, status: appt.status },
             data: { startAt: slot, status: AppointmentStatus.READY, partsReadyAt: now },
           });
           await logEvent(tx, {
@@ -511,13 +523,14 @@ export async function rollUpOrderStatus(
   const targetIdx = ORDER_PROGRESSION.indexOf(target);
   if (targetIdx <= currentIdx) return; // never move backwards
 
-  await tx.order.update({
-    where: { id: orderId },
+  const rolled = await tx.order.updateMany({
+    where: { id: orderId, status: order.status },
     data: {
       status: target,
       ...(target === OrderStatus.COMPLETED ? { completedAt: new Date() } : {}),
     },
   });
+  if (rolled.count === 0) return; // a concurrent transition moved it; that one logged its own event
   await logEvent(tx, {
     orderId,
     entityType: EntityType.ORDER,

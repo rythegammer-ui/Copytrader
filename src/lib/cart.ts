@@ -2,13 +2,10 @@ import { cookies } from "next/headers";
 import crypto from "crypto";
 import { db } from "@/lib/db";
 import type { CartWithItems } from "@/lib/checkout";
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentUser, secret } from "@/lib/session";
 
 const CART_COOKIE = "pp_cart";
 
-function secret(): string {
-  return process.env.SESSION_SECRET || "dev-only-insecure-session-secret";
-}
 
 function signCartId(cartId: string): string {
   const mac = crypto.createHmac("sha256", secret()).update(`cart:${cartId}`).digest("base64url");
