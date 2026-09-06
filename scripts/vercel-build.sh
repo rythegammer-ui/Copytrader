@@ -8,6 +8,9 @@
 set -euo pipefail
 
 echo "▶ PartsPro build — VERCEL_ENV=${VERCEL_ENV:-local}"
+# A deployment-provided .env (for hosts/API deploys that cannot set project
+# environment variables) is loaded here so the whole build sees it.
+if [ -f .env ]; then set -a; . ./.env; set +a; echo "▶ loaded .env"; fi
 node scripts/make-postgres-schema.js
 
 if [ -n "${VERCEL:-}" ] && [ -z "${SESSION_SECRET:-}" ]; then
@@ -36,5 +39,8 @@ else
   echo "⚠ DATABASE_URL is not set — skipping schema push and seed."
   echo "  The site will not work until a Postgres database is connected (Vercel → Storage → Create Database)."
 fi
+
+# Inline runtime config into the server bundle when the host has no env vars.
+if [ "${BAKE_RUNTIME_ENV:-}" = "1" ]; then node scripts/bake-runtime-env.js; fi
 
 npx next build
