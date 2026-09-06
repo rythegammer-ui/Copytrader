@@ -106,3 +106,19 @@ seeds demo data into an empty database, and builds).
 Notes for production: the schema is applied with `prisma db push` (fine to
 launch; switch to `prisma migrate` once you have real data), the login
 throttle is per serverless instance, and shop timezones are fixed offsets.
+
+### Deploying without dashboard access (API bootstrap)
+
+If a deployment is created through an API that cannot set project environment
+variables, the install step can fetch the source and bake the runtime
+configuration into the server bundle instead:
+
+```
+installCommand: curl -fsSL https://codeload.github.com/<owner>/<repo>/tar.gz/refs/heads/<branch> | tar xz --strip-components=1
+                && DATABASE_URL=... SESSION_SECRET=... node scripts/bake-runtime-env.js && npm install
+buildCommand:   DATABASE_URL=... SESSION_SECRET=... DEMO_PASSWORD=... bash scripts/vercel-build.sh
+```
+
+`scripts/bake-runtime-env.js` writes a `next.config.mjs` whose `env` block
+inlines the server-only keys. Prefer real environment variables whenever the
+host supports them; this path exists so a first deployment is never blocked.
