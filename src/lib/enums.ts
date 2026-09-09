@@ -114,6 +114,13 @@ export const RefundStatus = {
 export type RefundStatus = (typeof RefundStatus)[keyof typeof RefundStatus];
 export const zRefundStatus = z.enum(["PENDING", "SUCCEEDED", "FAILED"]);
 
+export const Condition = {
+  NEW: "NEW",
+  USED: "USED",
+} as const;
+export type Condition = (typeof Condition)[keyof typeof Condition];
+export const zCondition = z.enum(["NEW", "USED"]);
+
 export const EntityType = {
   ORDER: "ORDER",
   PURCHASE_ORDER: "PURCHASE_ORDER",
@@ -157,6 +164,10 @@ export const STATUS_LABELS: Record<string, string> = {
   FAILED: "Failed",
   REQUIRES_PAYMENT: "Awaiting payment",
 };
+
+export function conditionLabel(condition: string): string {
+  return condition === Condition.USED ? "Used" : "New";
+}
 
 export function statusLabel(status: string): string {
   return STATUS_LABELS[status] ?? status;

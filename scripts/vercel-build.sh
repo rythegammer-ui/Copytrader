@@ -33,6 +33,8 @@ if { [ "${VERCEL_ENV:-}" = "production" ] || [ "${RUN_DB_PUSH:-}" = "1" ]; } && 
   npx prisma db push --schema prisma/schema.postgres.prisma --skip-generate
   echo "▶ Seeding demo data (skipped automatically if the database already has users)"
   DATABASE_URL="$DATABASE_URL_UNPOOLED" SEED_IF_EMPTY=1 npx tsx prisma/seed.ts
+  echo "▶ Importing the Principe Performance & Parts inventory (idempotent)"
+  DATABASE_URL="$DATABASE_URL_UNPOOLED" npx tsx scripts/import-inventory.ts
 elif [ -n "${DATABASE_URL:-}" ]; then
   echo "▶ ${VERCEL_ENV:-non-production} build — schema push and seed run for production builds only."
 else

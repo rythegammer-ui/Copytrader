@@ -48,6 +48,8 @@ export interface QuoteItemInput {
   installerHourlyRateCents: number | null; // required when withInstall
   apptStartAt: Date | null;
   shipTo: string; // ShipTo
+  /** Collected at the shop: never adds shipping to its group. */
+  localPickupOnly?: boolean;
 }
 
 export interface QuotedLine {
@@ -67,6 +69,7 @@ export interface QuotedLine {
   installUnitCents: number | null;
   installTotalCents: number;
   groupKey: string;
+  localPickupOnly: boolean;
 }
 
 export interface QuoteGroup {
@@ -76,6 +79,9 @@ export interface QuoteGroup {
   installerId: string | null;
   partsCents: number;
   qty: number;
+  /** Parts/quantity that actually ship — local-pickup lines are excluded. */
+  shippablePartsCents: number;
+  shippableQty: number;
   shippingCents: number;
   supplierCostTotalCents: number;
   lineIds: string[]; // partIds in the group
@@ -146,6 +152,7 @@ export function priceQuote(
       installUnitCents: unitInstall,
       installTotalCents: installTotal,
       groupKey: destinationKey(it.supplierId, it.shipTo, it.installerId),
+      localPickupOnly: Boolean(it.localPickupOnly),
     };
   });
 
@@ -160,6 +167,8 @@ export function priceQuote(
         installerId: line.shipTo === ShipTo.INSTALLER ? line.installerId : null,
         partsCents: 0,
         qty: 0,
+        shippablePartsCents: 0,
+        shippableQty: 0,
         shippingCents: 0,
         supplierCostTotalCents: 0,
         lineIds: [],
@@ -168,6 +177,10 @@ export function priceQuote(
     }
     g.partsCents += line.lineTotalCents;
     g.qty += line.qty;
+    if (!line.localPickupOnly) {
+      g.shippablePartsCents += line.lineTotalCents;
+      g.shippableQty += line.qty;
+    }
     g.supplierCostTotalCents += line.supplierCostCents * line.qty;
     g.lineIds.push(line.partId);
   }
@@ -176,10 +189,11 @@ export function priceQuote(
   for (const g of groups) {
     const cfg = suppliers[g.supplierId];
     if (!cfg) throw new Error(`Missing supplier shipping config for ${g.supplierId}`);
+    // Nothing in the group ships (all local pickup) -> no shipping to charge.
     g.shippingCents =
-      g.partsCents >= FREE_SHIP_THRESHOLD_CENTS
+      g.shippableQty === 0 || g.shippablePartsCents >= FREE_SHIP_THRESHOLD_CENTS
         ? 0
-        : cfg.shippingFlatCents + cfg.shippingPerItemCents * g.qty;
+        : cfg.shippingFlatCents + cfg.shippingPerItemCents * g.shippableQty;
   }
 
   const partsSubtotalCents = lines.reduce((s, l) => s + l.lineTotalCents, 0);

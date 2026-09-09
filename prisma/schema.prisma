@@ -138,6 +138,18 @@ model Part {
   inStock              Boolean @default(true) // supplier-toggled stock signal
   active               Boolean @default(true)
 
+  // Real-inventory fields. Dropshipped parts are effectively unlimited, but a
+  // part pulled from one car is a single unit — stockQty is what stops the
+  // store selling the same alternator twice.
+  trackStock      Boolean @default(false) // false = supplier-stocked (effectively unlimited)
+  stockQty        Int     @default(0) // units on hand; only meaningful when trackStock
+  condition       String  @default("NEW") // Condition: NEW | USED
+  localPickupOnly Boolean @default(false) // freight-heavy items collected at the shop
+  acceptsOffers   Boolean @default(false)
+  floorPriceCents Int? // ADMIN ONLY - lowest acceptable price, never exposed publicly
+  internalNotes   String? // ADMIN ONLY - never exposed publicly
+  sourceRef       String? // row id in the source inventory sheet (e.g. "F26")
+
   category   Category    @relation(fields: [categoryId], references: [id])
   brand      Brand       @relation(fields: [brandId], references: [id])
   supplier   Supplier    @relation(fields: [supplierId], references: [id])

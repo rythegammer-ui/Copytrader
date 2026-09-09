@@ -298,6 +298,51 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
       // ------- PO FAN-OUT (from the checkout shipping-group snapshot) -------
       const groups = JSON.parse(order.shippingGroupsJson) as ShippingGroupSnapshot[];
       const liveItems = order.items.filter((i) => i.itemStatus === OrderItemStatus.PENDING);
+
+      // ------- FINITE INVENTORY DRAW-DOWN -------
+      // A part pulled from one car exists once. Checkout already validated
+      // availability; this is the authoritative decrement.
+      for (const item of liveItems) {
+        const part = await tx.part.findUnique({
+          where: { id: item.partId },
+          select: { trackStock: true, name: true },
+        });
+        if (!part?.trackStock) continue;
+        const drawn = await tx.part.updateMany({
+          where: { id: item.partId, stockQty: { gte: item.qty } },
+          data: { stockQty: { decrement: item.qty } },
+        });
+        if (drawn.count === 0) {
+          // Two carts raced the last unit. The payment stands — flag it so a
+          // human sorts out the physical part rather than failing the charge.
+          await tx.part.update({
+            where: { id: item.partId },
+            data: { stockQty: 0, inStock: false },
+          });
+          await logEvent(tx, {
+            orderId: order.id,
+            entityType: EntityType.PART,
+            entityId: item.partId,
+            action: "oversold",
+            internal: true,
+            actorRole: "SYSTEM",
+            message: `${part.name} sold beyond available stock on ${order.orderNumber} — confirm the physical part or refund the line`,
+          });
+          const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
+          await notifyMany(tx, admins.map((u) => u.id), {
+            type: "oversold",
+            title: `Oversold: ${part.name}`,
+            body: `Order ${order.orderNumber} claimed more of this part than was on hand. Confirm stock or refund the line.`,
+            href: `/admin/orders/${order.id}`,
+          });
+        } else {
+          await tx.part.updateMany({
+            where: { id: item.partId, stockQty: 0 },
+            data: { inStock: false },
+          });
+        }
+      }
+
       const supplierIds = Array.from(new Set(groups.map((g) => g.supplierId)));
       const suppliers = await tx.supplier.findMany({ where: { id: { in: supplierIds } } });
       const supplierById = new Map(suppliers.map((s) => [s.id, s]));

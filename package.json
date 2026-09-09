@@ -13,7 +13,8 @@
     "db:seed": "prisma db seed",
     "db:reset": "rm -f prisma/dev.db && prisma db push && prisma db seed",
     "test": "vitest run",
-    "vercel-build": "bash scripts/vercel-build.sh"
+    "vercel-build": "bash scripts/vercel-build.sh",
+    "inventory:import": "tsx scripts/import-inventory.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

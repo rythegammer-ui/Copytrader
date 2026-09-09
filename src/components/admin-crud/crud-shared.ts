@@ -157,6 +157,14 @@ export interface PartFormInitial {
   universalFit: boolean;
   inStock: boolean;
   active: boolean;
+  trackStock?: boolean;
+  stockQty?: number;
+  condition?: string;
+  localPickupOnly?: boolean;
+  acceptsOffers?: boolean;
+  floorPriceCents?: number | null;
+  internalNotes?: string | null;
+  sourceRef?: string | null;
 }
 
 export interface SupplierFormInitial {

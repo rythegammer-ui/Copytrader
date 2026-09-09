@@ -17,6 +17,10 @@ export interface PartCardData {
   inStock: boolean;
   installFromCents: number | null;
   verdict: FitmentVerdict | null;
+  condition?: string;
+  trackStock?: boolean;
+  stockQty?: number;
+  localPickupOnly?: boolean;
 }
 
 export function PartCard({ part }: { part: PartCardData }) {
@@ -32,6 +36,16 @@ export function PartCard({ part }: { part: PartCardData }) {
           alt={part.name}
           className="h-full w-full object-cover transition group-hover:scale-[1.02]"
         />
+        {part.condition === "USED" && part.inStock && (
+          <span className="absolute bottom-2 left-2 rounded-full bg-amber-500 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
+            Used
+          </span>
+        )}
+        {part.localPickupOnly && part.inStock && (
+          <span className="absolute right-2 top-2 rounded-full bg-slate-900/85 px-2 py-0.5 text-[11px] font-semibold text-white">
+            Pickup only
+          </span>
+        )}
         {!part.inStock && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/70">
             <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
@@ -55,6 +69,11 @@ export function PartCard({ part }: { part: PartCardData }) {
         <h3 className="line-clamp-2 text-sm font-semibold text-slate-900 group-hover:text-brand-700">
           {part.name}
         </h3>
+        {part.trackStock && part.inStock && (part.stockQty ?? 0) > 0 && (
+          <p className="text-xs font-semibold text-amber-700">
+            {part.stockQty === 1 ? "Only 1 available" : `Only ${part.stockQty} available`}
+          </p>
+        )}
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
           <span className="text-base font-bold text-slate-900">{formatCents(part.priceCents)}</span>
           {part.installEligible && part.installFromCents != null && (

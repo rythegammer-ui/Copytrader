@@ -1,0 +1,377 @@
+"""Turn the PPP Master Inventory workbook into data/ppp-catalog.json.
+
+Every mapping decision lives here and is explicit, so the importer stays dumb
+and the result is reproducible. Run from the repo root:
+    python3 transform.py <workbook.xlsx> data/ppp-catalog.json
+"""
+import json, re, sys
+import pandas as pd
+
+SRC, OUT = sys.argv[1], sys.argv[2]
+
+# --- price semantics -------------------------------------------------------
+# "Ask $ (line)" is a LOT price: F47 is four doors for $1,120 total, not each.
+# So a part-out row becomes ONE product at the ask price with one lot in stock.
+# Shop-stock rows are the opposite: Qty is a real unit count and the only money
+# column is unit cost — the sheet says "no asks yet", so they import UNPRICED.
+
+def cents(v):
+    return None if v is None or pd.isna(v) else int(round(float(v) * 100))
+
+def clean(v):
+    if v is None or (isinstance(v, float) and pd.isna(v)):
+        return None
+    s = str(v).strip()
+    return s or None
+
+# --- vehicle fitment -------------------------------------------------------
+# (make, model, yearFrom, yearTo, engine|None). Years are the generation's US
+# production span; engine set only where the platform names one.
+N20_APPS = [("BMW", "5 Series", 2012, 2016, "N20 2.0L Turbo I4"),
+            ("BMW", "3 Series", 2012, 2016, "N20 2.0L Turbo I4"),
+            ("BMW", "4 Series", 2014, 2016, "N20 2.0L Turbo I4"),
+            ("BMW", "X3", 2013, 2017, "N20 2.0L Turbo I4")]
+N54_APPS = [("BMW", "3 Series", 2007, 2013, "N54 3.0L Twin-Turbo I6"),
+            ("BMW", "5 Series", 2008, 2010, "N54 3.0L Twin-Turbo I6"),
+            ("BMW", "1 Series", 2008, 2013, "N54 3.0L Twin-Turbo I6")]
+N55_APPS = [("BMW", "3 Series", 2011, 2015, "N55 3.0L Turbo I6"),
+            ("BMW", "5 Series", 2011, 2016, "N55 3.0L Turbo I6")]
+S55_APPS = [("BMW", "3 Series", 2015, 2018, "S55 3.0L Twin-Turbo I6"),
+            ("BMW", "4 Series", 2015, 2020, "S55 3.0L Twin-Turbo I6")]
+B58_APPS = [("Toyota", "Supra", 2020, 2026, "B58 3.0L Turbo I6"),
+            ("BMW", "3 Series", 2016, 2018, "B58 3.0L Turbo I6"),
+            ("BMW", "5 Series", 2017, 2023, "B58 3.0L Turbo I6")]
+B46_APPS = [("BMW", "3 Series", 2016, 2019, "B46 2.0L Turbo I4"),
+            ("BMW", "4 Series", 2017, 2020, "B46 2.0L Turbo I4")]
+
+TOKENS = {
+    "F10 528i (N20)": [("BMW", "5 Series", 2012, 2016, "N20 2.0L Turbo I4")],
+    "E90 335i (N54)": [("BMW", "3 Series", 2007, 2010, "N54 3.0L Twin-Turbo I6")],
+    "N20 (2012-16)": N20_APPS,
+    "N20": N20_APPS,
+    "N54": N54_APPS,
+    "N55": N55_APPS,
+    "S55": S55_APPS,
+    "B58": B58_APPS,
+    "B46": B46_APPS,
+    "N52/N51": [("BMW", "3 Series", 2006, 2013, "N52 3.0L I6"),
+                ("BMW", "5 Series", 2006, 2010, "N52 3.0L I6")],
+    "F10 5-series": [("BMW", "5 Series", 2011, 2016, None)],
+    "G30 5-series": [("BMW", "5 Series", 2017, 2023, None)],
+    "E60 5-series": [("BMW", "5 Series", 2004, 2010, None)],
+    "5-series": [("BMW", "5 Series", 2004, 2023, None)],
+    "F07 5GT": [("BMW", "5 Series GT", 2010, 2017, None)],
+    "E9x 3-series": [("BMW", "3 Series", 2006, 2013, None)],
+    "F30/F3x 3-4 series": [("BMW", "3 Series", 2012, 2019, None),
+                           ("BMW", "4 Series", 2014, 2020, None)],
+    "3-series": [("BMW", "3 Series", 2006, 2019, None)],
+    "F06/F12/F13 6-series": [("BMW", "6 Series", 2012, 2018, None)],
+    "F01 7-series": [("BMW", "7 Series", 2009, 2015, None)],
+    "F25 X3": [("BMW", "X3", 2011, 2017, None)],
+    "E83 X3": [("BMW", "X3", 2004, 2010, None)],
+    "S1000RR (moto)": [("BMW Motorrad", "S1000RR", 2010, 2026, None)],
+    "Toyota Supra (B58)": [("Toyota", "Supra", 2020, 2026, "B58 3.0L Turbo I6")],
+    "Ford Fusion": [("Ford", "Fusion", 2006, 2020, None)],
+    "Buick Regal": [("Buick", "Regal", 2011, 2020, None)],
+    "Chevy Camaro": [("Chevrolet", "Camaro", 2010, 2024, None)],
+    "Jeep Grand Cherokee": [("Jeep", "Grand Cherokee", 2011, 2021, None)],
+    "Porsche Macan": [("Porsche", "Macan", 2015, 2024, None)],
+}
+# The source car behind each part-out, used when a row names no platform.
+SOURCE_FALLBACK = {
+    "F10 528i Part-Out": TOKENS["F10 528i (N20)"],
+    "E90 335i Part-Out": TOKENS["E90 335i (N54)"],
+    "N20 Motor Part-Out": N20_APPS,
+}
+SOURCE_CAR = {
+    "F10 528i Part-Out": "2013 BMW 528i (F10, N20)",
+    "E90 335i Part-Out": "2010 BMW 335i (E90, N54)",
+    "N20 Motor Part-Out": "N20 engine part-out",
+    "Shop Stock": "shop stock",
+}
+
+def fitments_for(platform, source):
+    raw = clean(platform)
+    if not raw:
+        return list(SOURCE_FALLBACK.get(source, []))
+    out, unknown = [], []
+    for tok in [t.strip() for t in raw.split(",") if t.strip()]:
+        if tok in TOKENS:
+            out.extend(TOKENS[tok])
+        else:
+            unknown.append(tok)
+    if unknown:
+        UNMAPPED.update(unknown)
+    if not out:
+        out = list(SOURCE_FALLBACK.get(source, []))
+    seen, uniq = set(), []
+    for f in out:
+        if f not in seen:
+            seen.add(f); uniq.append(f)
+    return uniq
+
+UNMAPPED = set()
+
+# --- categories ------------------------------------------------------------
+CATEGORY = {
+    "Interior": "interior", "Electrical / modules": "electrical",
+    "Electrical / sensors": "electrical", "Electronics": "audio-electronics",
+    "Audio": "audio-electronics", "Body / exterior": "body-exterior",
+    "Exterior": "body-exterior", "Front clip": "body-exterior",
+    "Cooling": "cooling", "Cylinder head / valvetrain": "engine",
+    "Engine & Performance": "engine", "Engine (KEEP)": "engine",
+    "Engine bay": "engine", "Oiling": "engine", "Turbo": "engine",
+    "Do not sell": "engine", "Intake": "fuel-air", "Fuel / ignition": "ignition",
+    "Brakes": "brakes", "Front Suspension": "suspension",
+    "Rear Suspension (Passenger)": "suspension", "Suspension": "suspension",
+    "Drivetrain": "drivetrain", "Exhaust": "exhaust",
+    "Shop fluids": "shop-supplies", "Shop supplies": "shop-supplies",
+    "Hardware": "shop-supplies",
+}
+# Keyword routing for the buckets the sheet leaves broad.
+KEYWORDS = [
+    (r"headlight|head lamp|tail lamp|taillight|fog|turn signal|led|xenon|halogen", "lighting"),
+    (r"wheel|tire|tpms", "wheels-tires"),
+    (r"brake|caliper|rotor|abs ", "brakes"),
+    (r"transmission|differential|driveshaft|half shaft|axle|clutch|torque converter", "drivetrain"),
+    (r"exhaust|muffler|downpipe|catalytic|cat\b", "exhaust"),
+    (r"radiator|condenser|coolant|water pump|thermostat|cooling fan|expansion tank", "cooling"),
+    (r"hvac|heater core|evaporator|a/c|ac compressor|blower|climate", "hvac"),
+    (r"fuel|injector|hpfp|intake|airbox|air filter|maf|mass air|throttle|manifold|evap", "fuel-air"),
+    (r"spark plug|ignition coil|coil pack", "ignition"),
+    (r"seat|dash|console|trim|carpet|door panel|headliner|glove box|steering wheel|mirror|visor|shifter", "interior"),
+    (r"suspension|strut|shock|control arm|sway bar|subframe|knuckle|spring|coilover|steering rack|tie rod", "suspension"),
+    (r"bumper|fender|hood|trunk|door|grille|spoiler|skirt|panel|glass|windshield|weather strip", "body-exterior"),
+    (r"radio|amplifier|speaker|subwoofer|head unit|navigation|idrive|cluster|screen|display", "audio-electronics"),
+    (r"module|sensor|switch|harness|relay|fuse|battery|alternator|starter|dme|ecu|cas\b|frm", "electrical"),
+    (r"oil filter|filter", "filters"),
+    (r"glove|brake clean|shop towel|rag|oil |atf|fluid|coolant|grease|sealant", "shop-supplies"),
+    (r"turbo|supercharger|intercooler|charge pipe|catch can|tune|jb4", "engine"),
+]
+
+def category_for(row):
+    name = (str(row["Part"]) or "").lower()
+    src_cat = clean(row["Category"])
+    # Broad buckets get routed by what the part actually is.
+    if src_cat in ("Hard part", "Accessories", "Wheels / brakes / suspension",
+                   "Exhaust / drivetrain", "Fuel / HVAC", None):
+        for pat, slug in KEYWORDS:
+            if re.search(pat, name):
+                return slug
+        return {"Wheels / brakes / suspension": "wheels-tires",
+                "Exhaust / drivetrain": "drivetrain",
+                "Fuel / HVAC": "fuel-air"}.get(src_cat, "accessories")
+    return CATEGORY.get(src_cat, "accessories")
+
+# --- installation ----------------------------------------------------------
+# Labor in tenths of an hour, by destination category; big jobs override.
+LABOR = {"brakes": 15, "suspension": 25, "cooling": 20, "engine": 30,
+         "electrical": 10, "exhaust": 15, "drivetrain": 50, "body-exterior": 20,
+         "interior": 10, "wheels-tires": 10, "lighting": 8,
+         "audio-electronics": 10, "fuel-air": 15, "hvac": 40, "ignition": 8,
+         "filters": 5, "accessories": 10}
+LABOR_OVERRIDE = [
+    (r"transmission|torque converter", 60), (r"long block|complete engine|engine, complete", 120),
+    (r"subframe|crossmember", 50), (r"hvac box|evaporator|heater core", 60),
+    (r"cylinder head", 60), (r"turbocharger|turbo kit", 45),
+    (r"wiring harness", 40), (r"differential", 35), (r"steering rack", 30),
+    (r"fuel tank", 30), (r"driveshaft", 20), (r"doors, complete", 40),
+]
+NOT_INSTALLABLE = re.compile(
+    r"bolt bucket|heat shield|hardware|glove|brake clean|shop towel|fluid|"
+    r"\batf\b|oil - |jug|spray|sealant|gasket|belts and hoses|brackets", re.I)
+
+def install_for(name, slug):
+    if slug == "shop-supplies" or NOT_INSTALLABLE.search(name):
+        return False, 0
+    tenths = LABOR.get(slug, 10)
+    for pat, t in LABOR_OVERRIDE:
+        if re.search(pat, name, re.I):
+            tenths = t
+            break
+    return True, tenths
+
+WEIGHT = {"body-exterior": 15000, "drivetrain": 30000, "engine": 12000,
+          "suspension": 8000, "wheels-tires": 12000, "cooling": 5000,
+          "hvac": 8000, "interior": 3000}
+
+# --- rows ------------------------------------------------------------------
+df = pd.read_excel(SRC, sheet_name="Master")
+df.columns = [str(c).strip() for c in df.columns]
+
+SELLABLE_STATUS = {"Pulled", "On Car", "On Engine"}
+NEVER_LIST_STATUS = {"Keep for Swap", "Do Not Sell", "Scrap", "Sold",
+                     "Out of Stock", "Undecided"}
+NEVER_LIST_CHANNEL = {"Keep", "Scrap"}
+LOCAL_CHANNEL = {"Local", "Recycler/Local"}
+
+def slugify(s):
+    return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", s.lower())).strip("-")[:70]
+
+parts, seen_slugs = [], {}
+for _, row in df.iterrows():
+    ref = clean(row["ID"])
+    if not ref:
+        continue
+    name = clean(row["Part"]) or ref
+    source = clean(row["Source"]) or "Shop Stock"
+    status = clean(row["Status"]) or "In Stock"
+    channel = clean(row["Channel"])
+    is_shop = source == "Shop Stock"
+
+    ask, floor = cents(row["Ask $ (line)"]), cents(row["Floor $"])
+    cost = cents(row["Cost $ (unit)"])
+    qty = row["Qty"]
+    qty = 0 if pd.isna(qty) else int(qty)
+
+    # Part-out lots price at the line ask and sell as one unit; shop stock
+    # keeps its real unit count but has no retail price in the export.
+    if is_shop:
+        price = cost or 0
+        stock_qty = qty
+        needs_price = True
+    else:
+        price = ask or 0
+        stock_qty = 0 if status in ("Sold", "Out of Stock") else 1
+        needs_price = price == 0
+
+    listable = (
+        status in SELLABLE_STATUS
+        and channel not in NEVER_LIST_CHANNEL
+        and clean(row["Category"]) != "Do not sell"
+        and price > 0
+        and stock_qty > 0
+    )
+
+    desc_raw = clean(row["Condition / Description"])
+    tags = re.findall(r"\[([^\]]+)\]", desc_raw or "")
+    public = re.sub(r"\s*\[[^\]]+\]", "", desc_raw or "").strip() or None
+    local_pickup = channel in LOCAL_CHANNEL or any(t.lower() == "local pickup" for t in tags)
+    accepts_offers = any(t.lower() == "obo" for t in tags)
+
+    pn = clean(row["Part Number"])
+    bits = []
+    if public:
+        bits.append(public)
+    elif is_shop:
+        bits.append(f"{name}. In stock at our shop.")
+    else:
+        bits.append(f"{name}, removed from our {SOURCE_CAR.get(source, 'part-out')}.")
+    if not is_shop:
+        bits.append("Used OEM part, sold as-is.")
+        if status in ("On Car", "On Engine"):
+            bits.append("Still on the vehicle — allow a few days for removal after you order.")
+    if pn:
+        bits.append(f"Part number: {pn}.")
+    if local_pickup:
+        bits.append("Local pickup at our shop — this item is not shipped.")
+    if accepts_offers:
+        bits.append("Open to offers.")
+    bits.append("Message us for photos or fitment questions.")
+    description = " ".join(bits)
+
+    slug = slugify(f"{name}-{ref}")
+    if slug in seen_slugs:
+        slug = f"{slug}-{ref.lower()}"
+    seen_slugs[slug] = True
+
+    cat = category_for(row)
+    installable, tenths = install_for(name, cat)
+    notes = clean(row["Notes / Flags"])
+    internal = []
+    if notes:
+        internal.append(notes)
+    if needs_price and is_shop:
+        internal.append(
+            f"PRICE NOT SET — ${(cost or 0)/100:.2f} is the cost basis from the shop export, "
+            "not a retail price. Set a retail price before listing.")
+    if not listable:
+        internal.append(f"Not listed: status {status}" + (f", channel {channel}" if channel else "") + ".")
+    if clean(row["Comp / Price basis"]):
+        internal.append(f"Price basis: {clean(row['Comp / Price basis'])}.")
+    if clean(row["eBay Low $"]) or clean(row["eBay High $"]):
+        internal.append(f"eBay comps: ${row['eBay Low $']}-${row['eBay High $']}.")
+    if qty > 1 and not is_shop:
+        internal.append(f"Lot of {qty} pieces sold as one unit at the line ask.")
+
+    parts.append({
+        "sourceRef": ref, "sku": f"PPP-{ref}", "slug": slug, "name": name,
+        "description": description,
+        "internalNotes": " ".join(internal) or None,
+        "categorySlug": cat,
+        "brandName": clean(row["Brand"]) or ("BMW" if "BMW" in (pn or "") or not is_shop else "Unbranded"),
+        "priceCents": price, "floorPriceCents": floor,
+        "supplierCostCents": cost or 0,
+        "stockQty": stock_qty, "condition": "NEW" if re.search(r"\bnew\b", name, re.I) else "USED",
+        "localPickupOnly": local_pickup, "acceptsOffers": accepts_offers,
+        "installEligible": installable, "laborHoursTenths": tenths,
+        "weightGrams": WEIGHT.get(cat, 2000),
+        "active": listable, "inStock": stock_qty > 0,
+        "partNumber": pn, "sourceLabel": source, "statusLabel": status,
+        "fitments": [{"make": m, "model": mo, "yearFrom": y1, "yearTo": y2, "engine": e}
+                     for (m, mo, y1, y2, e) in fitments_for(row["Fits / Platform"], source)],
+    })
+
+# --- bundles ---------------------------------------------------------------
+BUNDLES = [
+    ("PPP-BUNDLE-CLIP", "528i Front Clip — complete front end (12 pieces)", 129000, 103000,
+     "body-exterior", "F10 528i (N20)",
+     "Complete F10 528i front clip: hood, both fenders, front bumper cover, impact bar, core "
+     "support, headlights, grilles, hood latch, inner liners and air ducts. Radiator, condenser "
+     "and fan are not included — add the cooling package. One buyer, one pickup.", True, 40),
+    ("PPP-BUNDLE-COOLING", "528i Cooling Package — radiator, condenser, fan, expansion tank", 29000, 23000,
+     "cooling", "F10 528i (N20)",
+     "F10 528i cooling package: radiator, A/C condenser, electric cooling fan assembly and "
+     "coolant expansion tank. Priced as the front-clip upsell.", True, 30),
+    ("PPP-BUNDLE-LOCKSET", "528i Lockset — DME + CAS4 + 2 keys (matched set)", 42500, 34000,
+     "electrical", "F10 528i (N20)",
+     "Matched F10 528i immobilizer set: DME (MEVD17.2.4), CAS4 module and two working keys. "
+     "Sold only as a complete set — the pieces are useless apart.", True, 20),
+    ("PPP-BUNDLE-WATERPUMP", "N20 Electric Water Pump + Thermostat", 8000, 6000,
+     "cooling", "N20 (2012-16)",
+     "N20 electric water pump with the thermostat included at no extra charge. Replace both "
+     "together — the usual N20 cooling service.", True, 25),
+]
+for sku, name, price, floor, cat, platform, desc, inst, tenths in BUNDLES:
+    parts.append({
+        "sourceRef": sku, "sku": sku, "slug": slugify(name), "name": name,
+        "description": desc + " Local pickup at our shop preferred. Message us for photos.",
+        "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet.",
+        "categorySlug": cat, "brandName": "BMW",
+        "priceCents": price, "floorPriceCents": floor, "supplierCostCents": 0,
+        "stockQty": 1, "condition": "USED", "localPickupOnly": True, "acceptsOffers": False,
+        "installEligible": inst, "laborHoursTenths": tenths, "weightGrams": 40000,
+        "active": True, "inStock": True, "partNumber": None,
+        "sourceLabel": "F10 528i Part-Out", "statusLabel": "Bundle",
+        "fitments": [{"make": m, "model": mo, "yearFrom": y1, "yearTo": y2, "engine": e}
+                     for (m, mo, y1, y2, e) in TOKENS[platform]],
+    })
+
+# Lockset components sell only as the set.
+for p in parts:
+    if p["sourceRef"] in ("F13", "F130"):
+        p["active"] = False
+        p["internalNotes"] = ((p["internalNotes"] or "") +
+                              " Sold only inside PPP-BUNDLE-LOCKSET.").strip()
+
+# Brand names arrive with inconsistent casing ("FORD" and "Ford" are one
+# brand). Merge by slug, preferring the variant that is not all-caps.
+canon = {}
+for p in parts:
+    key = slugify(p["brandName"])
+    cur = canon.get(key)
+    if cur is None or (cur.isupper() and not p["brandName"].isupper()):
+        canon[key] = p["brandName"]
+for p in parts:
+    p["brandName"] = canon[slugify(p["brandName"])]
+
+json.dump({"generatedFrom": SRC.split("/")[-1], "parts": parts}, open(OUT, "w"), indent=1)
+
+listed = [p for p in parts if p["active"]]
+print(f"parts={len(parts)}  listed={len(listed)}  unlisted={len(parts)-len(listed)}")
+print(f"listed value = ${sum(p['priceCents'] for p in listed)/100:,.2f}")
+print(f"shop-stock cost basis = ${sum(p['supplierCostCents']*p['stockQty'] for p in parts if p['sourceLabel']=='Shop Stock')/100:,.2f}")
+print("categories:", {c: sum(1 for p in parts if p['categorySlug'] == c) for c in sorted({p['categorySlug'] for p in parts})})
+print("no fitment:", sum(1 for p in parts if not p["fitments"]))
+if UNMAPPED:
+    print("UNMAPPED PLATFORM TOKENS:", sorted(UNMAPPED))

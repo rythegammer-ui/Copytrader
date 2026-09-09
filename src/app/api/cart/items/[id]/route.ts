@@ -70,10 +70,22 @@ export const PATCH = api(async (req, ctx) => {
     shipTo = ShipTo.HOME;
   }
 
+  const nextQty = body.qty ?? item.qty;
+  if (item.part.trackStock && nextQty > item.part.stockQty) {
+    throw new ApiError(
+      "INSUFFICIENT_STOCK",
+      item.part.stockQty === 0
+        ? `${item.part.name} just sold out`
+        : `Only ${item.part.stockQty} of ${item.part.name} left`,
+      409,
+      { available: item.part.stockQty },
+    );
+  }
+
   const updated = await db.cartItem.update({
     where: { id: item.id },
     data: {
-      qty: body.qty ?? item.qty,
+      qty: nextQty,
       withInstall,
       installerId,
       apptStartAt,

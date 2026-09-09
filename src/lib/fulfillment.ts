@@ -27,6 +27,27 @@ import {
   type Actor,
 } from "@/lib/transitions";
 
+/**
+ * Return units to stock when a sale is undone (cancellation or a full-line
+ * refund). No-op for supplier-stocked parts, which have no finite count.
+ */
+async function restoreStock(
+  tx: Prisma.TransactionClient,
+  items: { partId: string; qty: number }[],
+): Promise<void> {
+  for (const item of items) {
+    const part = await tx.part.findUnique({
+      where: { id: item.partId },
+      select: { trackStock: true },
+    });
+    if (!part?.trackStock) continue;
+    await tx.part.update({
+      where: { id: item.partId },
+      data: { stockQty: { increment: item.qty }, inStock: true },
+    });
+  }
+}
+
 const CANCELLABLE_PO_STATUSES: string[] = [
   POStatus.PENDING_CONFIRMATION,
   POStatus.CONFIRMED,
@@ -223,6 +244,14 @@ export async function executeRefund(
           });
         }
 
+        // The parts come back on the shelf (install-only refunds keep the part).
+        await restoreStock(
+          tx,
+          fresh.items
+            .filter((i) => selection.itemIds.includes(i.id))
+            .map((i) => ({ partId: i.partId, qty: i.qty })),
+        );
+
         // Cancel POs whose last live item just died (only if still cancellable).
         for (const poId of deadPoIds) {
           const po = fresh.purchaseOrders.find((p) => p.id === poId);
@@ -399,10 +428,15 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
           });
         }
       }
+      const liveItems = await tx.orderItem.findMany({
+        where: { orderId, itemStatus: OrderItemStatus.PENDING },
+        select: { partId: true, qty: true },
+      });
       await tx.orderItem.updateMany({
         where: { orderId, itemStatus: OrderItemStatus.PENDING },
         data: { itemStatus: OrderItemStatus.CANCELLED },
       });
+      await restoreStock(tx, liveItems);
       const suppliers = await tx.user.findMany({
         where: { supplierId: { in: fresh.purchaseOrders.map((po) => po.supplierId) }, role: Role.SUPPLIER },
         select: { id: true },

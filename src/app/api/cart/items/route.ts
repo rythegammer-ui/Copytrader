@@ -35,7 +35,7 @@ export const POST = api(async (req) => {
     throw new ApiError("PART_UNAVAILABLE", "That part is no longer available", 409);
   }
   if (!part.inStock) {
-    throw new ApiError("OUT_OF_STOCK", `${part.name} is out of stock at the supplier`, 409);
+    throw new ApiError("OUT_OF_STOCK", `${part.name} is out of stock`, 409);
   }
 
   const cart = await getOrCreateCart();
@@ -85,6 +85,18 @@ export const POST = api(async (req) => {
   // Upsert on the (cartId, partId) unique key so a concurrent double-add of
   // the same part combines instead of tripping the constraint with a 500.
   const existing = cart.items.find((i) => i.partId === part.id);
+  // Finite inventory: the cart can never hold more than exists.
+  const requestedQty = Math.min(10, (existing?.qty ?? 0) + body.qty);
+  if (part.trackStock && requestedQty > part.stockQty) {
+    throw new ApiError(
+      "INSUFFICIENT_STOCK",
+      part.stockQty === 0
+        ? `${part.name} just sold out`
+        : `Only ${part.stockQty} of ${part.name} left`,
+      409,
+      { available: part.stockQty },
+    );
+  }
   const item = await db.cartItem.upsert({
     where: { cartId_partId: { cartId: cart.id, partId: part.id } },
     create: {
@@ -97,7 +109,7 @@ export const POST = api(async (req) => {
       shipTo,
     },
     update: {
-      qty: Math.min(10, (existing?.qty ?? 0) + body.qty),
+      qty: requestedQty,
       withInstall,
       installerId,
       apptStartAt,

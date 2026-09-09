@@ -43,6 +43,13 @@ export function PartForm({ mode, partId, initial, categories, brands, suppliers 
   const [universalFit, setUniversalFit] = useState(initial?.universalFit ?? false);
   const [inStock, setInStock] = useState(initial?.inStock ?? true);
   const [active, setActive] = useState(initial?.active ?? true);
+  const [trackStock, setTrackStock] = useState(initial?.trackStock ?? false);
+  const [stockQty, setStockQty] = useState(String(initial?.stockQty ?? 0));
+  const [condition, setCondition] = useState(initial?.condition ?? "NEW");
+  const [localPickupOnly, setLocalPickupOnly] = useState(initial?.localPickupOnly ?? false);
+  const [acceptsOffers, setAcceptsOffers] = useState(initial?.acceptsOffers ?? false);
+  const [floor, setFloor] = useState(centsToDollarInput(initial?.floorPriceCents ?? undefined));
+  const [internalNotes, setInternalNotes] = useState(initial?.internalNotes ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -87,6 +94,13 @@ export function PartForm({ mode, partId, initial, categories, brands, suppliers 
       universalFit,
       inStock,
       active,
+      trackStock,
+      stockQty: parseIntField(stockQty) ?? 0,
+      condition,
+      localPickupOnly,
+      acceptsOffers,
+      floorPriceCents: floor.trim() === "" ? null : parseDollars(floor),
+      internalNotes: internalNotes.trim() === "" ? null : internalNotes.trim(),
     };
 
     setBusy(true);
@@ -198,6 +212,78 @@ export function PartForm({ mode, partId, initial, categories, brands, suppliers 
           <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
           Active (visible in the store)
         </label>
+        <label className="inline-flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={localPickupOnly}
+            onChange={(e) => setLocalPickupOnly(e.target.checked)}
+          />
+          Local pickup only (no shipping charged)
+        </label>
+        <label className="inline-flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={acceptsOffers}
+            onChange={(e) => setAcceptsOffers(e.target.checked)}
+          />
+          Open to offers
+        </label>
+      </div>
+
+      {/* Finite inventory: used and pulled parts exist in countable units. */}
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <label className="label" htmlFor="pf-condition">Condition</label>
+          <select
+            id="pf-condition"
+            className="input"
+            value={condition}
+            onChange={(e) => setCondition(e.target.value)}
+          >
+            <option value="NEW">New</option>
+            <option value="USED">Used</option>
+          </select>
+        </div>
+        <div>
+          <label className="label" htmlFor="pf-stock">Units on hand</label>
+          <input
+            id="pf-stock"
+            className="input"
+            value={stockQty}
+            onChange={(e) => setStockQty(e.target.value)}
+            disabled={!trackStock}
+          />
+          <label className="mt-1 inline-flex items-center gap-2 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={trackStock}
+              onChange={(e) => setTrackStock(e.target.checked)}
+            />
+            Track finite stock (one-off parts)
+          </label>
+        </div>
+        <div>
+          <label className="label" htmlFor="pf-floor">Floor price ($, private)</label>
+          <input
+            id="pf-floor"
+            className="input"
+            value={floor}
+            onChange={(e) => setFloor(e.target.value)}
+            placeholder="lowest you will accept"
+          />
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <label className="label" htmlFor="pf-notes">
+          Internal notes (staff only — never shown to customers)
+        </label>
+        <textarea
+          id="pf-notes"
+          className="input min-h-[80px]"
+          value={internalNotes}
+          onChange={(e) => setInternalNotes(e.target.value)}
+        />
       </div>
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}

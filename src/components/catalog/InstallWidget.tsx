@@ -37,6 +37,7 @@ export function InstallWidget({
   laborHoursTenths,
   supplierLeadDays,
   shops,
+  availableQty,
 }: {
   partId: string;
   priceCents: number;
@@ -45,8 +46,12 @@ export function InstallWidget({
   laborHoursTenths: number;
   supplierLeadDays: number;
   shops: WidgetShop[];
+  /** Units on hand for a finite-stock part; null when supplier-stocked. */
+  availableQty?: number | null;
 }) {
   const router = useRouter();
+  // Never offer more than exists — the server rejects it anyway.
+  const maxQty = Math.max(1, Math.min(10, availableQty ?? 10));
   const [qty, setQty] = useState(1);
   const [withInstall, setWithInstall] = useState(false);
   const [installerId, setInstallerId] = useState("");
@@ -196,7 +201,7 @@ export function InstallWidget({
           value={qty}
           onChange={(e) => setQty(parseInt(e.target.value, 10))}
         >
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+          {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
             <option key={n} value={n}>
               {n}
             </option>

@@ -80,6 +80,10 @@ export default async function HomePage() {
         ? Math.min(...installers.map((s) => installUnitCents(part, s.hourlyRateCents)))
         : null,
     verdict: fitmentVerdict(part, part.fitments, ctx),
+    condition: part.condition,
+    trackStock: part.trackStock,
+    stockQty: part.stockQty,
+    localPickupOnly: part.localPickupOnly,
   }));
 
   return (

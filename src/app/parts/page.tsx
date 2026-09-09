@@ -116,6 +116,10 @@ export default async function PartsPage({ searchParams }: { searchParams: Search
         ? Math.min(...installers.map((s) => installUnitCents(part, s.hourlyRateCents)))
         : null,
     verdict: fitmentVerdict(part, part.fitments, ctx),
+    condition: part.condition,
+    trackStock: part.trackStock,
+    stockQty: part.stockQty,
+    localPickupOnly: part.localPickupOnly,
   }));
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));

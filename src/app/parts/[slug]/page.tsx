@@ -5,6 +5,7 @@ import { getCart } from "@/lib/cart";
 import { db } from "@/lib/db";
 import { fitmentVerdict, type VehicleContext } from "@/lib/fitment";
 import { pluralize } from "@/lib/format";
+import { conditionLabel } from "@/lib/enums";
 import { formatCents } from "@/lib/money";
 import { installUnitCents, TRANSIT_BUFFER_DAYS } from "@/lib/pricing";
 import { FitmentTable, type FitmentRow } from "@/components/catalog/FitmentTable";
@@ -132,10 +133,33 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
               </p>
 
               <div className="mt-3 flex flex-wrap gap-2">
+                <span
+                  className={`badge ${
+                    part.condition === "USED"
+                      ? "bg-amber-100 text-amber-800"
+                      : "bg-slate-100 text-slate-700"
+                  }`}
+                >
+                  {conditionLabel(part.condition)}
+                </span>
                 {part.inStock ? (
-                  <span className="badge bg-green-100 text-green-800">In stock</span>
+                  <span className="badge bg-green-100 text-green-800">
+                    {part.trackStock
+                      ? part.stockQty === 1
+                        ? "1 available"
+                        : `${part.stockQty} available`
+                      : "In stock"}
+                  </span>
                 ) : (
-                  <span className="badge bg-red-100 text-red-800">Out of stock</span>
+                  <span className="badge bg-red-100 text-red-800">
+                    {part.trackStock ? "Sold" : "Out of stock"}
+                  </span>
+                )}
+                {part.localPickupOnly && (
+                  <span className="badge bg-slate-900 text-white">📍 Local pickup only</span>
+                )}
+                {part.acceptsOffers && (
+                  <span className="badge bg-brand-100 text-brand-800">Open to offers</span>
                 )}
                 {part.universalFit && (
                   <span className="badge bg-brand-100 text-brand-800">Universal fit</span>
@@ -148,8 +172,18 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
               </div>
 
               <p className="mt-4 text-sm text-slate-600">
-                Ships from <span className="font-semibold">{part.supplier.name}</span> — usually{" "}
-                {part.supplier.leadTimeDays} {pluralize(part.supplier.leadTimeDays, "day")}.
+                {part.localPickupOnly ? (
+                  <>
+                    Collect at <span className="font-semibold">{part.supplier.name}</span> in{" "}
+                    {part.supplier.city}, {part.supplier.state} — too big to ship, so there is no
+                    shipping charge.
+                  </>
+                ) : (
+                  <>
+                    Ships from <span className="font-semibold">{part.supplier.name}</span> — usually{" "}
+                    {part.supplier.leadTimeDays} {pluralize(part.supplier.leadTimeDays, "day")}.
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -173,6 +207,7 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
             priceCents={part.priceCents}
             installEligible={part.installEligible}
             inStock={part.inStock}
+            availableQty={part.trackStock ? part.stockQty : null}
             laborHoursTenths={part.laborHoursTenths}
             supplierLeadDays={part.supplier.leadTimeDays}
             shops={widgetShops}

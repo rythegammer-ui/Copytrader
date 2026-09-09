@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { api, jsonOk, parseBody } from "@/lib/api";
 import { db } from "@/lib/db";
-import { EntityType, Role } from "@/lib/enums";
+import { EntityType, Role, zCondition } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 import { logEvent } from "@/lib/events";
 
@@ -49,6 +49,13 @@ const zPartPatch = z.object({
   universalFit: z.boolean().optional(),
   inStock: z.boolean().optional(),
   active: z.boolean().optional(),
+  trackStock: z.boolean().optional(),
+  stockQty: z.number().int().min(0).optional(),
+  condition: zCondition.optional(),
+  localPickupOnly: z.boolean().optional(),
+  acceptsOffers: z.boolean().optional(),
+  floorPriceCents: z.number().int().min(0).nullable().optional(),
+  internalNotes: z.string().max(4000).nullable().optional(),
 });
 
 /** GET /api/admin/parts/[id] — part detail incl. fitments with vehicle names. */
@@ -93,6 +100,14 @@ export const GET = api(
       universalFit: part.universalFit,
       inStock: part.inStock,
       active: part.active,
+      trackStock: part.trackStock,
+      stockQty: part.stockQty,
+      condition: part.condition,
+      localPickupOnly: part.localPickupOnly,
+      acceptsOffers: part.acceptsOffers,
+      floorPriceCents: part.floorPriceCents,
+      internalNotes: part.internalNotes,
+      sourceRef: part.sourceRef,
       fitments: part.fitments.map((f) => ({
         id: f.id,
         modelId: f.modelId,
@@ -179,6 +194,13 @@ export const PATCH = api(
           ...(body.universalFit !== undefined ? { universalFit: body.universalFit } : {}),
           ...(body.inStock !== undefined ? { inStock: body.inStock } : {}),
           ...(body.active !== undefined ? { active: body.active } : {}),
+          ...(body.trackStock !== undefined ? { trackStock: body.trackStock } : {}),
+          ...(body.stockQty !== undefined ? { stockQty: body.stockQty } : {}),
+          ...(body.condition !== undefined ? { condition: body.condition } : {}),
+          ...(body.localPickupOnly !== undefined ? { localPickupOnly: body.localPickupOnly } : {}),
+          ...(body.acceptsOffers !== undefined ? { acceptsOffers: body.acceptsOffers } : {}),
+          ...(body.floorPriceCents !== undefined ? { floorPriceCents: body.floorPriceCents } : {}),
+          ...(body.internalNotes !== undefined ? { internalNotes: body.internalNotes } : {}),
         },
       });
       await logEvent(tx, {

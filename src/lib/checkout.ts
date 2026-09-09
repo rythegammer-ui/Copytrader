@@ -56,6 +56,7 @@ export async function quoteCart(cart: CartWithItems): Promise<Quote> {
       installerHourlyRateCents: shop?.hourlyRateCents ?? null,
       apptStartAt: item.apptStartAt,
       shipTo: item.shipTo,
+      localPickupOnly: item.part.localPickupOnly,
     };
   });
 
@@ -87,6 +88,17 @@ export async function validateCartForCheckout(cart: CartWithItems): Promise<void
     }
     if (item.qty < 1 || item.qty > 10) {
       throw new ApiError("BAD_QTY", "Quantity must be between 1 and 10", 400, { cartItemId: item.id });
+    }
+    // One-off used parts: never let an order exceed what is physically on hand.
+    if (item.part.trackStock && item.qty > item.part.stockQty) {
+      throw new ApiError(
+        "INSUFFICIENT_STOCK",
+        item.part.stockQty === 0
+          ? `${item.part.name} just sold out`
+          : `Only ${item.part.stockQty} of ${item.part.name} left`,
+        409,
+        { cartItemId: item.id, available: item.part.stockQty },
+      );
     }
     if (item.withInstall) {
       if (!item.part.installEligible) {

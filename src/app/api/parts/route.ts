@@ -104,6 +104,10 @@ export const GET = api(async (req) => {
       installEligible: part.installEligible,
       inStock: part.inStock,
       universalFit: part.universalFit,
+      condition: part.condition,
+      trackStock: part.trackStock,
+      stockQty: part.trackStock ? part.stockQty : null,
+      localPickupOnly: part.localPickupOnly,
       installFromCents,
       verdict: fitmentVerdict(part, part.fitments, vehicle),
     };
