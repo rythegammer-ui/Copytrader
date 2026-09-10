@@ -28,7 +28,12 @@ export default async function AdminPartsPage({
     ...(categoryId ? { categoryId } : {}),
     ...(supplierId ? { supplierId } : {}),
     ...(q
-      ? { OR: [{ name: ci(q) }, { sku: ci(q) }, { slug: ci(q) }] }
+      ? {
+          // internalNotes is admin-only and never leaves this route, but it is
+          // where import flags land ("PRICE IS AN ESTIMATE", "NOT LISTED"), so
+          // it has to be searchable or those rows are unfindable.
+          OR: [{ name: ci(q) }, { sku: ci(q) }, { slug: ci(q) }, { internalNotes: ci(q) }],
+        }
       : {}),
   };
 

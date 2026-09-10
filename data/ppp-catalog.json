@@ -27,6 +27,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -63,6 +64,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -91,6 +93,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -134,6 +137,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -170,6 +174,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW Motorrad",
@@ -206,6 +211,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -234,6 +240,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -270,6 +277,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -306,6 +314,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -398,6 +407,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW Motorrad",
@@ -434,6 +444,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -470,6 +481,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -548,6 +560,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -584,6 +597,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -620,6 +634,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -648,6 +663,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -684,6 +700,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -720,6 +737,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -748,6 +766,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -776,6 +795,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -812,6 +832,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -848,6 +869,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -884,6 +906,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -920,6 +943,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -956,6 +980,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Ford",
@@ -992,6 +1017,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1020,6 +1046,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1056,6 +1083,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1084,6 +1112,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1112,6 +1141,7 @@
    "statusLabel": "Out of Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1140,6 +1170,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1176,6 +1207,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1226,6 +1258,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1262,6 +1295,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1298,6 +1332,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1334,6 +1369,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1362,6 +1398,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1390,6 +1427,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1440,6 +1478,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1497,6 +1536,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1561,6 +1601,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1597,6 +1638,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1633,6 +1675,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1683,6 +1726,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1711,6 +1755,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1739,6 +1784,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1767,6 +1813,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1795,6 +1842,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Buick",
@@ -1831,6 +1879,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1867,6 +1916,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1895,6 +1945,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Chevrolet",
@@ -1931,6 +1982,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -1967,6 +2019,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -1995,6 +2048,7 @@
    "statusLabel": "Out of Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2023,6 +2077,7 @@
    "statusLabel": "Out of Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2051,6 +2106,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2079,6 +2135,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2107,6 +2164,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2135,6 +2193,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2163,6 +2222,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2191,6 +2251,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2219,6 +2280,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2247,6 +2309,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2275,6 +2338,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Ford",
@@ -2311,6 +2375,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2339,6 +2404,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Jeep",
@@ -2375,6 +2441,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -2411,6 +2478,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2439,6 +2507,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2467,6 +2536,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2495,6 +2565,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -2531,6 +2602,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -2567,6 +2639,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Toyota",
@@ -2617,6 +2690,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Toyota",
@@ -2681,6 +2755,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -2787,6 +2862,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Porsche",
@@ -2823,6 +2899,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2851,6 +2928,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Toyota",
@@ -2887,6 +2965,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -2915,6 +2994,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Toyota",
@@ -2951,6 +3031,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "Toyota",
@@ -2987,6 +3068,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -3015,6 +3097,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -3043,6 +3126,7 @@
    "statusLabel": "In Stock",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": []
   },
   {
@@ -3071,6 +3155,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3107,6 +3192,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3143,6 +3229,7 @@
    "statusLabel": "Sold",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3179,6 +3266,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3215,6 +3303,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3251,6 +3340,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3287,6 +3377,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3323,6 +3414,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3359,6 +3451,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3395,6 +3488,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3431,6 +3525,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3467,6 +3562,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3503,6 +3599,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3539,6 +3636,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3575,6 +3673,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3611,6 +3710,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3647,6 +3747,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3683,6 +3784,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3719,6 +3821,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3755,6 +3858,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3791,6 +3895,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3827,6 +3932,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3863,6 +3969,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3899,6 +4006,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3935,6 +4043,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -3971,6 +4080,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4007,6 +4117,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4043,6 +4154,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4079,6 +4191,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4115,6 +4228,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4151,6 +4265,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4187,6 +4302,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4223,6 +4339,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4259,6 +4376,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4295,6 +4413,7 @@
    "statusLabel": "Sold",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4331,6 +4450,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4367,6 +4487,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4403,6 +4524,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4439,6 +4561,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4475,6 +4598,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4511,6 +4635,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4547,6 +4672,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4583,6 +4709,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4619,6 +4746,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4655,6 +4783,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4691,6 +4820,7 @@
    "statusLabel": "Sold",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4727,6 +4857,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4763,6 +4894,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4799,6 +4931,7 @@
    "statusLabel": "Sold",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4835,6 +4968,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4871,6 +5005,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4907,6 +5042,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4943,6 +5079,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -4979,6 +5116,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5015,6 +5153,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5051,6 +5190,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5087,6 +5227,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5123,6 +5264,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5159,6 +5301,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5195,6 +5338,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5231,6 +5375,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5267,6 +5412,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5303,6 +5449,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5339,6 +5486,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5375,6 +5523,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5411,6 +5560,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5447,6 +5597,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5483,6 +5634,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5519,6 +5671,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5555,6 +5708,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5591,6 +5745,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5627,6 +5782,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5663,6 +5819,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5699,6 +5856,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5735,6 +5893,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5771,6 +5930,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5807,6 +5967,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5843,6 +6004,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5879,6 +6041,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5915,6 +6078,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5951,6 +6115,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -5987,6 +6152,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6023,6 +6189,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6059,6 +6226,7 @@
    "statusLabel": "Keep for Swap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6095,6 +6263,7 @@
    "statusLabel": "Undecided",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6131,6 +6300,7 @@
    "statusLabel": "Undecided",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6167,6 +6337,7 @@
    "statusLabel": "Undecided",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6203,6 +6374,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6239,6 +6411,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6275,6 +6448,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6311,6 +6485,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6347,6 +6522,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6383,6 +6559,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6419,6 +6596,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6455,6 +6633,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6491,6 +6670,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6527,6 +6707,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6563,6 +6744,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6599,6 +6781,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6635,6 +6818,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6671,6 +6855,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6707,6 +6892,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6743,6 +6929,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6779,6 +6966,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6815,6 +7003,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6851,6 +7040,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6887,6 +7077,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6923,6 +7114,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6959,6 +7151,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -6995,6 +7188,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7031,6 +7225,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7067,6 +7262,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7103,6 +7299,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7139,6 +7336,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7175,6 +7373,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7211,6 +7410,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7247,6 +7447,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7283,6 +7484,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7319,6 +7521,7 @@
    "statusLabel": "Pulled",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7355,6 +7558,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7391,6 +7595,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7427,6 +7632,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7463,6 +7669,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7499,6 +7706,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7535,6 +7743,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7571,6 +7780,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7607,6 +7817,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7643,6 +7854,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7679,6 +7891,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7715,6 +7928,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7751,6 +7965,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7787,6 +8002,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7823,6 +8039,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7859,6 +8076,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7895,6 +8113,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7931,6 +8150,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -7967,6 +8187,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8003,6 +8224,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8039,6 +8261,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8075,6 +8298,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8111,6 +8335,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8147,6 +8372,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8183,6 +8409,7 @@
    "statusLabel": "Scrap",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8219,6 +8446,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8255,6 +8483,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8291,6 +8520,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8327,6 +8557,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8363,6 +8594,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8399,6 +8631,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8435,6 +8668,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8471,6 +8705,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8507,6 +8742,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8543,6 +8779,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8579,6 +8816,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8615,6 +8853,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8651,6 +8890,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8687,6 +8927,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8723,6 +8964,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8759,6 +9001,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8795,6 +9038,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8831,6 +9075,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8867,6 +9112,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8903,6 +9149,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8939,6 +9186,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -8975,6 +9223,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9011,6 +9260,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9047,6 +9297,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9083,6 +9334,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9119,6 +9371,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9155,6 +9408,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9191,6 +9445,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9227,6 +9482,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9263,6 +9519,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9299,6 +9556,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9335,6 +9593,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9371,6 +9630,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9407,6 +9667,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9443,6 +9704,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9479,6 +9741,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9515,6 +9778,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9551,6 +9815,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9587,6 +9852,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9623,6 +9889,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9659,6 +9926,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9695,6 +9963,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9731,6 +10000,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9767,6 +10037,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9803,6 +10074,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9839,6 +10111,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9875,6 +10148,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9911,6 +10185,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9947,6 +10222,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -9983,6 +10259,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10019,6 +10296,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10055,6 +10333,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10091,6 +10370,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10127,6 +10407,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10163,6 +10444,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10199,6 +10481,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10235,6 +10518,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10271,6 +10555,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10307,6 +10592,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10343,6 +10629,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10379,6 +10666,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10415,6 +10703,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10451,6 +10740,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10487,6 +10777,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10523,6 +10814,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10559,6 +10851,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10595,6 +10888,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10631,6 +10925,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10667,6 +10962,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10703,6 +10999,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10739,6 +11036,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10775,6 +11073,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10811,6 +11110,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10847,6 +11147,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10883,6 +11184,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10919,6 +11221,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10955,6 +11258,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -10991,6 +11295,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11027,6 +11332,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11063,6 +11369,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11099,6 +11406,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11135,6 +11443,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11171,6 +11480,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11207,6 +11517,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11243,6 +11554,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11279,6 +11591,7 @@
    "statusLabel": "On Car",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11315,6 +11628,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11372,6 +11686,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11429,6 +11744,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11486,6 +11802,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11543,6 +11860,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11600,6 +11918,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11657,6 +11976,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11714,6 +12034,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11771,6 +12092,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11828,6 +12150,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11885,6 +12208,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11942,6 +12266,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -11999,6 +12324,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12056,6 +12382,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12113,6 +12440,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12170,6 +12498,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12227,6 +12556,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12284,6 +12614,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12341,6 +12672,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12398,6 +12730,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12455,6 +12788,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12512,6 +12846,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12569,6 +12904,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12626,6 +12962,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12683,6 +13020,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12740,6 +13078,7 @@
    "statusLabel": "On Engine",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12797,6 +13136,7 @@
    "statusLabel": "Do Not Sell",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12854,6 +13194,7 @@
    "statusLabel": "Do Not Sell",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12911,6 +13252,7 @@
    "statusLabel": "Do Not Sell",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -12968,6 +13310,7 @@
    "statusLabel": "Do Not Sell",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -13025,6 +13368,7 @@
    "statusLabel": "Do Not Sell",
    "isKit": false,
    "kitOf": [],
+   "universalFit": false,
    "fitments": [
     {
      "make": "BMW",
@@ -13093,6 +13437,7 @@
     "F45",
     "F46"
    ],
+   "universalFit": false,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [
@@ -13134,6 +13479,7 @@
     "F33",
     "F34"
    ],
+   "universalFit": false,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [
@@ -13173,6 +13519,7 @@
     "F13",
     "F130"
    ],
+   "universalFit": false,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [
@@ -13212,6 +13559,7 @@
     "N6",
     "N7"
    ],
+   "universalFit": false,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [

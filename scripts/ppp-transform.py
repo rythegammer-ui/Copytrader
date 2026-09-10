@@ -22,6 +22,16 @@ _ov_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
 if os.path.exists(_ov_path):
     OVERRIDES = {r["id"]: r for r in json.load(open(_ov_path))["rows"]}
 
+# The shop bins and the part-out trackers were built separately and overlap:
+# the same physical climate panel can appear as a shop row and a 528i row.
+# data/ppp-duplicates.json records which side to keep so one unit is never
+# listed twice. Each entry is {"suppress": "F17", "keep": "S4", "reason": ...}.
+DUPLICATES = {}
+_dup_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                         "data", "ppp-duplicates.json")
+if os.path.exists(_dup_path):
+    DUPLICATES = {d["suppress"]: d for d in json.load(open(_dup_path))["pairs"]}
+
 # --- price semantics -------------------------------------------------------
 # "Ask $ (line)" is a LOT price: F47 is four doors for $1,120 total, not each.
 # So a part-out row becomes ONE product at the ask price with one lot in stock.
@@ -426,6 +436,59 @@ for p in parts:
         notes.append(ov["notes"])
     p["internalNotes"] = " ".join([n for n in ([p["internalNotes"]] + notes) if n]) or None
 
+# The override rows are reviewed, not hand-typed, so validate them before they
+# reach a live store: a bad category slug means a 404 image, a floor above ask
+# means the shop can be talked below its own limit, and a nonsense year range
+# means somebody buys a part that will not fit their car.
+VALID_CATEGORIES = {
+    "brakes", "engine", "suspension", "electrical", "filters", "exhaust", "cooling",
+    "lighting", "ignition", "accessories", "body-exterior", "interior", "drivetrain",
+    "wheels-tires", "audio-electronics", "fuel-air", "hvac", "shop-supplies",
+}
+problems = []
+for p in parts:
+    if p["sourceRef"] not in OVERRIDES:
+        continue
+    if p["categorySlug"] not in VALID_CATEGORIES:
+        problems.append(f"{p['sourceRef']}: unknown category {p['categorySlug']!r}")
+    if p["condition"] not in ("NEW", "USED"):
+        problems.append(f"{p['sourceRef']}: bad condition {p['condition']!r}")
+    if p["priceCents"] < 0:
+        problems.append(f"{p['sourceRef']}: negative price")
+    if p["floorPriceCents"] and p["floorPriceCents"] > p["priceCents"]:
+        problems.append(f"{p['sourceRef']}: floor above ask")
+    if not 0 <= p["laborHoursTenths"] <= 400:
+        problems.append(f"{p['sourceRef']}: implausible labour {p['laborHoursTenths']}")
+    if p["installEligible"] and p["laborHoursTenths"] <= 0:
+        problems.append(f"{p['sourceRef']}: installable with no labour time")
+    if p["weightGrams"] <= 0:
+        problems.append(f"{p['sourceRef']}: non-positive weight")
+    for f in p["fitments"]:
+        if not (1980 <= f["yearFrom"] <= f["yearTo"] <= 2030):
+            problems.append(f"{p['sourceRef']}: bad year range {f['yearFrom']}-{f['yearTo']}")
+if problems:
+    print("OVERRIDE VALIDATION FAILED:")
+    for pr in problems:
+        print("   -", pr)
+    sys.exit(1)
+
+# --- duplicate physical units ----------------------------------------------
+# One object, two rows: listing both would take money for a part that has
+# already gone out the door with somebody else's order.
+suppressed = 0
+for p in parts:
+    dup = DUPLICATES.get(p["sourceRef"])
+    if not dup:
+        continue
+    if p["active"]:
+        suppressed += 1
+    p["active"] = False
+    p["internalNotes"] = " ".join(filter(None, [
+        p["internalNotes"],
+        f"NOT LISTED — same physical unit as {dup['keep']}, which carries the listing. "
+        f"{dup.get('reason', '')}".strip(),
+    ]))
+
 # Slugs must stay unique after the retitling above.
 used = {}
 for p in parts:
@@ -457,6 +520,7 @@ json.dump({"generatedFrom": SRC.split("/")[-1], "parts": parts}, open(OUT, "w"),
 listed = [p for p in parts if p["active"]]
 print(f"parts={len(parts)}  listed={len(listed)}  unlisted={len(parts)-len(listed)}")
 print(f"shop-stock overrides applied = {applied}")
+print(f"duplicate rows suppressed = {suppressed}")
 print(f"listed value = ${sum(p['priceCents'] for p in listed)/100:,.2f}")
 print(f"shop-stock cost basis = ${sum(p['supplierCostCents']*p['stockQty'] for p in parts if p['sourceLabel']=='Shop Stock')/100:,.2f}")
 print("categories:", {c: sum(1 for p in parts if p['categorySlug'] == c) for c in sorted({p['categorySlug'] for p in parts})})
