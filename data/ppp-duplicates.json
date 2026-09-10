@@ -1,0 +1,45 @@
+{
+ "_comment": "One physical object, two rows. The shop bins and the part-out trackers were built separately and overlap, so a part can appear on both. Listing both sides would take money for something that has already gone out the door with somebody else's order. Only pairs where BOTH sides would otherwise be listed appear here; a pair whose other half is unlisted (Undecided, Keep, bundle-only) carries no risk and is left alone with a note instead. Resolves open items 10 and 11 of the workbook Summary.",
+ "pairs": [
+  {
+   "suppress": "S22",
+   "keep": "F22",
+   "confidence": "HIGH",
+   "reason": "Same antenna/keyless module. S22's part number 65 20-9220832-02 and F22's 'heard as 65 20 92 28 32 02' are the same string once the extra 0 that F22's own note already flags for verification is dropped; both carry the -02 suffix. F22 is the priced row ($40 with a 9/1 comp), S22 carries only a $25 cost."
+  },
+  {
+   "suppress": "S13",
+   "keep": "E33",
+   "confidence": "MEDIUM",
+   "reason": "One E90 has one climate panel, but the 335i part-out lists two (E32 noted 'Two available', E33 logged as 'Single Hump, 2nd'). The second almost certainly came from shop stock, which is S13. Listing S13 as well would put three listings against at most two units. E32/E33 are priced at $40; S13 carries only a $30 cost."
+  },
+  {
+   "suppress": "S72",
+   "keep": "S71",
+   "confidence": "MEDIUM",
+   "reason": "Byte-identical rows: same title, same part number 61357199885, same Bin B, qty 1 each, cost identical to the cent. A part-number collision scan across all 84 shop rows found exactly this one, so it is an outlier rather than house style. Two of three independent audits called it a duplicated export line. Reversible by a shelf count in Bin B."
+  }
+ ],
+ "_linkedButSafe": [
+  {
+   "shopRows": ["S36", "S27"],
+   "other": "F11",
+   "note": "The bin airbox and upper duct may be the same assembly as the 528i's airbox. F11 is Undecided and unlisted, so nothing can be sold twice today. If F11 is ever listed, suppress S36 and S27 first."
+  },
+  {
+   "shopRows": ["S42"],
+   "other": "F12",
+   "note": "The bin intercooler pipe may be part of the 528i's intercooler and charge pipes. F12 is Undecided and unlisted, so there is no conflict today. If F12 is ever listed, suppress S42 first."
+  },
+  {
+   "shopRows": ["S9"],
+   "other": "F13",
+   "note": "Both are N20 DME modules, but F13 is 'DME + 2 keys' and sells only inside the lockset package, which is not listed on its own. S9 is a bare purchased core with no keys."
+  },
+  {
+   "shopRows": ["S15"],
+   "other": "F10",
+   "note": "Engine covers. F10 is Undecided and unlisted, and the 528i's engine is kept for the swap with everything mounted, so its cover most likely went with the motor."
+  }
+ ]
+}
