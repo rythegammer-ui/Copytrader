@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { ShipTo, zShipTo } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 import { fitmentVerdict } from "@/lib/fitment";
+import { availableQty, isShort, loadKitPieces, shortMessage } from "@/lib/inventory";
 
 export const dynamic = "force-dynamic";
 
@@ -85,17 +86,12 @@ export const POST = api(async (req) => {
   // Upsert on the (cartId, partId) unique key so a concurrent double-add of
   // the same part combines instead of tripping the constraint with a 500.
   const existing = cart.items.find((i) => i.partId === part.id);
-  // Finite inventory: the cart can never hold more than exists.
+  // Finite inventory: the cart can never hold more than exists. A kit is
+  // bounded by its components, not by a count of its own.
   const requestedQty = Math.min(10, (existing?.qty ?? 0) + body.qty);
-  if (part.trackStock && requestedQty > part.stockQty) {
-    throw new ApiError(
-      "INSUFFICIENT_STOCK",
-      part.stockQty === 0
-        ? `${part.name} just sold out`
-        : `Only ${part.stockQty} of ${part.name} left`,
-      409,
-      { available: part.stockQty },
-    );
+  const available = availableQty(part, (await loadKitPieces(db, [part.id])).get(part.id) ?? []);
+  if (isShort(available, requestedQty)) {
+    throw new ApiError("INSUFFICIENT_STOCK", shortMessage(part.name, available), 409, { available });
   }
   const item = await db.cartItem.upsert({
     where: { cartId_partId: { cartId: cart.id, partId: part.id } },

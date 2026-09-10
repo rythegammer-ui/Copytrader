@@ -25,6 +25,8 @@
    "partNumber": "9192745 05",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -59,6 +61,8 @@
    "partNumber": "7244836 01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -85,6 +89,8 @@
    "partNumber": "0280218266, 13627602038",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -126,6 +132,8 @@
    "partNumber": "9249701-01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -160,6 +168,8 @@
    "partNumber": "13548545069",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW Motorrad",
@@ -194,6 +204,8 @@
    "partNumber": "9206389-14, 9206389-13",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -220,6 +232,8 @@
    "partNumber": "9206729",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -254,6 +268,8 @@
    "partNumber": "BE B093",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -288,6 +304,8 @@
    "partNumber": "7649123-01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -378,6 +396,8 @@
    "partNumber": "9830141",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW Motorrad",
@@ -412,6 +432,8 @@
    "partNumber": "7451335 / 61.35-6 937 791.9 / 61.35-8 379 345",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -446,6 +468,8 @@
    "partNumber": "7549476, A 7549476",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -522,6 +546,8 @@
    "partNumber": "6411 9199261-01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -556,6 +582,8 @@
    "partNumber": "9 296 904-01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -590,6 +618,8 @@
    "partNumber": "7636791",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -616,6 +646,8 @@
    "partNumber": "7238665, 723866502, 7238665 02",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -650,6 +682,8 @@
    "partNumber": "61.35 9 280 915.9 01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -684,6 +718,8 @@
    "partNumber": "161 295 10",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -710,6 +746,8 @@
    "partNumber": "61319217594",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -736,6 +774,8 @@
    "partNumber": "9206664",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -770,6 +810,8 @@
    "partNumber": "917238107 , 9172381 07",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -804,6 +846,8 @@
    "partNumber": "65 20-9220832-02",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -838,6 +882,8 @@
    "partNumber": "9264923-01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -872,6 +918,8 @@
    "partNumber": "145373-10-BFS-LL",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -906,6 +954,8 @@
    "partNumber": "DS7Z9661A, DS7Z9A600B",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Ford",
@@ -940,6 +990,8 @@
    "partNumber": "oil",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -966,6 +1018,8 @@
    "partNumber": "13717612094",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1000,6 +1054,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1026,6 +1082,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1052,6 +1110,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "Out of Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1078,6 +1138,8 @@
    "partNumber": "7 261 216",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1112,6 +1174,8 @@
    "partNumber": "6582 9286699-01, 9286699-01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1160,6 +1224,8 @@
    "partNumber": "EF081005",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1194,6 +1260,8 @@
    "partNumber": "64318379621",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1228,6 +1296,8 @@
    "partNumber": "6131920293602",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1262,6 +1332,8 @@
    "partNumber": "13717612014",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1288,6 +1360,8 @@
    "partNumber": "9284974 01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1314,6 +1388,8 @@
    "partNumber": "11617564679",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1362,6 +1438,8 @@
    "partNumber": "61.359291508.901",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1417,6 +1495,8 @@
    "partNumber": "3452 6850783",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1479,6 +1559,8 @@
    "partNumber": "51459192935; 9192935",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1513,6 +1595,8 @@
    "partNumber": "7612095 01",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1547,6 +1631,8 @@
    "partNumber": "A-79709626",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1595,6 +1681,8 @@
    "partNumber": "7603514",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1621,6 +1709,8 @@
    "partNumber": "13583542",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1647,6 +1737,8 @@
    "partNumber": "BC",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1673,6 +1765,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1699,6 +1793,8 @@
    "partNumber": "13585879",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Buick",
@@ -1733,6 +1829,8 @@
    "partNumber": "52850610",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1767,6 +1865,8 @@
    "partNumber": "CH 2 143",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1793,6 +1893,8 @@
    "partNumber": "1810-10-6240",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Chevrolet",
@@ -1827,6 +1929,8 @@
    "partNumber": "5147 (69454)",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -1861,6 +1965,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1887,6 +1993,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "Out of Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1913,6 +2021,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "Out of Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1939,6 +2049,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1965,6 +2077,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -1991,6 +2105,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2017,6 +2133,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2043,6 +2161,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2069,6 +2189,8 @@
    "partNumber": "1364-7597870 102135-41",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2095,6 +2217,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2121,6 +2245,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2147,6 +2273,8 @@
    "partNumber": "DS73-9R504-GE, HS73-9R504",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Ford",
@@ -2181,6 +2309,8 @@
    "partNumber": "SP",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2207,6 +2337,8 @@
    "partNumber": "5LW29TRMAB",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Jeep",
@@ -2241,6 +2373,8 @@
    "partNumber": "MR-LS-BF10",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -2275,6 +2409,8 @@
    "partNumber": "13.53-1 435 950, 13531435950, 1 435 950, 1435950",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2301,6 +2437,8 @@
    "partNumber": "13541438794",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2327,6 +2465,8 @@
    "partNumber": "9383072 / 65129383072",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2353,6 +2493,8 @@
    "partNumber": "61357199885",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -2387,6 +2529,8 @@
    "partNumber": "61357199885",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -2421,6 +2565,8 @@
    "partNumber": "SP",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Toyota",
@@ -2469,6 +2615,8 @@
    "partNumber": "SP",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Toyota",
@@ -2531,6 +2679,8 @@
    "partNumber": "SP",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -2635,6 +2785,8 @@
    "partNumber": "958103649",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Porsche",
@@ -2669,6 +2821,8 @@
    "partNumber": null,
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2695,6 +2849,8 @@
    "partNumber": "1205862",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Toyota",
@@ -2729,6 +2885,8 @@
    "partNumber": "1-0-30ESP-5QT",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2755,6 +2913,8 @@
    "partNumber": "17700WAA02",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Toyota",
@@ -2789,6 +2949,8 @@
    "partNumber": "8693006-02",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "Toyota",
@@ -2823,6 +2985,8 @@
    "partNumber": "WK602",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2849,6 +3013,8 @@
    "partNumber": "17127580957",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2875,6 +3041,8 @@
    "partNumber": "11-53-7-639-997",
    "sourceLabel": "Shop Stock",
    "statusLabel": "In Stock",
+   "isKit": false,
+   "kitOf": [],
    "fitments": []
   },
   {
@@ -2901,6 +3069,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -2935,6 +3105,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -2969,6 +3141,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Sold",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3003,6 +3177,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3037,6 +3213,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3071,6 +3249,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3105,6 +3285,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3139,6 +3321,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3173,6 +3357,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3207,6 +3393,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3241,6 +3429,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3275,6 +3465,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3309,6 +3501,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3343,6 +3537,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3377,6 +3573,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3411,6 +3609,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3445,6 +3645,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3479,6 +3681,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3513,6 +3717,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3547,6 +3753,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3581,6 +3789,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3615,6 +3825,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3649,6 +3861,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3683,6 +3897,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3717,6 +3933,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3751,6 +3969,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3785,6 +4005,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3819,6 +4041,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3853,6 +4077,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3887,6 +4113,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3921,6 +4149,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3955,6 +4185,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -3989,6 +4221,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4023,6 +4257,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4057,6 +4293,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Sold",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4091,6 +4329,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4125,6 +4365,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4159,6 +4401,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4193,6 +4437,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4227,6 +4473,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4261,6 +4509,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4295,6 +4545,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4329,6 +4581,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4363,6 +4617,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4397,6 +4653,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4431,6 +4689,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Sold",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4465,6 +4725,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4499,6 +4761,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4533,6 +4797,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Sold",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4567,6 +4833,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4601,6 +4869,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4635,6 +4905,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4669,6 +4941,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4703,6 +4977,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4737,6 +5013,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4771,6 +5049,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4805,6 +5085,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4839,6 +5121,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4873,6 +5157,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4907,6 +5193,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4941,6 +5229,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -4975,6 +5265,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5009,6 +5301,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5043,6 +5337,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5077,6 +5373,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5111,6 +5409,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5145,6 +5445,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5179,6 +5481,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5213,6 +5517,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5247,6 +5553,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5281,6 +5589,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5315,6 +5625,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5349,6 +5661,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5383,6 +5697,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5417,6 +5733,8 @@
    "partNumber": null,
    "sourceLabel": "E90 335i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5451,6 +5769,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5485,6 +5805,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5519,6 +5841,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5553,6 +5877,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5587,6 +5913,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5621,6 +5949,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5655,6 +5985,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5689,6 +6021,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5723,6 +6057,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Keep for Swap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5757,6 +6093,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Undecided",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5791,6 +6129,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Undecided",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5825,6 +6165,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Undecided",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5859,6 +6201,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5893,6 +6237,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5927,6 +6273,8 @@
    "partNumber": "61 14 9 240 490 (likely)",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5961,6 +6309,8 @@
    "partNumber": "16 14 7 426 095 (verify)",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -5995,6 +6345,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6029,6 +6381,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6063,6 +6417,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6097,6 +6453,8 @@
    "partNumber": "(re-read stamping)",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6131,6 +6489,8 @@
    "partNumber": "51 47 7 222 132",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6165,6 +6525,8 @@
    "partNumber": "65 20 9 228 320 (verify)",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6199,6 +6561,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6233,6 +6597,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6267,6 +6633,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6301,6 +6669,8 @@
    "partNumber": "GA8HP45Z",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6335,6 +6705,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6369,6 +6741,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6403,6 +6777,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6437,6 +6813,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6471,6 +6849,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6505,6 +6885,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6539,6 +6921,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6573,6 +6957,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6607,6 +6993,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6641,6 +7029,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6675,6 +7065,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6709,6 +7101,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6743,6 +7137,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6777,6 +7173,8 @@
    "partNumber": "Xenon AHL per eBay: 7203255 L / 7203256 R (confirm on housing)",
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6811,6 +7209,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6845,6 +7245,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6879,6 +7281,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6913,6 +7317,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Pulled",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6947,6 +7353,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -6981,6 +7389,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7015,6 +7425,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7049,6 +7461,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7083,6 +7497,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7117,6 +7533,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7151,6 +7569,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7185,6 +7605,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7219,6 +7641,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7253,6 +7677,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7287,6 +7713,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7321,6 +7749,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7355,6 +7785,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7389,6 +7821,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7423,6 +7857,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7457,6 +7893,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7491,6 +7929,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7525,6 +7965,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7559,6 +8001,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7593,6 +8037,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7627,6 +8073,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7661,6 +8109,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7695,6 +8145,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7729,6 +8181,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Scrap",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7763,6 +8217,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7797,6 +8253,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7831,6 +8289,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7865,6 +8325,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7899,6 +8361,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7933,6 +8397,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -7967,6 +8433,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8001,6 +8469,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8035,6 +8505,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8069,6 +8541,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8103,6 +8577,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8137,6 +8613,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8171,6 +8649,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8205,6 +8685,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8239,6 +8721,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8273,6 +8757,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8307,6 +8793,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8341,6 +8829,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8375,6 +8865,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8409,6 +8901,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8443,6 +8937,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8477,6 +8973,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8511,6 +9009,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8545,6 +9045,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8579,6 +9081,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8613,6 +9117,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8647,6 +9153,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8681,6 +9189,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8715,6 +9225,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8749,6 +9261,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8783,6 +9297,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8817,6 +9333,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8851,6 +9369,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8885,6 +9405,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8919,6 +9441,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8953,6 +9477,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -8987,6 +9513,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9021,6 +9549,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9055,6 +9585,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9089,6 +9621,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9123,6 +9657,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9157,6 +9693,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9191,6 +9729,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9225,6 +9765,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9259,6 +9801,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9293,6 +9837,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9327,6 +9873,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9361,6 +9909,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9395,6 +9945,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9429,6 +9981,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9463,6 +10017,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9497,6 +10053,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9531,6 +10089,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9565,6 +10125,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9599,6 +10161,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9633,6 +10197,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9667,6 +10233,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9701,6 +10269,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9735,6 +10305,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9769,6 +10341,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9803,6 +10377,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9837,6 +10413,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9871,6 +10449,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9905,6 +10485,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9939,6 +10521,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -9973,6 +10557,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10007,6 +10593,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10041,6 +10629,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10075,6 +10665,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10109,6 +10701,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10143,6 +10737,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10177,6 +10773,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10211,6 +10809,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10245,6 +10845,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10279,6 +10881,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10313,6 +10917,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10347,6 +10953,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10381,6 +10989,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10415,6 +11025,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10449,6 +11061,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10483,6 +11097,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10517,6 +11133,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10551,6 +11169,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10585,6 +11205,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10619,6 +11241,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10653,6 +11277,8 @@
    "partNumber": null,
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "On Car",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10687,6 +11313,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10742,6 +11370,8 @@
    "partNumber": "11127624778 (per listings - confirm)",
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10797,6 +11427,8 @@
    "partNumber": "13518604229 / 7584461 (catalog - confirm on part)",
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10852,6 +11484,8 @@
    "partNumber": "11377603979 (catalog - confirm on part)",
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10907,6 +11541,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -10962,6 +11598,8 @@
    "partNumber": "11518635089 / 11517604027 (catalog - confirm on part)",
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11017,6 +11655,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11072,6 +11712,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11127,6 +11769,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11182,6 +11826,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11237,6 +11883,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11292,6 +11940,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11347,6 +11997,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11402,6 +12054,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11457,6 +12111,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11512,6 +12168,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11567,6 +12225,8 @@
    "partNumber": "11127588412 (per listings - confirm)",
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11622,6 +12282,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11677,6 +12339,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11732,6 +12396,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11787,6 +12453,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11842,6 +12510,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11897,6 +12567,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -11952,6 +12624,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12007,6 +12681,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12062,6 +12738,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "On Engine",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12117,6 +12795,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "Do Not Sell",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12172,6 +12852,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "Do Not Sell",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12227,6 +12909,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "Do Not Sell",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12282,6 +12966,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "Do Not Sell",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12337,6 +13023,8 @@
    "partNumber": null,
    "sourceLabel": "N20 Motor Part-Out",
    "statusLabel": "Do Not Sell",
+   "isKit": false,
+   "kitOf": [],
    "fitments": [
     {
      "make": "BMW",
@@ -12374,7 +13062,7 @@
    "slug": "528i-front-clip-complete-front-end-12-pieces",
    "name": "528i Front Clip \u2014 complete front end (12 pieces)",
    "description": "Complete F10 528i front clip: hood, both fenders, front bumper cover, impact bar, core support, headlights, grilles, hood latch, inner liners and air ducts. Radiator, condenser and fan are not included \u2014 add the cooling package. One buyer, one pickup. Local pickup at our shop preferred. Message us for photos.",
-   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet.",
+   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet. Built from F35, F36, F37, F38, F39, F40, F41, F42, F43, F44, F45, F46 \u2014 stock is shared with those rows, so selling either side draws the same pieces down.",
    "categorySlug": "body-exterior",
    "brandName": "BMW",
    "priceCents": 129000,
@@ -12390,6 +13078,21 @@
    "active": true,
    "inStock": true,
    "partNumber": null,
+   "isKit": true,
+   "kitOf": [
+    "F35",
+    "F36",
+    "F37",
+    "F38",
+    "F39",
+    "F40",
+    "F41",
+    "F42",
+    "F43",
+    "F44",
+    "F45",
+    "F46"
+   ],
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [
@@ -12408,7 +13111,7 @@
    "slug": "528i-cooling-package-radiator-condenser-fan-expansion-tank",
    "name": "528i Cooling Package \u2014 radiator, condenser, fan, expansion tank",
    "description": "F10 528i cooling package: radiator, A/C condenser, electric cooling fan assembly and coolant expansion tank. Priced as the front-clip upsell. Local pickup at our shop preferred. Message us for photos.",
-   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet.",
+   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet. Built from F27, F32, F33, F34 \u2014 stock is shared with those rows, so selling either side draws the same pieces down.",
    "categorySlug": "cooling",
    "brandName": "BMW",
    "priceCents": 29000,
@@ -12424,6 +13127,13 @@
    "active": true,
    "inStock": true,
    "partNumber": null,
+   "isKit": true,
+   "kitOf": [
+    "F27",
+    "F32",
+    "F33",
+    "F34"
+   ],
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [
@@ -12442,7 +13152,7 @@
    "slug": "528i-lockset-dme-cas4-2-keys-matched-set",
    "name": "528i Lockset \u2014 DME + CAS4 + 2 keys (matched set)",
    "description": "Matched F10 528i immobilizer set: DME (MEVD17.2.4), CAS4 module and two working keys. Sold only as a complete set \u2014 the pieces are useless apart. Local pickup at our shop preferred. Message us for photos.",
-   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet.",
+   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet. Built from F13, F130 \u2014 stock is shared with those rows, so selling either side draws the same pieces down.",
    "categorySlug": "electrical",
    "brandName": "BMW",
    "priceCents": 42500,
@@ -12458,6 +13168,11 @@
    "active": true,
    "inStock": true,
    "partNumber": null,
+   "isKit": true,
+   "kitOf": [
+    "F13",
+    "F130"
+   ],
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [
@@ -12476,7 +13191,7 @@
    "slug": "n20-electric-water-pump-thermostat",
    "name": "N20 Electric Water Pump + Thermostat",
    "description": "N20 electric water pump with the thermostat included at no extra charge. Replace both together \u2014 the usual N20 cooling service. Local pickup at our shop preferred. Message us for photos.",
-   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet.",
+   "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet. Built from N6, N7 \u2014 stock is shared with those rows, so selling either side draws the same pieces down.",
    "categorySlug": "cooling",
    "brandName": "BMW",
    "priceCents": 8000,
@@ -12492,6 +13207,11 @@
    "active": true,
    "inStock": true,
    "partNumber": null,
+   "isKit": true,
+   "kitOf": [
+    "N6",
+    "N7"
+   ],
    "sourceLabel": "F10 528i Part-Out",
    "statusLabel": "Bundle",
    "fitments": [

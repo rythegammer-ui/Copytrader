@@ -27,6 +27,36 @@ one `*@supplier.test` per supplier, one `*@installer.test` per shop.
    The success handler is idempotent (WebhookEvent ledger + in-tx status guard) and
    **must assert `intent.amount === order.totalCents` and currency** before flipping.
 
+## Inventory: dropship, one-off units, and kits (src/lib/inventory.ts)
+
+Three kinds of stock live in one `Part` table, and every availability check
+goes through `availableQty()` rather than reading `stockQty` directly.
+
+| Kind | Flags | Availability |
+| --- | --- | --- |
+| Dropshipped | `trackStock = false` | unbounded — the supplier holds it |
+| One-off unit | `trackStock = true` | `stockQty`; a part pulled off one car exists once |
+| Kit | `isKit = true` + `KitComponent` rows | the tightest component bound |
+
+A kit is not a unit the shop owns. The 528i front clip is an assembly of a hood,
+two fenders and nine more pieces the shop already lists individually. If the kit
+carried its own `stockQty`, the store would sell the kit *and* the hood inside
+it and owe somebody a refund. So a kit's sellable count is derived:
+`min over components of floor(component.stockQty / qtyPerKit)`, and selling
+either side draws the same physical pieces down. `Part.stockQty` on a kit row is
+only a mirror kept in sync by `resyncKits()` so catalog list pages need no join.
+
+- **Draw-down** happens once, in `drawDownPart()`, called from the payment
+  success handler. Each decrement is a compare-and-set (`updateMany` with a
+  `gte` guard) so two carts racing the last unit cannot both win under Postgres
+  READ COMMITTED. A kit that runs short mid-draw rolls back the components it
+  already took.
+- **Restore** happens in `restorePart()`, called on full-line refunds and on
+  cancellation of a paid order.
+- Losing the race never fails a successful charge: the line is flagged
+  `oversold` in the EventLog and admins are notified to sort out the physical
+  part.
+
 ## Fitment model
 
 `Make → VehicleModel → Engine` hierarchy. A part carries `Fitment` rows =

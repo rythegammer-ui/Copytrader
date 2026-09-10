@@ -17,6 +17,7 @@ import { blocksNeeded, isSlotAvailable, lockShop, nextFreeSlot } from "@/lib/slo
 import type { PaymentProviderApi } from "@/lib/payments/provider";
 import { mockProvider } from "@/lib/payments/mock";
 import { stripeProvider } from "@/lib/payments/stripe";
+import { drawDownPart } from "@/lib/inventory";
 
 export function stripeConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
@@ -303,22 +304,11 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
       // A part pulled from one car exists once. Checkout already validated
       // availability; this is the authoritative decrement.
       for (const item of liveItems) {
-        const part = await tx.part.findUnique({
-          where: { id: item.partId },
-          select: { trackStock: true, name: true },
-        });
-        if (!part?.trackStock) continue;
-        const drawn = await tx.part.updateMany({
-          where: { id: item.partId, stockQty: { gte: item.qty } },
-          data: { stockQty: { decrement: item.qty } },
-        });
-        if (drawn.count === 0) {
+        const drawn = await drawDownPart(tx, item.partId, item.qty);
+        if (!drawn.ok) {
           // Two carts raced the last unit. The payment stands — flag it so a
           // human sorts out the physical part rather than failing the charge.
-          await tx.part.update({
-            where: { id: item.partId },
-            data: { stockQty: 0, inStock: false },
-          });
+          const part = { name: drawn.name };
           await logEvent(tx, {
             orderId: order.id,
             entityType: EntityType.PART,
@@ -334,11 +324,6 @@ function runPaymentSucceededTx(input: PaymentEventInput): Promise<SucceededResul
             title: `Oversold: ${part.name}`,
             body: `Order ${order.orderNumber} claimed more of this part than was on hand. Confirm stock or refund the line.`,
             href: `/admin/orders/${order.id}`,
-          });
-        } else {
-          await tx.part.updateMany({
-            where: { id: item.partId, stockQty: 0 },
-            data: { inStock: false },
           });
         }
       }

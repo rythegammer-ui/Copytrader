@@ -88,6 +88,10 @@ interface CatalogPart {
   weightGrams: number;
   active: boolean;
   inStock: boolean;
+  isKit: boolean;
+  universalFit: boolean;
+  /** source refs of the rows this kit is assembled from */
+  kitOf: string[];
   partNumber: string | null;
   sourceLabel: string;
   statusLabel: string;
@@ -218,12 +222,13 @@ async function main(): Promise<void> {
       weightGrams: p.weightGrams,
       installEligible: p.installEligible,
       laborHoursTenths: p.laborHoursTenths,
-      universalFit: false,
+      universalFit: p.universalFit,
       inStock: p.inStock,
       active: p.active,
       // Every line here is finite stock — one car yields one alternator.
       trackStock: true,
       stockQty: p.stockQty,
+      isKit: p.isKit,
       condition: p.condition,
       localPickupOnly: p.localPickupOnly,
       acceptsOffers: p.acceptsOffers,
@@ -260,6 +265,49 @@ async function main(): Promise<void> {
     }
   }
 
+  // --- kits ---------------------------------------------------------------
+  // A bundle is not a unit we own; it is an assembly of units we already own.
+  // Linking it to its pieces is what stops the front clip and the hood inside
+  // it from both being sold when the shop has one hood.
+  const partIdBySku = new Map(
+    (
+      await db.part.findMany({
+        where: { supplierId: supplier.id },
+        select: { id: true, sku: true },
+      })
+    ).map((r) => [r.sku, r.id]),
+  );
+  let kitLinks = 0;
+  for (const p of parts.filter((x) => x.isKit)) {
+    const kitId = partIdBySku.get(p.sku);
+    if (!kitId) continue;
+    // Rebuild rather than diff — membership is derived from the sheet.
+    await db.kitComponent.deleteMany({ where: { kitId } });
+    for (const ref of p.kitOf) {
+      const componentId = partIdBySku.get(`PPP-${ref}`);
+      if (!componentId) {
+        console.warn(`  ! kit ${p.sku} references ${ref}, which is not in the catalog`);
+        continue;
+      }
+      await db.kitComponent.create({ data: { kitId, componentId, qty: 1 } });
+      kitLinks++;
+    }
+    // The kit can only ever offer as many sets as its scarcest piece allows.
+    const pieces = await db.kitComponent.findMany({
+      where: { kitId },
+      select: { qty: true, component: { select: { trackStock: true, stockQty: true } } },
+    });
+    const buildable = pieces.reduce((min, piece) => {
+      if (!piece.component.trackStock) return min;
+      return Math.min(min, Math.floor(piece.component.stockQty / Math.max(1, piece.qty)));
+    }, Number.POSITIVE_INFINITY);
+    const qty = Number.isFinite(buildable) ? buildable : 1;
+    await db.part.update({
+      where: { id: kitId },
+      data: { stockQty: qty, inStock: qty > 0 },
+    });
+  }
+
   // --- demo catalog -------------------------------------------------------
   let demoHidden = 0;
   if (!KEEP_DEMO) {
@@ -279,6 +327,7 @@ async function main(): Promise<void> {
   console.log(`  parts created: ${created}, updated: ${updated}${RESET_STOCK ? " (stock levels reset from the sheet)" : " (live stock preserved)"}`);
   console.log(`  listed for sale: ${listed} (\$${((listedValue._sum.priceCents ?? 0) / 100).toLocaleString("en-US")})`);
   console.log(`  unlisted (no price / not for sale): ${parts.length - listed}`);
+  console.log(`  kit component links: ${kitLinks}`);
   if (demoHidden) console.log(`  demo seed parts deactivated: ${demoHidden} (re-run with --keep-demo to keep them)`);
 }
 

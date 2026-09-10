@@ -9,6 +9,19 @@ import pandas as pd
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 
+# The shop-stock rows arrive as raw eBay-style keyword soup with a unit cost
+# and no retail price, so they cannot be mapped by table lookup the way the
+# part-out rows can. data/ppp-shop-overrides.json carries the reviewed
+# per-row decision (clean title, category, fitment, price, labour) and is
+# applied on top of the mechanical mapping below. Absent, shop rows keep the
+# mechanical result and stay unlisted.
+import os
+OVERRIDES = {}
+_ov_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                        "data", "ppp-shop-overrides.json")
+if os.path.exists(_ov_path):
+    OVERRIDES = {r["id"]: r for r in json.load(open(_ov_path))["rows"]}
+
 # --- price semantics -------------------------------------------------------
 # "Ask $ (line)" is a LOT price: F47 is four doors for $1,120 total, not each.
 # So a part-out row becomes ONE product at the ask price with one lot in stock.
@@ -209,6 +222,10 @@ def slugify(s):
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", s.lower())).strip("-")[:70]
 
 parts, seen_slugs = [], {}
+# Channel "Bundle-*" marks a row as a piece of a package the shop lists as one
+# item. Collected here so the bundle product can be linked to its pieces and
+# the two can never be sold twice over.
+bundle_members = {}
 for _, row in df.iterrows():
     ref = clean(row["ID"])
     if not ref:
@@ -294,6 +311,9 @@ for _, row in df.iterrows():
     if qty > 1 and not is_shop:
         internal.append(f"Lot of {qty} pieces sold as one unit at the line ask.")
 
+    if (channel or "").startswith("Bundle-"):
+        bundle_members.setdefault(channel, []).append(ref)
+
     parts.append({
         "sourceRef": ref, "sku": f"PPP-{ref}", "slug": slug, "name": name,
         "description": description,
@@ -308,44 +328,111 @@ for _, row in df.iterrows():
         "weightGrams": WEIGHT.get(cat, 2000),
         "active": listable, "inStock": stock_qty > 0,
         "partNumber": pn, "sourceLabel": source, "statusLabel": status,
+        "isKit": False, "kitOf": [], "universalFit": False,
         "fitments": [{"make": m, "model": mo, "yearFrom": y1, "yearTo": y2, "engine": e}
                      for (m, mo, y1, y2, e) in fitments_for(row["Fits / Platform"], source)],
     })
 
 # --- bundles ---------------------------------------------------------------
 BUNDLES = [
-    ("PPP-BUNDLE-CLIP", "528i Front Clip — complete front end (12 pieces)", 129000, 103000,
+    ("Bundle-Clip", "PPP-BUNDLE-CLIP", "528i Front Clip — complete front end (12 pieces)", 129000, 103000,
      "body-exterior", "F10 528i (N20)",
      "Complete F10 528i front clip: hood, both fenders, front bumper cover, impact bar, core "
      "support, headlights, grilles, hood latch, inner liners and air ducts. Radiator, condenser "
      "and fan are not included — add the cooling package. One buyer, one pickup.", True, 40),
-    ("PPP-BUNDLE-COOLING", "528i Cooling Package — radiator, condenser, fan, expansion tank", 29000, 23000,
+    ("Bundle-Cooling", "PPP-BUNDLE-COOLING", "528i Cooling Package — radiator, condenser, fan, expansion tank", 29000, 23000,
      "cooling", "F10 528i (N20)",
      "F10 528i cooling package: radiator, A/C condenser, electric cooling fan assembly and "
      "coolant expansion tank. Priced as the front-clip upsell.", True, 30),
-    ("PPP-BUNDLE-LOCKSET", "528i Lockset — DME + CAS4 + 2 keys (matched set)", 42500, 34000,
+    ("Bundle-Lockset", "PPP-BUNDLE-LOCKSET", "528i Lockset — DME + CAS4 + 2 keys (matched set)", 42500, 34000,
      "electrical", "F10 528i (N20)",
      "Matched F10 528i immobilizer set: DME (MEVD17.2.4), CAS4 module and two working keys. "
      "Sold only as a complete set — the pieces are useless apart.", True, 20),
-    ("PPP-BUNDLE-WATERPUMP", "N20 Electric Water Pump + Thermostat", 8000, 6000,
+    ("Bundle-WaterPump", "PPP-BUNDLE-WATERPUMP", "N20 Electric Water Pump + Thermostat", 8000, 6000,
      "cooling", "N20 (2012-16)",
      "N20 electric water pump with the thermostat included at no extra charge. Replace both "
      "together — the usual N20 cooling service.", True, 25),
 ]
-for sku, name, price, floor, cat, platform, desc, inst, tenths in BUNDLES:
+for channel_key, sku, name, price, floor, cat, platform, desc, inst, tenths in BUNDLES:
     parts.append({
         "sourceRef": sku, "sku": sku, "slug": slugify(name), "name": name,
         "description": desc + " Local pickup at our shop preferred. Message us for photos.",
-        "internalNotes": "Bundle from the Master Inventory summary. Sum-of-parts and discount per that sheet.",
+        "internalNotes": (
+            "Bundle from the Master Inventory summary. Sum-of-parts and discount per that "
+            f"sheet. Built from {', '.join(bundle_members.get(channel_key, [])) or 'no linked rows'} — "
+            "stock is shared with those rows, so selling either side draws the same pieces down."),
         "categorySlug": cat, "brandName": "BMW",
         "priceCents": price, "floorPriceCents": floor, "supplierCostCents": 0,
         "stockQty": 1, "condition": "USED", "localPickupOnly": True, "acceptsOffers": False,
         "installEligible": inst, "laborHoursTenths": tenths, "weightGrams": 40000,
         "active": True, "inStock": True, "partNumber": None,
+        "isKit": True, "kitOf": bundle_members.get(channel_key, []), "universalFit": False,
         "sourceLabel": "F10 528i Part-Out", "statusLabel": "Bundle",
         "fitments": [{"make": m, "model": mo, "yearFrom": y1, "yearTo": y2, "engine": e}
                      for (m, mo, y1, y2, e) in TOKENS[platform]],
     })
+
+# --- shop-stock overrides --------------------------------------------------
+# Applied after the mechanical pass so the part-out rows keep their existing
+# behaviour untouched. A shop row goes live only if it is a thing a customer
+# facing store should actually sell, carries a price, and is either on the
+# shelf or a restockable consumable the shop has run out of.
+applied = 0
+for p in parts:
+    ov = OVERRIDES.get(p["sourceRef"])
+    if not ov:
+        continue
+    applied += 1
+    p["name"] = ov["name"]
+    p["description"] = ov["description"]
+    p["categorySlug"] = ov["categorySlug"]
+    p["brandName"] = ov["brandName"] or p["brandName"]
+    p["condition"] = ov["condition"]
+    p["priceCents"] = int(round(float(ov["priceUsd"]) * 100))
+    p["floorPriceCents"] = int(round(float(ov["floorUsd"]) * 100)) or None
+    p["localPickupOnly"] = bool(ov["localPickupOnly"])
+    p["acceptsOffers"] = bool(ov["acceptsOffers"])
+    p["installEligible"] = bool(ov["installEligible"])
+    p["laborHoursTenths"] = int(ov["laborHoursTenths"])
+    p["weightGrams"] = int(ov["weightGrams"])
+    p["universalFit"] = bool(ov["universalFit"])
+    p["partNumber"] = ov["partNumber"] or p["partNumber"]
+    p["slug"] = slugify(f"{ov['name']}-{p['sourceRef']}")
+    p["fitments"] = [
+        {"make": f["make"], "model": f["model"], "yearFrom": int(f["yearFrom"]),
+         "yearTo": int(f["yearTo"]), "engine": (f["engine"] or None)}
+        for f in ov["fitments"]
+    ]
+    # "Out of Stock" is a consumable the shop ran dry, not a part that no
+    # longer exists — list it so it is visible and buyable again on restock.
+    restockable = p["statusLabel"] == "Out of Stock"
+    p["active"] = bool(ov["retailSuitable"]) and p["priceCents"] > 0 and (
+        p["stockQty"] > 0 or restockable)
+    p["inStock"] = p["stockQty"] > 0
+
+    notes = []
+    if ov["retailReason"]:
+        notes.append(f"NOT LISTED: {ov['retailReason']}")
+    basis = ov["priceBasis"]
+    if basis == "SHEET_COST":
+        notes.append("Price = the Cost $ column of the shop-system export, per Summary open "
+                     "item #12. Retail was blank on every shop-stock line.")
+    elif basis == "MARKET_EST":
+        notes.append(f"PRICE IS AN ESTIMATE — no cost or ask in the export. {ov['priceRationale']} "
+                     "Confirm before relying on it.")
+    if ov.get("priceSuspect"):
+        notes.append("This number may be wholesale rather than retail — check the margin.")
+    if ov["notes"]:
+        notes.append(ov["notes"])
+    p["internalNotes"] = " ".join([n for n in ([p["internalNotes"]] + notes) if n]) or None
+
+# Slugs must stay unique after the retitling above.
+used = {}
+for p in parts:
+    base = p["slug"]
+    if base in used:
+        p["slug"] = f"{base}-{p['sourceRef'].lower()}"
+    used[p["slug"]] = True
 
 # Lockset components sell only as the set.
 for p in parts:
@@ -369,6 +456,7 @@ json.dump({"generatedFrom": SRC.split("/")[-1], "parts": parts}, open(OUT, "w"),
 
 listed = [p for p in parts if p["active"]]
 print(f"parts={len(parts)}  listed={len(listed)}  unlisted={len(parts)-len(listed)}")
+print(f"shop-stock overrides applied = {applied}")
 print(f"listed value = ${sum(p['priceCents'] for p in listed)/100:,.2f}")
 print(f"shop-stock cost basis = ${sum(p['supplierCostCents']*p['stockQty'] for p in parts if p['sourceLabel']=='Shop Stock')/100:,.2f}")
 print("categories:", {c: sum(1 for p in parts if p['categorySlug'] == c) for c in sorted({p['categorySlug'] for p in parts})})

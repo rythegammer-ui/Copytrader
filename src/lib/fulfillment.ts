@@ -17,6 +17,7 @@ import { formatShopTime } from "@/lib/format";
 import { getProvider } from "@/lib/payments";
 import { computeRefund, type RefundOrderSnapshot, type RefundSelection } from "@/lib/refunds";
 import { blocksNeeded, isSlotAvailable, lockShop } from "@/lib/slots";
+import { restorePart } from "@/lib/inventory";
 import {
   SYSTEM_ACTOR,
   TransitionError,
@@ -36,15 +37,8 @@ async function restoreStock(
   items: { partId: string; qty: number }[],
 ): Promise<void> {
   for (const item of items) {
-    const part = await tx.part.findUnique({
-      where: { id: item.partId },
-      select: { trackStock: true },
-    });
-    if (!part?.trackStock) continue;
-    await tx.part.update({
-      where: { id: item.partId },
-      data: { stockQty: { increment: item.qty }, inStock: true },
-    });
+    // Kits give their components back, not a count of their own.
+    await restorePart(tx, item.partId, item.qty);
   }
 }
 

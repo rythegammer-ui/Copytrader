@@ -46,6 +46,11 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
         include: { model: { include: { make: true } }, engine: true },
         orderBy: [{ yearFrom: "asc" }],
       },
+      // A kit is priced and sold as one item, but the buyer deserves to see
+      // exactly which pieces they are getting.
+      components: {
+        include: { component: { select: { name: true, slug: true, active: true } } },
+      },
     },
   });
   if (!part || !part.active) notFound();
@@ -194,6 +199,35 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
               {part.description}
             </p>
           </section>
+
+          {part.isKit && part.components.length > 0 ? (
+            <section>
+              <h2 className="mb-2 text-lg font-bold text-slate-900">
+                What&rsquo;s in this package ({part.components.length} pieces)
+              </h2>
+              <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+                {part.components.map((c) => (
+                  <li key={c.id} className="px-4 py-2 text-sm text-slate-700">
+                    {c.component.active ? (
+                      <Link
+                        href={`/parts/${c.component.slug}`}
+                        className="text-slate-900 underline-offset-2 hover:underline"
+                      >
+                        {c.component.name}
+                      </Link>
+                    ) : (
+                      c.component.name
+                    )}
+                    {c.qty > 1 ? <span className="text-slate-500"> &times;{c.qty}</span> : null}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-slate-500">
+                Priced as one package. These pieces are also sold separately, so the package sells
+                only while every piece is still on the shelf.
+              </p>
+            </section>
+          ) : null}
 
           <section>
             <h2 className="mb-2 text-lg font-bold text-slate-900">Fitment</h2>

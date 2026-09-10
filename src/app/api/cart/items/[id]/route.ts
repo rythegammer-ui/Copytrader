@@ -4,6 +4,7 @@ import { getCart } from "@/lib/cart";
 import { db } from "@/lib/db";
 import { ShipTo, zShipTo } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
+import { availableQty, isShort, loadKitPieces, shortMessage } from "@/lib/inventory";
 
 export const dynamic = "force-dynamic";
 
@@ -71,15 +72,14 @@ export const PATCH = api(async (req, ctx) => {
   }
 
   const nextQty = body.qty ?? item.qty;
-  if (item.part.trackStock && nextQty > item.part.stockQty) {
-    throw new ApiError(
-      "INSUFFICIENT_STOCK",
-      item.part.stockQty === 0
-        ? `${item.part.name} just sold out`
-        : `Only ${item.part.stockQty} of ${item.part.name} left`,
-      409,
-      { available: item.part.stockQty },
-    );
+  const available = availableQty(
+    item.part,
+    (await loadKitPieces(db, [item.partId])).get(item.partId) ?? [],
+  );
+  if (isShort(available, nextQty)) {
+    throw new ApiError("INSUFFICIENT_STOCK", shortMessage(item.part.name, available), 409, {
+      available,
+    });
   }
 
   const updated = await db.cartItem.update({

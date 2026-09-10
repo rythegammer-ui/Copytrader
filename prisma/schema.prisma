@@ -149,6 +149,7 @@ model Part {
   floorPriceCents Int? // ADMIN ONLY - lowest acceptable price, never exposed publicly
   internalNotes   String? // ADMIN ONLY - never exposed publicly
   sourceRef       String? // row id in the source inventory sheet (e.g. "F26")
+  isKit           Boolean @default(false) // sells as one unit but draws its stock from components
 
   category   Category    @relation(fields: [categoryId], references: [id])
   brand      Brand       @relation(fields: [brandId], references: [id])
@@ -157,12 +158,32 @@ model Part {
   orderItems OrderItem[]
   cartItems  CartItem[]
 
+  // A kit holds no stock of its own: what it can sell is bounded by the
+  // components it is assembled from, and selling either side draws the same
+  // physical units down. This is what stops the front-clip bundle and the
+  // hood inside it from both being sold when only one hood exists.
+  components KitComponent[] @relation("KitParent")
+  usedInKits KitComponent[] @relation("KitPiece")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
   @@index([supplierId])
   @@index([brandId])
+}
+
+model KitComponent {
+  id          String @id @default(cuid())
+  kitId       String
+  componentId String
+  qty         Int    @default(1) // units of the component consumed per kit sold
+
+  kit       Part @relation("KitParent", fields: [kitId], references: [id], onDelete: Cascade)
+  component Part @relation("KitPiece", fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@unique([kitId, componentId])
+  @@index([componentId])
 }
 
 model Make {

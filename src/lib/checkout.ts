@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { EntityType, OrderStatus, PaymentStatus, ShipTo } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 import { logEvent } from "@/lib/events";
+import { availableQty, isShort, loadKitPieces, shortMessage } from "@/lib/inventory";
 import {
   MIN_ORDER_TOTAL_CENTS,
   priceQuote,
@@ -75,6 +76,13 @@ export async function quoteCart(cart: CartWithItems): Promise<Quote> {
 export async function validateCartForCheckout(cart: CartWithItems): Promise<void> {
   if (cart.items.length === 0) throw new ApiError("EMPTY_CART", "Your cart is empty", 400);
 
+  // Kits are bounded by their components, so resolve availability for the
+  // whole cart in one query rather than per line.
+  const kitAvailability = await loadKitPieces(
+    db,
+    cart.items.filter((i) => i.part.isKit).map((i) => i.partId),
+  );
+
   for (const item of cart.items) {
     if (!item.part.active) {
       throw new ApiError("PART_UNAVAILABLE", `${item.part.name} is no longer available`, 409, {
@@ -90,15 +98,12 @@ export async function validateCartForCheckout(cart: CartWithItems): Promise<void
       throw new ApiError("BAD_QTY", "Quantity must be between 1 and 10", 400, { cartItemId: item.id });
     }
     // One-off used parts: never let an order exceed what is physically on hand.
-    if (item.part.trackStock && item.qty > item.part.stockQty) {
-      throw new ApiError(
-        "INSUFFICIENT_STOCK",
-        item.part.stockQty === 0
-          ? `${item.part.name} just sold out`
-          : `Only ${item.part.stockQty} of ${item.part.name} left`,
-        409,
-        { cartItemId: item.id, available: item.part.stockQty },
-      );
+    const available = availableQty(item.part, kitAvailability.get(item.partId) ?? []);
+    if (isShort(available, item.qty)) {
+      throw new ApiError("INSUFFICIENT_STOCK", shortMessage(item.part.name, available), 409, {
+        cartItemId: item.id,
+        available,
+      });
     }
     if (item.withInstall) {
       if (!item.part.installEligible) {
