@@ -67,7 +67,7 @@
   {
    "id": "S3",
    "name": "BMW F30 F32 F80 F82 Mass Air Flow Sensor (MAF)",
-   "description": "OEM mass air flow sensor, BMW part 13627602038 (Bosch reference 0280218266), pulled from an F3x-platform car. The raw listing calls out F30 and F32 3/4 Series along with F80/F82 M3 and M4 applications from 2012-2020. Used sensor sold as-is with no bench test recorded, so verify the part number against your existing sensor before ordering.",
+   "description": "OEM mass air flow sensor, BMW part 13627602038 (Bosch reference 0280218266). Listed here for the N20 2.0L turbo four: F30 3 Series 2012-2016 and F32 4 Series 2014-2016. The original shop listing also named F80 M3 and F82 M4, which run a different engine and take a different sensor, so those are not claimed. Match the part number against your existing sensor before ordering. Used sensor sold as-is with no bench test recorded.",
    "categorySlug": "fuel-air",
    "brandName": "BMW",
    "condition": "USED",
@@ -312,7 +312,7 @@
   {
    "id": "S10",
    "name": "BMW S1000RR Akrapovic OEM Slip-On Exhaust Silencer",
-   "description": "Akrapovic slip-on muffler / silencer can, BMW OEM accessory part 9830141, for the 2018-2024 S1000RR. This is the factory-supplied Akrapovic unit rather than an aftermarket copy. Used condition as removed - inspect the can, hardware and mounting strap; no baffle or dB testing is recorded in our export.",
+   "description": "Akrapovic slip-on muffler / silencer can, BMW OEM accessory part 9830141, for the 2019-2024 S1000RR. The S1000RR was redesigned for 2019 with different exhaust routing and silencer mounting, so this can is for the later bike and will not fit the earlier generation. This is the factory-supplied Akrapovic unit rather than an aftermarket copy. Used condition as removed - inspect the can, hardware and mounting strap; no baffle or dB testing is recorded in our export.",
    "categorySlug": "exhaust",
    "brandName": "Akrapovic",
    "condition": "USED",
@@ -1145,7 +1145,7 @@
   {
    "id": "S36",
    "name": "BMW F10 528i 2.0L Air Cleaner Filter Box Housing - OEM",
-   "description": "OEM BMW air cleaner filter box (airbox) housing, part number 13717612014, from a 528i with the 2.0L N20 turbo four - the F10-generation 5 Series, 2011-2016. Used take-off; check the housing halves, clips and the sealing face for cracks, and plan on a new filter element. Sold as the housing assembly only.",
+   "description": "OEM BMW air cleaner filter box (airbox) housing, part number 13717612014, from a 528i with the 2.0L N20 turbo four. It fits the F10-generation 5 Series from 2012-2016; the 2011 528i shipped with the 3.0L naturally aspirated six and takes a different airbox. Used take-off; check the housing halves, clips and the sealing face for cracks, and plan on a new filter element. Sold as the housing assembly only.",
    "categorySlug": "fuel-air",
    "brandName": "BMW",
    "condition": "USED",

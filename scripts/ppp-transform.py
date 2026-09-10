@@ -466,6 +466,22 @@ for p in parts:
     for f in p["fitments"]:
         if not (1980 <= f["yearFrom"] <= f["yearTo"] <= 2030):
             problems.append(f"{p['sourceRef']}: bad year range {f['yearFrom']}-{f['yearTo']}")
+    # The description is the only place a buyer reads fitment in prose, so a
+    # year span named there that the fitment table does not carry is a
+    # contradiction the customer sees — and the prose is what they trust.
+    # This deliberately also rejects negative phrasing ("will not fit the
+    # 2010-2018 bike"): prose that names only ranges the part does fit cannot
+    # be misread by someone skimming for their own model year.
+    spans = {(f["yearFrom"], f["yearTo"]) for f in p["fitments"]}
+    if spans:
+        for m in re.finditer(r"\b(19|20)(\d{2})\s*[-\u2013\u2014]\s*(19|20)?(\d{2})\b",
+                             p["description"]):
+            a = int(m.group(1) + m.group(2))
+            b = int((m.group(3) or m.group(1)) + m.group(4))
+            if b > a and (a, b) not in spans:
+                problems.append(
+                    f"{p['sourceRef']}: description says {a}-{b} but the fitments are "
+                    f"{sorted(spans)}")
 if problems:
     print("OVERRIDE VALIDATION FAILED:")
     for pr in problems:
