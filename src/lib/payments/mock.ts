@@ -27,9 +27,13 @@ export const mockProvider: PaymentProviderApi = {
     return { amountCents: payment.amountCents, currency: payment.currency, status: payment.status };
   },
 
-  async createRefund() {
+  async createRefund(_intentId, _amountCents, idempotencyKey) {
+    // Derive the id from the key so the mock is idempotent too: the same
+    // logical refund retried returns the same refundId, exactly as Stripe
+    // does. Parity here is what lets the demo path exercise the real one.
+    const suffix = crypto.createHash("sha256").update(idempotencyKey).digest("hex").slice(0, 24);
     return {
-      refundId: `mock_re_${crypto.randomUUID().replace(/-/g, "")}`,
+      refundId: `mock_re_${suffix}`,
       status: RefundStatus.SUCCEEDED,
     };
   },

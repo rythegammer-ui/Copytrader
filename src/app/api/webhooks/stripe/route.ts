@@ -1,7 +1,7 @@
 import type Stripe from "stripe";
 import { api, jsonOk } from "@/lib/api";
 import { db } from "@/lib/db";
-import { EntityType, PayProvider, RefundStatus, Role } from "@/lib/enums";
+import { EntityType, OrderStatus, PayProvider, RefundStatus, Role } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 import { logEvent, notifyMany } from "@/lib/events";
 import { handlePaymentFailed, handlePaymentSucceeded, stripeConfigured } from "@/lib/payments";
@@ -81,8 +81,37 @@ export const POST = api(
               ? RefundStatus.FAILED
               : RefundStatus.PENDING;
         if (nextStatus !== refund.status) {
+          // A refund that had been recorded was already added to the order's
+          // refundedTotalCents. If the provider now says it failed, that money
+          // never went back to the customer, so it has to come off the total —
+          // otherwise the order is booked as refunded, the balance is gone,
+          // and nobody can ever refund it again.
+          const wasCounted = Boolean(refund.providerRefundId) && refund.status !== RefundStatus.FAILED;
+          const reverse = wasCounted && nextStatus === RefundStatus.FAILED;
           await db.$transaction(async (tx) => {
             await tx.refund.update({ where: { id: refund.id }, data: { status: nextStatus } });
+            if (reverse) {
+              await tx.order.update({
+                where: { id: refund.orderId },
+                data: { refundedTotalCents: { decrement: refund.amountCents } },
+              });
+              // The order may have been flipped to REFUNDED on the strength of
+              // this refund. Put it back to a live status now the money is not
+              // actually returned.
+              const after = await tx.order.findUniqueOrThrow({
+                where: { id: refund.orderId },
+                select: { totalCents: true, refundedTotalCents: true, status: true },
+              });
+              if (
+                after.status === OrderStatus.REFUNDED &&
+                after.refundedTotalCents < after.totalCents
+              ) {
+                await tx.order.update({
+                  where: { id: refund.orderId },
+                  data: { status: OrderStatus.PAID },
+                });
+              }
+            }
             await logEvent(tx, {
               orderId: refund.orderId,
               entityType: EntityType.REFUND,
@@ -93,7 +122,9 @@ export const POST = api(
               message:
                 nextStatus === RefundStatus.SUCCEEDED
                   ? `Refund of $${(refund.amountCents / 100).toFixed(2)} settled`
-                  : `Stripe reports the refund ${stripeRefund.status} — review required`,
+                  : reverse
+                    ? `Stripe reports the refund ${stripeRefund.status}. $${(refund.amountCents / 100).toFixed(2)} put back on the order balance — the customer did NOT receive this money. Any items marked refunded for it need reviewing.`
+                    : `Stripe reports the refund ${stripeRefund.status} — review required`,
             });
             if (nextStatus === RefundStatus.FAILED) {
               const admins = await tx.user.findMany({
@@ -103,10 +134,94 @@ export const POST = api(
               await notifyMany(tx, admins.map((u) => u.id), {
                 type: "refund_failed",
                 title: `Refund failed on ${refund.order.orderNumber}`,
-                body: "Stripe could not complete a refund that was recorded as issued. Reconcile manually.",
+                body: "Stripe could not complete a refund that was recorded as issued. The amount has been put back on the order balance, but any items marked refunded for it still need reviewing.",
                 href: `/admin/orders/${refund.orderId}`,
               });
             }
+          });
+        }
+      }
+    } else if (event.type === "charge.dispute.created") {
+      // A chargeback. Stripe has already pulled the money back and the shop
+      // has a deadline to respond in the dashboard. Nothing here can contest
+      // it, but an order silently losing its funds is far worse than a noisy
+      // alert, so make it visible immediately.
+      const dispute = event.data.object as Stripe.Dispute;
+      const intentId =
+        typeof dispute.payment_intent === "string"
+          ? dispute.payment_intent
+          : dispute.payment_intent?.id;
+      const payment = intentId
+        ? await db.payment.findUnique({
+            where: { providerIntentId: intentId },
+            include: { order: true },
+          })
+        : null;
+      if (payment) {
+        await db.$transaction(async (tx) => {
+          await logEvent(tx, {
+            orderId: payment.orderId,
+            entityType: EntityType.PAYMENT,
+            entityId: payment.id,
+            action: "disputed",
+            internal: true,
+            actorRole: "SYSTEM",
+            message: `Chargeback opened for $${(dispute.amount / 100).toFixed(2)} (reason: ${dispute.reason}). Respond in the Stripe dashboard before the deadline.`,
+          });
+          const admins = await tx.user.findMany({
+            where: { role: Role.ADMIN },
+            select: { id: true },
+          });
+          await notifyMany(tx, admins.map((u) => u.id), {
+            type: "dispute_opened",
+            title: `Chargeback on ${payment.order.orderNumber}`,
+            body: `A customer disputed $${(dispute.amount / 100).toFixed(2)}. Respond in Stripe before the deadline or the money is lost.`,
+            href: `/admin/orders/${payment.orderId}`,
+          });
+        });
+      }
+    } else if (event.type === "charge.refunded") {
+      // A refund issued straight from the Stripe dashboard rather than through
+      // the app. Reconciling it automatically risks double-counting against a
+      // refund the app already recorded, so compare and report the gap instead
+      // of guessing.
+      const charge = event.data.object as Stripe.Charge;
+      const intentId =
+        typeof charge.payment_intent === "string"
+          ? charge.payment_intent
+          : charge.payment_intent?.id;
+      const payment = intentId
+        ? await db.payment.findUnique({
+            where: { providerIntentId: intentId },
+            include: { order: true, refunds: true },
+          })
+        : null;
+      if (payment) {
+        const recorded = payment.refunds
+          .filter((r) => r.status !== RefundStatus.FAILED)
+          .reduce((sum, r) => sum + r.amountCents, 0);
+        if (charge.amount_refunded > recorded) {
+          const gap = charge.amount_refunded - recorded;
+          await db.$transaction(async (tx) => {
+            await logEvent(tx, {
+              orderId: payment.orderId,
+              entityType: EntityType.PAYMENT,
+              entityId: payment.id,
+              action: "external_refund",
+              internal: true,
+              actorRole: "SYSTEM",
+              message: `Stripe reports $${(charge.amount_refunded / 100).toFixed(2)} refunded on this charge but only $${(recorded / 100).toFixed(2)} is recorded here — $${(gap / 100).toFixed(2)} was refunded outside the app. The order totals do not include it.`,
+            });
+            const admins = await tx.user.findMany({
+              where: { role: Role.ADMIN },
+              select: { id: true },
+            });
+            await notifyMany(tx, admins.map((u) => u.id), {
+              type: "external_refund",
+              title: `Refund made outside the app on ${payment.order.orderNumber}`,
+              body: `$${(gap / 100).toFixed(2)} was refunded in Stripe but is not in this order's books. Reconcile it.`,
+              href: `/admin/orders/${payment.orderId}`,
+            });
           });
         }
       }

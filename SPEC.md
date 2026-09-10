@@ -57,6 +57,30 @@ only a mirror kept in sync by `resyncKits()` so catalog list pages need no join.
   `oversold` in the EventLog and admins are notified to sort out the physical
   part.
 
+## Payments: never trust one side alone (src/lib/payments/)
+
+The provider and the database can disagree, and every rule here exists because
+one of them can be wrong at the moment it matters.
+
+- **Stripe is "configured" only with a webhook secret too.** A secret key alone
+  lets the store charge cards it can never confirm. Missing either one falls
+  back to the clearly-labelled demo provider rather than taking real money.
+- **`reconcileOrderPayments()` is the tiebreaker.** Before cancelling an order
+  that looks unpaid, and before minting a replacement intent for a retry, ask
+  the provider what happened to the intent. A missed webhook must never become
+  a cancelled-but-charged order or a second charge. Only `succeeded` applies the
+  payment; anything still resolving merely blocks the cancel.
+- **Refund rows are written before money moves.** The row id is the provider
+  idempotency key, so a recording failure is safe to retry: the provider
+  returns the original refund. A provider call that does not confirm stays
+  PENDING and unlinked — never recorded as FAILED, because that invites an
+  admin to retry a refund that may have succeeded.
+- **A failed refund gives the balance back.** `refund.updated` reporting failure
+  decrements `refundedTotalCents` and lifts the order out of REFUNDED, or the
+  money is booked as returned and can never be refunded again.
+- **Money moving outside the app is surfaced, not guessed at.** Chargebacks and
+  dashboard-issued refunds alert admins rather than being auto-reconciled.
+
 ## Fitment model
 
 `Make → VehicleModel → Engine` hierarchy. A part carries `Fitment` rows =

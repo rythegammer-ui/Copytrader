@@ -22,8 +22,13 @@ export interface ProviderRefund {
 
 export interface PaymentProviderApi {
   name: string; // PayProvider
-  createIntent(amountCents: number, currency: string, metadata: Record<string, string>): Promise<CreatedIntent>;
+  createIntent(amountCents: number, currency: string, metadata: Record<string, string>, idempotencyKey?: string): Promise<CreatedIntent>;
   cancelIntent(intentId: string): Promise<void>;
   retrieveIntent(intentId: string): Promise<RetrievedIntent | null>;
-  createRefund(intentId: string, amountCents: number): Promise<ProviderRefund>;
+  /**
+   * `idempotencyKey` MUST be stable across retries of the same logical refund.
+   * Without it a retried call — a lost response, a timed-out function, an
+   * admin clicking twice — moves the customer's money a second time.
+   */
+  createRefund(intentId: string, amountCents: number, idempotencyKey: string): Promise<ProviderRefund>;
 }

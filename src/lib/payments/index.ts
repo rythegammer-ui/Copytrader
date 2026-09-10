@@ -19,7 +19,32 @@ import { mockProvider } from "@/lib/payments/mock";
 import { stripeProvider } from "@/lib/payments/stripe";
 import { drawDownPart } from "@/lib/inventory";
 
+/**
+ * Stripe is usable only when the app can BOTH charge and confirm.
+ *
+ * The secret key alone is not enough. Without a webhook signing secret every
+ * delivery fails signature verification, so `payment_intent.succeeded` never
+ * lands, the order sits in PENDING_PAYMENT, and 24 hours later the stale-order
+ * sweep cancels an order whose card was actually charged. Requiring both means
+ * a half-finished setup falls back to the clearly-labelled demo provider
+ * instead of taking money it cannot account for.
+ */
 export function stripeConfigured(): boolean {
+  const secret = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (secret && !webhookSecret) {
+    console.warn(
+      "[payments] STRIPE_SECRET_KEY is set but STRIPE_WEBHOOK_SECRET is not — " +
+        "staying on the demo provider rather than taking card payments that " +
+        "cannot be confirmed. Set the signing secret from your Stripe webhook " +
+        "endpoint and redeploy.",
+    );
+  }
+  return Boolean(secret && webhookSecret);
+}
+
+/** True when a secret key exists, whatever else is missing. */
+export function stripeKeyPresent(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
 
@@ -100,9 +125,14 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
     // Money genuinely moved on a dead order — refund it in full. This charge
     // was never part of the order's books, so refundedTotalCents is untouched.
     try {
+      // A stray capture is uniquely identified by the intent that produced
+      // it, so the intent id is a naturally stable idempotency key: this
+      // auto-refund can be retried any number of times and still move the
+      // money exactly once.
       const providerRefund = await getProvider(stray.provider).createRefund(
         stray.intentId,
         stray.amountCents,
+        `stray-capture:${stray.intentId}`,
       );
       await db.$transaction(async (tx) => {
         const refund = await tx.refund.create({
@@ -629,4 +659,77 @@ function runPaymentFailedTx(input: PaymentEventInput & { errorMessage?: string }
     }
     return { ok: true };
   });
+}
+
+/**
+ * What the provider says actually happened to an order's payment intents.
+ *
+ * "paid" — money is captured; the order has now been applied.
+ * "in_flight" — an async method (bank debit, wallet redirect) is still
+ *   resolving. Not paid, but absolutely not safe to cancel.
+ * "unpaid" — nothing was taken.
+ */
+export type ReconcileResult = "paid" | "in_flight" | "unpaid";
+
+/** Stripe returns lowercase intent statuses; the mock returns PaymentStatus. */
+export function intentSaysPaid(status: string): boolean {
+  const s = status.toLowerCase();
+  return s === "succeeded";
+}
+
+export function intentInFlight(status: string): boolean {
+  const s = status.toLowerCase();
+  return s === "processing" || s === "requires_action" || s === "requires_capture";
+}
+
+/**
+ * Ask the payment provider what really happened, and apply it.
+ *
+ * Webhooks are the normal path, but they are not guaranteed: an endpoint can
+ * be unregistered during cutover, carry the wrong signing secret, or be down
+ * past Stripe's three-day retry window. Without this the app would believe an
+ * order was never paid while the customer's card had in fact been charged —
+ * and the stale-order sweep would then cancel it.
+ *
+ * Never call this inside a transaction: it makes a network request.
+ */
+export async function reconcileOrderPayments(orderId: string): Promise<ReconcileResult> {
+  const payments = await db.payment.findMany({
+    where: { orderId, status: { in: [PaymentStatus.REQUIRES_PAYMENT, PaymentStatus.FAILED] } },
+    select: { id: true, provider: true, providerIntentId: true },
+  });
+  if (payments.length === 0) return "unpaid";
+
+  let sawInFlight = false;
+  for (const payment of payments) {
+    let intent = null;
+    try {
+      intent = await getProvider(payment.provider).retrieveIntent(payment.providerIntentId);
+    } catch {
+      // A provider we cannot reach is not evidence that nothing was charged,
+      // so treat it as in-flight and leave the order alone.
+      sawInFlight = true;
+      continue;
+    }
+    if (!intent) continue;
+
+    if (intentSaysPaid(intent.status)) {
+      // Feed it through the same handler the webhook uses so the amount
+      // assertion, PAID compare-and-set, stock draw-down and PO fan-out all
+      // run exactly once. A webhook arriving later is deduped by those same
+      // in-transaction guards, not by the event ledger, since this synthetic
+      // id will never match Stripe's evt_... one.
+      await handlePaymentSucceeded({
+        provider: payment.provider,
+        intentId: payment.providerIntentId,
+        eventId: `reconcile:${payment.providerIntentId}`,
+        eventType: "reconcile.payment_intent.succeeded",
+        providerAmountCents: intent.amountCents,
+        providerCurrency: intent.currency,
+      });
+      return "paid";
+    }
+    if (intentInFlight(intent.status)) sawInFlight = true;
+  }
+  return sawInFlight ? "in_flight" : "unpaid";
 }

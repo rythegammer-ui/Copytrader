@@ -17,13 +17,16 @@ export function getStripe(): Stripe {
 export const stripeProvider: PaymentProviderApi = {
   name: PayProvider.STRIPE,
 
-  async createIntent(amountCents, currency, metadata) {
-    const intent = await getStripe().paymentIntents.create({
-      amount: amountCents,
-      currency,
-      metadata,
-      automatic_payment_methods: { enabled: true },
-    });
+  async createIntent(amountCents, currency, metadata, idempotencyKey) {
+    const intent = await getStripe().paymentIntents.create(
+      {
+        amount: amountCents,
+        currency,
+        metadata,
+        automatic_payment_methods: { enabled: true },
+      },
+      idempotencyKey ? { idempotencyKey } : undefined,
+    );
     if (!intent.client_secret) throw new Error("Stripe returned no client secret");
     return { intentId: intent.id, clientSecret: intent.client_secret };
   },
@@ -41,11 +44,17 @@ export const stripeProvider: PaymentProviderApi = {
     return { amountCents: intent.amount, currency: intent.currency, status: intent.status };
   },
 
-  async createRefund(intentId, amountCents) {
-    const refund = await getStripe().refunds.create({
-      payment_intent: intentId,
-      amount: amountCents,
-    });
+  async createRefund(intentId, amountCents, idempotencyKey) {
+    // The key is the Refund row's own id, written to the database BEFORE this
+    // call. A retry therefore reuses the same key and Stripe returns the
+    // original refund instead of issuing a second one.
+    const refund = await getStripe().refunds.create(
+      {
+        payment_intent: intentId,
+        amount: amountCents,
+      },
+      { idempotencyKey },
+    );
     return {
       refundId: refund.id,
       status: refund.status === "succeeded" ? RefundStatus.SUCCEEDED : RefundStatus.PENDING,

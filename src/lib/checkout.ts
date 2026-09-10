@@ -11,7 +11,12 @@ import {
   type Quote,
   type QuoteItemInput,
 } from "@/lib/pricing";
-import { activeProviderName, getProvider, nextNumber } from "@/lib/payments";
+import {
+  activeProviderName,
+  getProvider,
+  nextNumber,
+  reconcileOrderPayments,
+} from "@/lib/payments";
 import { blocksNeeded, earliestFeasible, isSlotAvailable } from "@/lib/slots";
 
 export type CartWithItems = Prisma.CartGetPayload<{
@@ -343,6 +348,22 @@ export async function createRetryPayment(orderId: string, userId: string): Promi
   }
   if (order.payments.some((p) => p.status === PaymentStatus.SUCCEEDED)) {
     throw new ApiError("ALREADY_PAID", "This order is already paid", 409);
+  }
+
+  // The database saying "unpaid" is not enough. If a webhook never arrived the
+  // card may already have been charged, and minting a replacement intent here
+  // would let the customer pay a second time. Ask the provider first — and if
+  // it says the money is in, that reconciles the order rather than retrying it.
+  const verdict = await reconcileOrderPayments(orderId);
+  if (verdict === "paid") {
+    throw new ApiError("ALREADY_PAID", "This order is already paid", 409);
+  }
+  if (verdict === "in_flight") {
+    throw new ApiError(
+      "PAYMENT_IN_PROGRESS",
+      "A payment on this order is still being processed — wait a moment before retrying",
+      409,
+    );
   }
 
   // Cancel every stale attempt at the provider BEFORE issuing a new intent —

@@ -2,13 +2,21 @@
 
 The store ships with two payment providers behind one interface
 (`src/lib/payments/provider.ts`): a built-in **mock** used for demos, and
-**Stripe**. Which one runs is decided by a single fact — whether
-`STRIPE_SECRET_KEY` is set. Nothing else needs changing to go live.
+**Stripe**. Which one runs is decided by whether the app can both charge *and*
+confirm — that is, whether `STRIPE_SECRET_KEY` **and** `STRIPE_WEBHOOK_SECRET`
+are both set. Nothing else needs changing to go live.
 
 ```
-STRIPE_SECRET_KEY unset  ->  mock provider, /api/payments/mock/confirm is open
-STRIPE_SECRET_KEY set    ->  Stripe provider, mock confirm endpoint returns 404
+either one missing  ->  mock provider, /api/payments/mock/confirm is open
+both set            ->  Stripe provider, mock confirm endpoint returns 404
 ```
+
+The secret key alone deliberately does **not** switch the store to Stripe.
+Without a signing secret every webhook fails verification, so a charged card
+would never mark its order paid, and the 24-hour sweep would later cancel an
+order the customer had actually paid for. Falling back to the demo provider is
+the safer failure: it is clearly labelled, and no real money moves. A warning is
+logged when the secret key is set and the webhook secret is not.
 
 ## 1. The three environment variables
 
@@ -51,8 +59,10 @@ In Stripe: Developers → Webhooks → Add endpoint.
 - **Events** — subscribe to exactly these:
   - `payment_intent.succeeded` — flips the order to PAID, draws down stock, fans out purchase orders and books appointments
   - `payment_intent.payment_failed` — records the failure on the payment
-  - `refund.updated` — settles a refund's final status, and pages admins when one fails
+  - `refund.updated` — settles a refund's final status, and puts the money back on the order balance if it failed
   - `charge.refund.updated` — the older spelling of the same thing; harmless to include
+  - `charge.dispute.created` — a chargeback; alerts admins so somebody responds before the deadline
+  - `charge.refunded` — catches refunds issued straight from the Stripe dashboard, which the order's books would otherwise never see
 
 Copy the endpoint's **Signing secret** into `STRIPE_WEBHOOK_SECRET` and
 redeploy.
@@ -114,3 +124,13 @@ endpoint (signing secrets differ per endpoint), update
 - **The amount is asserted.** Before flipping an order to PAID the handler
   checks the intent's amount and currency against the order total, and records a
   mismatch for review rather than trusting the event.
+- **Nothing is cancelled on the database's word alone.** Before the 24-hour
+  sweep cancels an order that looks unpaid, and before a customer is allowed to
+  retry payment, the app asks Stripe what actually happened to the intent. If
+  the card was charged and the webhook simply never arrived, the order is
+  reconciled instead of cancelled or charged again.
+- **Refunds cannot move money twice.** The refund row is written before the
+  provider is called and its id is the Stripe idempotency key, so a retry after
+  a failed recording returns the original refund rather than issuing a second
+  one. A provider call that does not confirm is never recorded as "failed",
+  because an admin who is told a refund failed will retry it.

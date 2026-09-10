@@ -14,7 +14,7 @@ import {
 import { ApiError } from "@/lib/errors";
 import { logEvent, notify, notifyMany } from "@/lib/events";
 import { formatShopTime } from "@/lib/format";
-import { getProvider } from "@/lib/payments";
+import { reconcileOrderPayments, type ReconcileResult, getProvider } from "@/lib/payments";
 import { computeRefund, type RefundOrderSnapshot, type RefundSelection } from "@/lib/refunds";
 import { blocksNeeded, isSlotAvailable, lockShop } from "@/lib/slots";
 import { restorePart } from "@/lib/inventory";
@@ -81,10 +81,83 @@ async function loadOrderForRefund(orderId: string) {
   return order;
 }
 
-function succeededPayment(order: { payments: { status: string; id: string; provider: string; providerIntentId: string; amountCents: number }[] }) {
-  const payment = order.payments.find((p) => p.status === PaymentStatus.SUCCEEDED);
+/**
+ * The payment that actually paid for this order.
+ *
+ * An order can carry more than one SUCCEEDED payment: a capture can land on an
+ * order already paid through another intent, and that stray is auto-refunded
+ * on arrival. Picking whichever row came back first would sometimes aim a
+ * refund at an intent whose money has already gone back, so choose
+ * deterministically — the capture that matches the order total, earliest
+ * first — rather than relying on row order.
+ */
+function succeededPayment(order: {
+  totalCents: number;
+  payments: {
+    status: string;
+    id: string;
+    provider: string;
+    providerIntentId: string;
+    amountCents: number;
+    createdAt: Date;
+  }[];
+}) {
+  const candidates = order.payments
+    .filter((p) => p.status === PaymentStatus.SUCCEEDED)
+    .sort((a, b) => {
+      const aMatches = a.amountCents === order.totalCents ? 0 : 1;
+      const bMatches = b.amountCents === order.totalCents ? 0 : 1;
+      if (aMatches !== bMatches) return aMatches - bMatches;
+      return a.createdAt.getTime() - b.createdAt.getTime();
+    });
+  const payment = candidates[0];
   if (!payment) throw new ApiError("NO_PAYMENT", "Order has no successful payment to refund", 409);
   return payment;
+}
+
+/**
+ * Reserve the database row for a refund BEFORE any money moves.
+ *
+ * The row's id is the provider idempotency key. Ordering matters: claim, then
+ * call the provider, then record inside the transaction that also moves the
+ * totals and item states. If that transaction fails, the row is still unlinked
+ * and a retry claims the SAME row, so the provider sees the same key and
+ * returns the original refund instead of issuing a second one.
+ *
+ * The consequence is that two deliberate, byte-identical refunds on one
+ * payment collapse into one. That is the safe direction to err in.
+ */
+async function claimRefundSlot(
+  orderId: string,
+  paymentId: string,
+  amountCents: number,
+  reason: string,
+  actorUserId: string | null,
+): Promise<{ id: string }> {
+  const existing = await db.refund.findFirst({
+    where: {
+      orderId,
+      paymentId,
+      amountCents,
+      reason,
+      providerRefundId: null,
+      status: RefundStatus.PENDING,
+    },
+    select: { id: true },
+    orderBy: { createdAt: "desc" },
+  });
+  if (existing) return existing;
+  return db.refund.create({
+    data: {
+      orderId,
+      paymentId,
+      amountCents,
+      reason,
+      status: RefundStatus.PENDING,
+      createdByUserId: actorUserId,
+    },
+    select: { id: true },
+  });
 }
 
 /**
@@ -138,7 +211,33 @@ export async function executeRefund(
   if (amountCents <= 0) throw new ApiError("NOTHING_TO_REFUND", "Nothing to refund", 409);
 
   const provider = getProvider(payment.provider);
-  const providerRefund = await provider.createRefund(payment.providerIntentId, amountCents);
+  // Claim the row first — its id is the idempotency key, so a retry after a
+  // failed recording reuses it rather than refunding a second time.
+  const slot = await claimRefundSlot(
+    orderId,
+    payment.id,
+    amountCents,
+    reason,
+    actor.userId ?? null,
+  );
+  let providerRefund;
+  try {
+    providerRefund = await provider.createRefund(payment.providerIntentId, amountCents, slot.id);
+  } catch (err) {
+    // Deliberately leave the row PENDING and unlinked. If this was a timeout
+    // rather than a rejection the money may have moved, and a retry reusing
+    // this same key is the only safe way to find out.
+    await logEvent(db, {
+      orderId,
+      entityType: EntityType.REFUND,
+      entityId: slot.id,
+      action: "refund_provider_error",
+      internal: true,
+      actorRole: "SYSTEM",
+      message: `Provider refund call failed: ${err instanceof Error ? err.message : "unknown error"}. Retrying is safe — the same idempotency key is reused.`,
+    });
+    throw new ApiError("REFUND_FAILED", "The payment provider rejected the refund", 502);
+  }
 
   return db.$transaction(
     async (tx) => {
@@ -173,15 +272,14 @@ export async function executeRefund(
         deadPoIds = [];
       }
 
-      const refund = await tx.refund.create({
+      // Link the claimed row to the money that just moved. This lands in the
+      // same transaction as the totals and item flips, so either all of it is
+      // recorded or none of it is and the retry is safe.
+      const refund = await tx.refund.update({
+        where: { id: slot.id },
         data: {
-          orderId,
-          paymentId: payment.id,
-          amountCents,
-          reason,
           providerRefundId: providerRefund.refundId,
           status: providerRefund.status,
-          createdByUserId: actor.userId ?? null,
         },
       });
       // Atomic increment (never an absolute write) plus a guarded status flip,
@@ -449,19 +547,65 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
 
   if (remaining > 0) {
     const payment = succeededPayment(order);
+    const refundReason = `Full refund — ${reason}`;
+    // Claim first: the row id is the idempotency key, so nothing below can
+    // move the customer's money twice however it fails.
+    const slot = await claimRefundSlot(
+      orderId,
+      payment.id,
+      remaining,
+      refundReason,
+      actor.userId ?? null,
+    );
+
+    let providerRefund;
     try {
-      const provider = getProvider(payment.provider);
-      const providerRefund = await provider.createRefund(payment.providerIntentId, remaining);
+      providerRefund = await getProvider(payment.provider).createRefund(
+        payment.providerIntentId,
+        remaining,
+        slot.id,
+      );
+    } catch (err) {
+      // The provider did not confirm. The money may or may not have moved —
+      // a timeout looks exactly like a rejection from here — so the row stays
+      // PENDING and unlinked, and a retry reuses the same key to find out.
+      // Never record this as FAILED: an admin told "the refund failed" retries
+      // it, and if it had actually succeeded that is a second real refund.
       await db.$transaction(async (tx) => {
-        const refund = await tx.refund.create({
+        await logEvent(tx, {
+          orderId,
+          entityType: EntityType.REFUND,
+          entityId: slot.id,
+          action: "refund_unconfirmed",
+          internal: true,
+          actorRole: "SYSTEM",
+          message: `Refund of $${(remaining / 100).toFixed(2)} was not confirmed by the provider: ${err instanceof Error ? err.message : "unknown error"}. Check the provider dashboard before retrying; retrying here is safe and reuses the same idempotency key.`,
+        });
+        const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
+        await notifyMany(tx, admins.map((u) => u.id), {
+          type: "refund_unconfirmed",
+          title: "Refund needs checking",
+          body: `Order ${order.orderNumber} is cancelled but the refund was not confirmed. Check the provider before retrying.`,
+          href: `/admin/orders/${orderId}`,
+        });
+      });
+      throw new ApiError(
+        "REFUND_UNCONFIRMED",
+        "Order cancelled, but the refund was not confirmed — support has been alerted",
+        502,
+      );
+    }
+
+    // Money moved. Record it. If this transaction fails the row is still
+    // unlinked, so a retry reuses the key and the provider returns this same
+    // refund rather than issuing another.
+    try {
+      await db.$transaction(async (tx) => {
+        const refund = await tx.refund.update({
+          where: { id: slot.id },
           data: {
-            orderId,
-            paymentId: payment.id,
-            amountCents: remaining,
-            reason: `Full refund — ${reason}`,
             providerRefundId: providerRefund.refundId,
             status: providerRefund.status,
-            createdByUserId: actor.userId ?? null,
           },
         });
         // Guarded increment (never an absolute write): a concurrent refund
@@ -496,35 +640,21 @@ export async function cancelOrder(orderId: string, actor: Actor, reason: string)
         });
       });
     } catch (err) {
-      await db.$transaction(async (tx) => {
-        await tx.refund.create({
-          data: {
-            orderId,
-            paymentId: payment.id,
-            amountCents: remaining,
-            reason: `Full refund — ${reason}`,
-            status: RefundStatus.FAILED,
-            createdByUserId: actor.userId ?? null,
-          },
-        });
-        await logEvent(tx, {
-          orderId,
-          entityType: EntityType.REFUND,
-          entityId: orderId,
-          action: "refund_failed",
-          internal: true,
-          actorRole: "SYSTEM",
-          message: `Provider refund failed after cancellation: ${err instanceof Error ? err.message : "unknown error"}`,
-        });
-        const admins = await tx.user.findMany({ where: { role: Role.ADMIN }, select: { id: true } });
-        await notifyMany(tx, admins.map((u) => u.id), {
-          type: "refund_failed",
-          title: "Refund failed — action required",
-          body: `Order ${order.orderNumber} is cancelled but the refund failed. Retry from the order page.`,
-          href: `/admin/orders/${orderId}`,
-        });
+      // The money DID move and we failed to write it down. Say exactly that.
+      await logEvent(db, {
+        orderId,
+        entityType: EntityType.REFUND,
+        entityId: slot.id,
+        action: "refund_recording_failed",
+        internal: true,
+        actorRole: "SYSTEM",
+        message: `Provider refund ${providerRefund.refundId} SUCCEEDED but recording it failed: ${err instanceof Error ? err.message : "unknown error"}. The customer has their money; the order totals are stale until this is replayed.`,
       });
-      throw new ApiError("REFUND_FAILED", "Order cancelled, but the refund failed — support has been alerted", 502);
+      throw new ApiError(
+        "REFUND_NOT_RECORDED",
+        "The refund went through but could not be recorded — support has been alerted",
+        500,
+      );
     }
   }
 }
@@ -632,7 +762,16 @@ export async function rescheduleAppointment(
   });
 }
 
-/** Lazy TTL: cancel unpaid orders older than 24h. Call from order reads. */
+/**
+ * Lazy TTL: cancel unpaid orders older than 24h. Call from order reads.
+ *
+ * Never cancels on the database's word alone. An order can look unpaid here
+ * only because a webhook never arrived — the endpoint unregistered during
+ * cutover, the wrong signing secret, an outage past Stripe's retry window —
+ * while the customer's card was in fact charged. Cancelling then would leave
+ * money at the provider with nothing in the books pointing at it, and tell the
+ * customer nothing was taken. So ask the provider first.
+ */
 export async function expireStaleUnpaidOrder(order: {
   id: string;
   status: string;
@@ -642,6 +781,19 @@ export async function expireStaleUnpaidOrder(order: {
     (order.status === OrderStatus.PENDING_PAYMENT || order.status === OrderStatus.PAYMENT_FAILED) &&
     Date.now() - order.placedAt.getTime() > 24 * 60 * 60_000;
   if (!stale) return false;
+
+  let verdict: ReconcileResult = "unpaid";
+  try {
+    verdict = await reconcileOrderPayments(order.id);
+  } catch {
+    // Could not reach the provider: refuse to cancel rather than risk
+    // cancelling a paid order. It stays stale and is retried on the next read.
+    return false;
+  }
+  // "paid" means reconciliation just applied the payment; "in_flight" means an
+  // async method is still resolving. Neither is safe to cancel.
+  if (verdict !== "unpaid") return false;
+
   try {
     await cancelOrder(order.id, SYSTEM_ACTOR, "Payment not completed within 24 hours");
     return true;
