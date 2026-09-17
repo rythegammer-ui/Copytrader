@@ -308,6 +308,21 @@ async function main(): Promise<void> {
     });
   }
 
+  // --- demo installer shops ------------------------------------------------
+  // The seed ships four fictional garages with 555 phone numbers. Once real
+  // card payments are on, a customer can pay for installation at a shop that
+  // does not exist and nobody turns up. Matched by their seed slugs so a real
+  // shop added later is never touched.
+  const DEMO_INSTALLER_SLUGS = ["lone-star", "hill-country", "empire-auto", "golden-gate"];
+  let demoShopsHidden = 0;
+  if (!KEEP_DEMO) {
+    const res = await db.installer.updateMany({
+      where: { slug: { in: DEMO_INSTALLER_SLUGS }, active: true },
+      data: { active: false },
+    });
+    demoShopsHidden = res.count;
+  }
+
   // --- demo catalog -------------------------------------------------------
   let demoHidden = 0;
   if (!KEEP_DEMO) {
@@ -328,6 +343,9 @@ async function main(): Promise<void> {
   console.log(`  listed for sale: ${listed} (\$${((listedValue._sum.priceCents ?? 0) / 100).toLocaleString("en-US")})`);
   console.log(`  unlisted (no price / not for sale): ${parts.length - listed}`);
   console.log(`  kit component links: ${kitLinks}`);
+  if (demoShopsHidden) {
+    console.log(`  demo installer shops deactivated: ${demoShopsHidden} — add the real shop before offering installation`);
+  }
   if (demoHidden) console.log(`  demo seed parts deactivated: ${demoHidden} (re-run with --keep-demo to keep them)`);
 }
 
