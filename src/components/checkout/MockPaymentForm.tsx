@@ -13,10 +13,13 @@ export function MockPaymentForm({
   intentId,
   amountCents,
   orderId,
+  accessToken,
 }: {
   intentId: string;
   amountCents: number;
   orderId: string;
+  /** A guest has no session; the token proves they own this order. */
+  accessToken?: string;
 }) {
   const router = useRouter();
   const [card, setCard] = useState("4242 4242 4242 4242");
@@ -35,13 +38,16 @@ export function MockPaymentForm({
         const res = await fetch("/api/payments/mock/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ intentId, outcome }),
+          body: JSON.stringify({ intentId, outcome, ...(accessToken ? { accessToken } : {}) }),
         });
         const data = (await res.json().catch(() => null)) as
           | { next?: string; error?: { message?: string } }
           | null;
         if (res.ok && outcome === "succeed") {
-          router.push(data?.next ?? `/checkout/success/${orderId}`);
+          const next = data?.next ?? `/checkout/success/${orderId}`;
+          router.push(
+            accessToken ? `${next}?t=${encodeURIComponent(accessToken)}` : next,
+          );
           return;
         }
         if (res.ok && outcome === "fail") {
@@ -56,7 +62,7 @@ export function MockPaymentForm({
         setBusy(null);
       }
     },
-    [intentId, orderId, router],
+    [intentId, orderId, accessToken, router],
   );
 
   return (

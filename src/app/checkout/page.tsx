@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { Role, ShipTo } from "@/lib/enums";
 import { ApiError } from "@/lib/errors";
 import { formatShopTime } from "@/lib/format";
-import { requirePageUser } from "@/lib/page-auth";
+import { getCurrentUser } from "@/lib/session";
 import {
   CheckoutForm,
   type AppointmentGroupView,
@@ -18,7 +18,9 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Checkout" };
 
 export default async function CheckoutPage() {
-  const user = await requirePageUser([Role.CUSTOMER], "/checkout");
+  // No sign-in required. Someone arriving from a marketplace listing should be
+  // able to pay without making an account first.
+  const user = await getCurrentUser();
   const cart = await getCart();
 
   if (!cart || cart.items.length === 0) {
@@ -119,10 +121,13 @@ export default async function CheckoutPage() {
     totalCents: quote.totalCents,
   };
 
-  const addresses = await db.address.findMany({
-    where: { userId: user.id },
-    orderBy: [{ isDefault: "desc" }, { label: "asc" }],
-  });
+  // A guest has no saved addresses; they always type a new one.
+  const addresses = user
+    ? await db.address.findMany({
+        where: { userId: user.id },
+        orderBy: [{ isDefault: "desc" }, { label: "asc" }],
+      })
+    : [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -138,8 +143,9 @@ export default async function CheckoutPage() {
           zip: a.zip,
           isDefault: a.isDefault,
         }))}
-        userName={user.name}
-        defaultPhone={user.phone ?? ""}
+        userName={user?.name ?? ""}
+        defaultPhone={user?.phone ?? ""}
+        isGuest={!user}
         groups={groups}
         appointments={Array.from(apptMap.values())}
         totals={totals}

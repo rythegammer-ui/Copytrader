@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatCents } from "@/lib/money";
 
@@ -58,6 +58,7 @@ export function CheckoutForm({
   addresses,
   userName,
   defaultPhone,
+  isGuest = false,
   groups,
   appointments,
   totals,
@@ -65,6 +66,8 @@ export function CheckoutForm({
   addresses: AddressOption[];
   userName: string;
   defaultPhone: string;
+  /** No session: collect an email so the buyer can be reached about the order. */
+  isGuest?: boolean;
   groups: ShipmentGroupView[];
   appointments: AppointmentGroupView[];
   totals: CheckoutTotalsView;
@@ -79,20 +82,33 @@ export function CheckoutForm({
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
   const [phone, setPhone] = useState(defaultPhone);
+  const [email, setEmail] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
   // One idempotency key per checkout attempt session: double-clicks and
   // network retries replay the same order instead of creating duplicates.
   const idempotencyKeyRef = useRef<string | null>(null);
 
+  // The idempotency key identifies one checkout attempt by one buyer. Change
+  // the email and it is a different buyer, so the replay guard would reject
+  // it — mint a new key instead.
+  useEffect(() => {
+    idempotencyKeyRef.current = null;
+  }, [email]);
+
   const usingNew = selectedId === "new";
   const newAddressComplete =
     name.trim() && line1.trim() && city.trim() && /^[A-Za-z]{2}$/.test(state.trim()) && zip.trim();
+  const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim());
 
   const placeOrder = useCallback(async () => {
     setError(null);
     if (usingNew && !newAddressComplete) {
       setError({ code: "VALIDATION", message: "Fill in the shipping address (2-letter state)." });
+      return;
+    }
+    if (isGuest && !emailOk) {
+      setError({ code: "VALIDATION", message: "Enter an email address for your receipt." });
       return;
     }
     if (!idempotencyKeyRef.current) idempotencyKeyRef.current = crypto.randomUUID();
@@ -115,14 +131,27 @@ export function CheckoutForm({
               }
             : { addressId: selectedId }),
           ...(phone.trim() ? { contactPhone: phone.trim() } : {}),
+          ...(isGuest
+            ? { guest: { email: email.trim(), name: name.trim() || "Guest" } }
+            : {}),
           idempotencyKey: idempotencyKeyRef.current,
         }),
       });
       const data = (await res.json().catch(() => null)) as
-        | { orderId?: string; error?: { code?: string; message?: string } }
+        | {
+            orderId?: string;
+            accessToken?: string;
+            error?: { code?: string; message?: string };
+          }
         | null;
       if (res.ok && data?.orderId) {
-        router.push(`/checkout/pay/${data.orderId}`);
+        // A guest has no account to come back to, so the token is the only way
+        // back to this order. It rides in the URL from here on.
+        router.push(
+          data.accessToken
+            ? `/checkout/pay/${data.orderId}?t=${encodeURIComponent(data.accessToken)}`
+            : `/checkout/pay/${data.orderId}`,
+        );
         return;
       }
       setError({
@@ -134,7 +163,24 @@ export function CheckoutForm({
       setError({ code: "NETWORK", message: "Could not place the order — check your connection" });
       setPending(false);
     }
-  }, [usingNew, newAddressComplete, name, line1, line2, city, state, zip, phone, selectedId, router]);
+  }, [
+    usingNew,
+    newAddressComplete,
+    name,
+    line1,
+    line2,
+    city,
+    state,
+    zip,
+    phone,
+    // Without these the handler closes over the email typed at first render —
+    // a guest correcting a typo would have the old address submitted.
+    email,
+    emailOk,
+    isGuest,
+    selectedId,
+    router,
+  ]);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -259,6 +305,32 @@ export function CheckoutForm({
                   />
                 </div>
               </div>
+            </div>
+          )}
+
+          {isGuest && (
+            <div className="mt-4">
+              <label className="label" htmlFor="co-email">
+                Email <span className="font-normal text-slate-400">(for your order updates)</span>
+              </label>
+              <input
+                id="co-email"
+                className="input sm:max-w-xs"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                No account needed. Already have one?{" "}
+                <Link href="/login?next=/checkout" className="underline underline-offset-2">
+                  Sign in
+                </Link>{" "}
+                to use your saved addresses.
+              </p>
             </div>
           )}
 

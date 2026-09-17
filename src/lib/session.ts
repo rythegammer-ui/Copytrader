@@ -136,3 +136,56 @@ export function decodeResetToken(token: string): { userId: string } | null {
     return null;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Order access tokens (HMAC-signed, order-scoped, no DB table).
+//
+// A guest who checks out is never given a session. They get one of these
+// instead: it opens exactly one order and nothing else. That distinction is
+// the whole security model of guest checkout — a session would hand over the
+// account behind the email, including any orders somebody else placed.
+// ---------------------------------------------------------------------------
+
+const ORDER_TOKEN_MAX_AGE_SECONDS = 60 * 60 * 24 * 120; // 120 days
+
+export function encodeOrderToken(orderId: string): string {
+  const payload = {
+    p: "order",
+    orderId,
+    exp: Math.floor(Date.now() / 1000) + ORDER_TOKEN_MAX_AGE_SECONDS,
+  };
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  return `${body}.${sign(`order:${body}`)}`;
+}
+
+/** Returns the order id this token opens, or null if it opens nothing. */
+export function decodeOrderToken(token: string | undefined): string | null {
+  if (!token) return null;
+  const dot = token.lastIndexOf(".");
+  if (dot < 0) return null;
+  const body = token.slice(0, dot);
+  const mac = token.slice(dot + 1);
+  const expected = sign(`order:${body}`);
+  const a = Buffer.from(mac);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString()) as {
+      p?: string;
+      orderId?: string;
+      exp?: number;
+    };
+    if (payload.p !== "order") return null;
+    if (typeof payload.orderId !== "string" || typeof payload.exp !== "number") return null;
+    if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload.orderId;
+  } catch {
+    return null;
+  }
+}
+
+/** True when `token` opens exactly `orderId`. */
+export function tokenOpensOrder(orderId: string, token: string | undefined): boolean {
+  const opened = decodeOrderToken(token);
+  return opened !== null && opened === orderId;
+}

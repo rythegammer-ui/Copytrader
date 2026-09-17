@@ -4,7 +4,13 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { OrderStatus, PaymentStatus, PayProvider, Role, statusLabel } from "@/lib/enums";
 import { formatCents } from "@/lib/money";
-import { requirePageUser } from "@/lib/page-auth";
+import { expireStaleUnpaidOrder } from "@/lib/fulfillment";
+import {
+  deniedOrder,
+  resolveOrderViewer,
+  tokenParam,
+  withToken,
+} from "@/lib/order-access";
 import { MockPaymentForm } from "@/components/checkout/MockPaymentForm";
 import { RetryPaymentButton } from "@/components/checkout/RetryPaymentButton";
 import { StripePaymentForm } from "@/components/checkout/StripePaymentForm";
@@ -12,14 +18,35 @@ import { StripePaymentForm } from "@/components/checkout/StripePaymentForm";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Pay" };
 
-export default async function PayPage({ params }: { params: { orderId: string } }) {
-  const user = await requirePageUser([Role.CUSTOMER], `/checkout/pay/${params.orderId}`);
+export default async function PayPage({
+  params,
+  searchParams,
+}: {
+  params: { orderId: string };
+  searchParams?: Record<string, string | string[] | undefined>;
+}) {
+  const token = tokenParam(searchParams);
+  const viewer = await resolveOrderViewer(
+    params.orderId,
+    token,
+    `/checkout/pay/${params.orderId}`,
+  );
 
   const order = await db.order.findUnique({
     where: { id: params.orderId },
     include: { payments: { orderBy: { createdAt: "desc" } } },
   });
-  if (!order || order.userId !== user.id) notFound();
+  if (!order || deniedOrder(viewer, order.userId)) notFound();
+
+  // Guests never open /account, which is where this sweep normally runs, so an
+  // abandoned guest order would sit PENDING_PAYMENT forever with a live
+  // payment intent behind it. Run it here too, and re-read when it acted —
+  // otherwise the page below would still be working from the pre-cancel row.
+  if (await expireStaleUnpaidOrder(order)) {
+    const fresh = await db.order.findUnique({ where: { id: params.orderId } });
+    if (!fresh) notFound();
+    order.status = fresh.status;
+  }
 
   const awaitingPayment =
     order.status === OrderStatus.PENDING_PAYMENT || order.status === OrderStatus.PAYMENT_FAILED;
@@ -39,7 +66,7 @@ export default async function PayPage({ params }: { params: { orderId: string } 
       );
     }
     // Already paid (or beyond) — never show a payment form again.
-    redirect(`/checkout/success/${order.id}`);
+    redirect(withToken(`/checkout/success/${order.id}`, viewer));
   }
 
   const activePayment =
@@ -61,12 +88,14 @@ export default async function PayPage({ params }: { params: { orderId: string } 
       {activePayment ? (
         activePayment.provider === PayProvider.MOCK ? (
           <MockPaymentForm
+            accessToken={viewer.token}
             intentId={activePayment.providerIntentId}
             amountCents={activePayment.amountCents}
             orderId={order.id}
           />
         ) : (
           <StripePaymentForm
+            accessToken={viewer.token}
             clientSecret={activePayment.clientSecret ?? ""}
             orderId={order.id}
             amountCents={activePayment.amountCents}
@@ -91,7 +120,7 @@ export default async function PayPage({ params }: { params: { orderId: string } 
             No worries — nothing was charged. Start a fresh attempt below.
           </p>
           <div className="mt-4 flex justify-center">
-            <RetryPaymentButton orderId={order.id} />
+            <RetryPaymentButton orderId={order.id} accessToken={viewer.token} />
           </div>
         </div>
       )}

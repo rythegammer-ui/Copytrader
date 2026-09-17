@@ -40,10 +40,13 @@ export function StripePaymentForm({
   clientSecret,
   orderId,
   amountCents,
+  accessToken,
 }: {
   clientSecret: string;
   orderId: string;
   amountCents: number;
+  /** A guest's order token, threaded through Stripe's redirect. */
+  accessToken?: string;
 }) {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const stripeRef = useRef<StripeJs | null>(null);
@@ -113,7 +116,11 @@ export function StripePaymentForm({
       const { error: confirmError } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/checkout/success/${orderId}`,
+          // A guest has no session, so the token has to survive the round trip
+          // through Stripe or they come back to a page they cannot open.
+          return_url: accessToken
+            ? `${window.location.origin}/checkout/success/${orderId}?t=${encodeURIComponent(accessToken)}`
+            : `${window.location.origin}/checkout/success/${orderId}`,
         },
       });
       // On success Stripe redirects; reaching here means it failed.
@@ -123,7 +130,7 @@ export function StripePaymentForm({
     } finally {
       setBusy(false);
     }
-  }, [orderId]);
+  }, [orderId, accessToken]);
 
   if (!publishableKey) {
     return (

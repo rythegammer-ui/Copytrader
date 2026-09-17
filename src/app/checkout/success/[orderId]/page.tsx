@@ -5,14 +5,32 @@ import { db } from "@/lib/db";
 import { OrderStatus, Role, ShipTo } from "@/lib/enums";
 import { formatShopTime, pluralize } from "@/lib/format";
 import { formatCents } from "@/lib/money";
-import { requirePageUser } from "@/lib/page-auth";
+import {
+  deniedOrder,
+  resolveOrderViewer,
+  tokenParam,
+  withToken,
+} from "@/lib/order-access";
 import { destinationKey, TRANSIT_BUFFER_DAYS } from "@/lib/pricing";
+import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
+import { expireStaleUnpaidOrder } from "@/lib/fulfillment";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Order placed" };
 
-export default async function CheckoutSuccessPage({ params }: { params: { orderId: string } }) {
-  const user = await requirePageUser([Role.CUSTOMER], `/checkout/success/${params.orderId}`);
+export default async function CheckoutSuccessPage({
+  params,
+  searchParams,
+}: {
+  params: { orderId: string };
+  searchParams?: Record<string, string | string[] | undefined>;
+}) {
+  const token = tokenParam(searchParams);
+  const viewer = await resolveOrderViewer(
+    params.orderId,
+    token,
+    `/checkout/success/${params.orderId}`,
+  );
 
   const order = await db.order.findUnique({
     where: { id: params.orderId },
@@ -21,12 +39,46 @@ export default async function CheckoutSuccessPage({ params }: { params: { orderI
       appointments: { include: { installer: true } },
     },
   });
-  if (!order || order.userId !== user.id) notFound();
+  if (!order || deniedOrder(viewer, order.userId)) notFound();
 
-  // Never celebrate a dead order (stale pay tab after a cancellation) — the
-  // order page tells the real story.
-  if (order.status === OrderStatus.CANCELLED || order.status === OrderStatus.REFUNDED) {
-    redirect(`/account/orders/${order.id}`);
+  // Guests never open /account, which is where this sweep normally runs, so an
+  // abandoned guest order would sit PENDING_PAYMENT forever with a live
+  // payment intent behind it. Run it here too, and re-read when it acted —
+  // otherwise the page below would still be working from the pre-cancel row.
+  if (await expireStaleUnpaidOrder(order)) {
+    const fresh = await db.order.findUnique({ where: { id: params.orderId } });
+    if (!fresh) notFound();
+    order.status = fresh.status;
+  }
+
+  // Never celebrate a dead order (stale pay tab after a cancellation). A
+  // signed-in customer gets the fuller story on their order page; a guest has
+  // no account to send them to, so say it in place. Redirecting them here
+  // would target this very URL and loop the browser until it gave up.
+  const dead =
+    order.status === OrderStatus.CANCELLED || order.status === OrderStatus.REFUNDED;
+  if (dead) {
+    if (viewer.user) redirect(`/account/orders/${order.id}`);
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+        <h1 className="text-2xl font-bold text-slate-900">Order {order.orderNumber}</h1>
+        <p className="mt-3 text-sm text-slate-600">
+          {order.status === OrderStatus.REFUNDED
+            ? "This order was refunded. The money is on its way back to your card — banks usually take a few working days to show it."
+            : "This order was cancelled, so nothing further will be shipped or charged."}
+        </p>
+        <p className="mt-3 text-sm text-slate-600">
+          Questions? Call or text{" "}
+          <a href={`tel:${SHOP_PHONE_TEL}`} className="font-semibold underline underline-offset-2">
+            {SHOP_PHONE_DISPLAY}
+          </a>
+          .
+        </p>
+        <Link href="/parts" className="btn-primary mt-6">
+          Browse parts
+        </Link>
+      </div>
+    );
   }
 
   const stillUnpaid =
@@ -133,7 +185,7 @@ export default async function CheckoutSuccessPage({ params }: { params: { orderI
         <div className="mt-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           We&apos;re still confirming your payment. This page updates once it clears — refresh in a
           moment, or{" "}
-          <Link href={`/checkout/pay/${order.id}`} className="font-semibold underline">
+          <Link href={withToken(`/checkout/pay/${order.id}`, viewer)} className="font-semibold underline">
             return to the payment page
           </Link>{" "}
           if it doesn&apos;t.
@@ -175,9 +227,17 @@ export default async function CheckoutSuccessPage({ params }: { params: { orderI
       </div>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Link href={`/account/orders/${order.id}`} className="btn-primary">
-          Track this order
-        </Link>
+        {viewer.user ? (
+          <Link href={`/account/orders/${order.id}`} className="btn-primary">
+            Track this order
+          </Link>
+        ) : (
+          // No account to track it in. Keep this link — it is the one they
+          // should bookmark — and be honest about what it is.
+          <a href={`tel:${SHOP_PHONE_TEL}`} className="btn-primary">
+            Questions? {SHOP_PHONE_DISPLAY}
+          </a>
+        )}
         <Link href="/parts" className="btn-secondary">
           Keep shopping
         </Link>

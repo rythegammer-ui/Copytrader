@@ -28,21 +28,37 @@ export const POST = api(async (req) => {
   }
   await rateLimitHit(ipKey);
 
+  const passwordHash = await hashPassword(body.password);
+
   const existing = await db.user.findUnique({ where: { email } });
-  if (existing) {
+  if (existing && !existing.isGuest) {
     throw new ApiError("EMAIL_TAKEN", "An account with that email already exists", 409);
   }
 
-  const passwordHash = await hashPassword(body.password);
-  const user = await db.user.create({
-    data: {
-      email,
-      passwordHash,
-      name: body.name,
-      phone: body.phone ?? null,
-      role: Role.CUSTOMER,
-    },
-  });
+  // A guest row is a placeholder someone created by typing this address at
+  // checkout — possibly this very person, possibly not. It holds no password
+  // and nobody can sign in as it, but it does own the email, so without this
+  // the address would be locked out of registration forever. Claiming it
+  // turns it into a real account and keeps any orders placed with it.
+  const user = existing
+    ? await db.user.update({
+        where: { id: existing.id },
+        data: {
+          passwordHash,
+          name: body.name,
+          phone: body.phone ?? existing.phone,
+          isGuest: false,
+        },
+      })
+    : await db.user.create({
+        data: {
+          email,
+          passwordHash,
+          name: body.name,
+          phone: body.phone ?? null,
+          role: Role.CUSTOMER,
+        },
+      });
 
   createSessionCookie(user.id);
   await mergeGuestCartIntoUser(user.id);

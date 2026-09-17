@@ -24,6 +24,10 @@ model User {
   name         String
   phone        String?
   role         String  @default("CUSTOMER") // Role: CUSTOMER | ADMIN | SUPPLIER | INSTALLER
+  // Created by guest checkout: holds the order, but has no usable password and
+  // is never issued a session. Keeps Order.userId non-null so every downstream
+  // path (notifications, POs, refunds, appointments) works unchanged.
+  isGuest      Boolean @default(false)
   supplierId   String? // set iff role=SUPPLIER (portal scope)
   installerId  String? // set iff role=INSTALLER (portal scope)
 

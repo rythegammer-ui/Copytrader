@@ -337,12 +337,27 @@ export async function createOrderFromCart(
 }
 
 /** New payment attempt for a PENDING_PAYMENT / PAYMENT_FAILED order. */
-export async function createRetryPayment(orderId: string, userId: string): Promise<CheckoutResult> {
+/**
+ * Mint a replacement payment intent for an order still awaiting payment.
+ *
+ * `userId` is the signed-in customer, or null for a guest who holds the
+ * order's access token. The token already grants the ability to pay this
+ * order — the payment form sits on the same page — so letting it retry adds
+ * no capability, it just stops a failed card being a dead end.
+ */
+export async function createRetryPayment(
+  orderId: string,
+  userId: string | null,
+  viaToken = false,
+): Promise<CheckoutResult> {
   const order = await db.order.findUnique({
     where: { id: orderId },
     include: { payments: true },
   });
-  if (!order || order.userId !== userId) throw new ApiError("NOT_FOUND", "Order not found", 404);
+  if (!order) throw new ApiError("NOT_FOUND", "Order not found", 404);
+  if (!viaToken && order.userId !== userId) {
+    throw new ApiError("NOT_FOUND", "Order not found", 404);
+  }
   if (order.status !== OrderStatus.PAYMENT_FAILED && order.status !== OrderStatus.PENDING_PAYMENT) {
     throw new ApiError("NOT_RETRYABLE", "This order is not awaiting payment", 409);
   }

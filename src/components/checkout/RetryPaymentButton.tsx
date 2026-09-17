@@ -3,8 +3,17 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
-/** Starts a fresh payment attempt for an order, then reloads the pay page. */
-export function RetryPaymentButton({ orderId }: { orderId: string }) {
+/**
+ * Starts a fresh payment attempt for an order, then reloads the pay page.
+ * A guest passes the order access token, since they have no session.
+ */
+export function RetryPaymentButton({
+  orderId,
+  accessToken,
+}: {
+  orderId: string;
+  accessToken?: string;
+}) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,6 +25,7 @@ export function RetryPaymentButton({ orderId }: { orderId: string }) {
       const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/retry-payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(accessToken ? { accessToken } : {}),
       });
       if (!res.ok) {
         const data = (await res.json().catch(() => null)) as {
@@ -29,7 +39,7 @@ export function RetryPaymentButton({ orderId }: { orderId: string }) {
     } finally {
       setBusy(false);
     }
-  }, [orderId, router]);
+  }, [orderId, accessToken, router]);
 
   return (
     <div className="space-y-2">
