@@ -10,7 +10,24 @@ set -euo pipefail
 echo "▶ PartsPro build — VERCEL_ENV=${VERCEL_ENV:-local}"
 # A deployment-provided .env (for hosts/API deploys that cannot set project
 # environment variables) is loaded here so the whole build sees it.
-if [ -f .env ]; then set -a; . ./.env; set +a; echo "▶ loaded .env"; fi
+# Values already in the environment WIN. The host's own environment variables
+# (Vercel → Settings → Environment Variables) are the place secrets belong, so
+# a deployment-provided .env acts only as a fallback for hosts that cannot set
+# them. Without this, a baked .env would silently clobber a key the owner had
+# just rotated in the dashboard.
+if [ -f .env ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue;; *=*) ;; *) continue;; esac
+    key=${line%%=*}
+    case "$key" in *[!A-Za-z0-9_]*) continue;; esac
+    if [ -z "$(eval "printf '%s' \"\${$key:-}\"")" ]; then
+      export "$key=${line#*=}"
+    else
+      echo "  · $key already set in the environment — keeping it, ignoring .env"
+    fi
+  done < .env
+  echo "▶ loaded .env (host environment takes precedence)"
+fi
 node scripts/make-postgres-schema.js
 
 if [ -n "${VERCEL:-}" ] && [ -z "${SESSION_SECRET:-}" ]; then

@@ -27,7 +27,10 @@ logged when the secret key is set and the webhook secret is not.
 | `STRIPE_WEBHOOK_SECRET` | created in step 3 below (`whsec_…`) | build + runtime |
 
 Set all three on the hosting project (on Vercel: Project → Settings →
-Environment Variables, all environments), **not** in a committed file. The
+Environment Variables, all environments), **not** in a committed file. Values
+already present in the host environment always win over a deployment-provided
+`.env`, so rotating a key in the dashboard is enough — the next deploy picks up
+the new one and cannot clobber it. The
 build script picks them up automatically; `scripts/bake-runtime-env.js` inlines
 the two server-side ones, and Next.js inlines the publishable key into the
 browser bundle.
@@ -108,6 +111,18 @@ any future expiry, any CVC. Then check:
 Then swap both keys to live mode, create a **separate** live-mode webhook
 endpoint (signing secrets differ per endpoint), update
 `STRIPE_WEBHOOK_SECRET`, and redeploy.
+
+## Rotating a key
+
+Keys leak. Rotating one is two steps and needs nobody's help:
+
+1. Stripe → Developers → API keys → roll the secret key.
+2. Paste the new value into Vercel → Settings → Environment Variables, then
+   redeploy.
+
+The build treats the host environment as authoritative, so the new key takes
+effect and nothing in the deployment can override it. Roll immediately if a key
+has ever appeared in a chat log, a screenshot, a commit, or a support ticket.
 
 ## Notes
 
