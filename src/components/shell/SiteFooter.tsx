@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
 
 export function SiteFooter() {
   return (
@@ -36,6 +37,13 @@ export function SiteFooter() {
           <ul className="space-y-1">
             <li>Whole-item cancellations only; self-serve until a supplier confirms.</li>
             <li>Install cancellations free up to 24 hours before your appointment.</li>
+            <li>
+              Photos of any part on request — call or text{" "}
+              <a href={`tel:${SHOP_PHONE_TEL}`} className="underline underline-offset-2">
+                {SHOP_PHONE_DISPLAY}
+              </a>
+              .
+            </li>
             <li>Demo store — no real charges or shipments.</li>
           </ul>
         </div>

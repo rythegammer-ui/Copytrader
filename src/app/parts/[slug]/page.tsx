@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {
+  PHOTO_REQUEST_LINE,
+  SHOP_PHONE_DISPLAY,
+  SHOP_PHONE_TEL,
+} from "@/lib/shop-contact";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCart } from "@/lib/cart";
@@ -169,7 +174,7 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
                 {part.universalFit && (
                   <span className="badge bg-brand-100 text-brand-800">Universal fit</span>
                 )}
-                {part.installEligible && (
+                {part.installEligible && shops.length > 0 && (
                   <span className="badge bg-brand-100 text-brand-800">
                     🔧 Installation available · ~{laborHours}h labor
                   </span>
@@ -197,6 +202,20 @@ export default async function PartDetailPage({ params }: { params: { slug: strin
             <h2 className="mb-2 text-lg font-bold text-slate-900">Description</h2>
             <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">
               {part.description}
+            </p>
+          </section>
+
+          {/* Used parts sell on photographs. The catalog carries placeholder
+              images, so make the ask impossible to miss. */}
+          <section className="rounded-lg border border-brand-200 bg-brand-50 px-4 py-3">
+            <p className="text-sm text-slate-800">
+              📷 {PHOTO_REQUEST_LINE}{" "}
+              <a
+                href={`tel:${SHOP_PHONE_TEL}`}
+                className="font-semibold text-brand-800 underline underline-offset-2"
+              >
+                {SHOP_PHONE_DISPLAY}
+              </a>
             </p>
           </section>
 
