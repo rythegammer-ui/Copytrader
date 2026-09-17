@@ -64,6 +64,26 @@ const READS = new Set([
 
 const RETRY_DELAYS_MS = [150, 600];
 
+/**
+ * Ceiling on the total extra wall-clock a single operation may spend retrying.
+ *
+ * The failures worth retrying are fast ones: a closed connection, a pool
+ * timeout, a Neon endpoint resuming from idle. Those come back in well under a
+ * second, so a small budget catches all of them.
+ *
+ * The case this exists to prevent is the opposite one. `connect_timeout=15`
+ * means an unroutable database — packets dropped rather than refused — hangs
+ * each attempt for the full 15 seconds. Retrying that blindly turns one 15s
+ * failure into 45s for a single query, and a page issues several. It would
+ * overrun the serverless function's maxDuration and hand the customer a
+ * platform 504 instead of the error page this change exists to show them,
+ * which is strictly worse than failing fast.
+ *
+ * So: if an attempt already burned the budget, there is no retry, and the page
+ * fails exactly as quickly as it did before retries existed.
+ */
+const RETRY_BUDGET_MS = 2_500;
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -100,8 +120,11 @@ export async function retryTransientReads<T>(
   action: string,
   run: () => Promise<T>,
   delays: readonly number[] = RETRY_DELAYS_MS,
+  budgetMs: number = RETRY_BUDGET_MS,
+  now: () => number = Date.now,
 ): Promise<T> {
   if (!READS.has(action)) return run();
+  const startedAt = now();
   let lastErr: unknown;
   for (let attempt = 0; attempt <= delays.length; attempt++) {
     try {
@@ -109,7 +132,11 @@ export async function retryTransientReads<T>(
     } catch (err) {
       if (!isTransient(err)) throw err;
       lastErr = err;
-      if (attempt < delays.length) await sleep(delays[attempt]);
+      if (attempt >= delays.length) break;
+      // Both the time already spent and the wait still to come count against
+      // the budget, so a slow attempt cannot sneak one more slow attempt in.
+      if (now() - startedAt + delays[attempt] > budgetMs) break;
+      await sleep(delays[attempt]);
     }
   }
   throw lastErr;

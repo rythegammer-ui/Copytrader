@@ -79,3 +79,64 @@ describe("retryTransientReads", () => {
     expect(op.calls).toBe(1);
   });
 });
+
+describe("retryTransientReads time budget", () => {
+  /** A clock the test drives, so no test actually waits. */
+  function fakeClock(perAttemptMs: number) {
+    let t = 0;
+    const calls: number[] = [];
+    return {
+      calls,
+      now: () => t,
+      run: async () => {
+        calls.push(t);
+        t += perAttemptMs;
+        throw new Prisma.PrismaClientKnownRequestError("unreachable", {
+          code: "P1001",
+          clientVersion: "test",
+        });
+      },
+    };
+  }
+
+  // The whole point of the budget: connect_timeout=15 means an unroutable
+  // database burns 15s per attempt. Retrying that would blow the serverless
+  // function's maxDuration and replace the error page with a platform 504.
+  it("does not retry when one attempt already exhausted the budget", async () => {
+    const c = fakeClock(15_000);
+    await expect(
+      retryTransientReads("findMany", c.run, [150, 600], 2_500, c.now),
+    ).rejects.toThrow("unreachable");
+    expect(c.calls).toEqual([0]);
+  });
+
+  it("still retries the fast failures the budget was sized for", async () => {
+    const c = fakeClock(50);
+    await expect(
+      retryTransientReads("findMany", c.run, [150, 600], 2_500, c.now),
+    ).rejects.toThrow("unreachable");
+    expect(c.calls.length).toBe(3);
+  });
+
+  it("keeps going while each attempt plus its wait stays inside the budget", async () => {
+    // The clock advances only inside an attempt, so these are attempt start
+    // times: 0, 900, 1800. After attempt 1, 900 + 150 = 1050 is inside 2_500;
+    // after attempt 2, 1800 + 600 = 2400 still is. Attempt 3 runs and there
+    // are no delays left, so it stops there having never overrun.
+    const c = fakeClock(900);
+    await expect(
+      retryTransientReads("findMany", c.run, [150, 600], 2_500, c.now),
+    ).rejects.toThrow("unreachable");
+    expect(c.calls).toEqual([0, 900, 1800]);
+  });
+
+  it("counts the pending wait, not just time already spent", async () => {
+    // 1_000ms per attempt against a 1_100ms budget: after attempt 1 only 100ms
+    // has been "spent", but the 150ms wait would cross the line, so it stops.
+    const c = fakeClock(1_000);
+    await expect(
+      retryTransientReads("findMany", c.run, [150, 600], 1_100, c.now),
+    ).rejects.toThrow("unreachable");
+    expect(c.calls).toEqual([0]);
+  });
+});
