@@ -73,14 +73,31 @@ async function main(): Promise<void> {
   });
 
   // --- demo installers and suppliers ---------------------------------------
-  // Their portal logins reference them, so the users go first.
-  await db.user.deleteMany({ where: { role: Role.INSTALLER } });
-  const installers = await db.installer.deleteMany({});
+  // Named explicitly rather than "everything that isn't ours". The owner has
+  // already added a real garage of their own through the admin, and a blanket
+  // delete would take it with the fiction. Anything not on these lists is
+  // assumed to be theirs and left alone.
+  const DEMO_INSTALLERS = ["lone-star", "hill-country", "empire-auto", "golden-gate"];
+  const DEMO_SUPPLIERS = [
+    "automax",
+    "precision-parts",
+    "midwest-auto",
+    "pacific-rim",
+    "southern-gear",
+  ];
 
-  await db.user.deleteMany({
-    where: { role: Role.SUPPLIER, supplierId: { not: supplier.id } },
-  });
-  const suppliers = await db.supplier.deleteMany({ where: { id: { not: supplier.id } } });
+  // Portal logins reference their shop, so the users go first.
+  const demoInstallerIds = (
+    await db.installer.findMany({ where: { slug: { in: DEMO_INSTALLERS } }, select: { id: true } })
+  ).map((i) => i.id);
+  await db.user.deleteMany({ where: { installerId: { in: demoInstallerIds } } });
+  const installers = await db.installer.deleteMany({ where: { slug: { in: DEMO_INSTALLERS } } });
+
+  const demoSupplierIds = (
+    await db.supplier.findMany({ where: { slug: { in: DEMO_SUPPLIERS } }, select: { id: true } })
+  ).map((s) => s.id);
+  await db.user.deleteMany({ where: { supplierId: { in: demoSupplierIds } } });
+  const suppliers = await db.supplier.deleteMany({ where: { slug: { in: DEMO_SUPPLIERS } } });
 
   // --- customers -----------------------------------------------------------
   // Every customer account is test data: no order was ever paid. Admins and
