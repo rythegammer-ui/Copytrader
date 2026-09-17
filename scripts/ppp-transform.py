@@ -232,6 +232,7 @@ def slugify(s):
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", s.lower())).strip("-")[:70]
 
 parts, seen_slugs = [], {}
+skipped_consumables = []
 # Channel "Bundle-*" marks a row as a piece of a package the shop lists as one
 # item. Collected here so the bundle product can be linked to its pieces and
 # the two can never be sold twice over.
@@ -239,6 +240,12 @@ bundle_members = {}
 for _, row in df.iterrows():
     ref = clean(row["ID"])
     if not ref:
+        continue
+    # Shop consumables, not stock for sale. The sheet's own Category column is
+    # the authority: bottled fluids, aerosols, gloves and service filters the
+    # shop buys to do jobs with, including the used fluid it has to dispose of.
+    if clean(row["Category"]) in ("Shop fluids", "Shop supplies"):
+        skipped_consumables.append(ref)
         continue
     name = clean(row["Part"]) or ref
     source = clean(row["Source"]) or "Shop Stock"
@@ -536,6 +543,7 @@ json.dump({"generatedFrom": SRC.split("/")[-1], "parts": parts}, open(OUT, "w"),
 listed = [p for p in parts if p["active"]]
 print(f"parts={len(parts)}  listed={len(listed)}  unlisted={len(parts)-len(listed)}")
 print(f"shop-stock overrides applied = {applied}")
+print(f"shop consumables excluded = {len(skipped_consumables)} ({', '.join(skipped_consumables)})")
 print(f"duplicate rows suppressed = {suppressed}")
 print(f"listed value = ${sum(p['priceCents'] for p in listed)/100:,.2f}")
 print(f"shop-stock cost basis = ${sum(p['supplierCostCents']*p['stockQty'] for p in parts if p['sourceLabel']=='Shop Stock')/100:,.2f}")

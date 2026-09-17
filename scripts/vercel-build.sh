@@ -50,6 +50,13 @@ if { [ "${VERCEL_ENV:-}" = "production" ] || [ "${RUN_DB_PUSH:-}" = "1" ]; } && 
   npx prisma db push --schema prisma/schema.postgres.prisma --skip-generate
   echo "▶ Seeding demo data (skipped automatically if the database already has users)"
   DATABASE_URL="$DATABASE_URL_UNPOOLED" SEED_IF_EMPTY=1 npx tsx prisma/seed.ts
+  # Runs AFTER the seed on purpose: the seed skips a database that already has
+  # users, so wiping first would invite it to put the demo data straight back.
+  # Off unless RESET_STORE=1 is explicitly set for that one deploy.
+  if [ "${RESET_STORE:-}" = "1" ]; then
+    echo "▶ RESET_STORE=1 — wiping orders, demo data and customer accounts"
+    DATABASE_URL="$DATABASE_URL_UNPOOLED" RESET_STORE=1 npx tsx scripts/reset-store.ts
+  fi
   echo "▶ Importing the Principe Performance & Parts inventory (idempotent)"
   DATABASE_URL="$DATABASE_URL_UNPOOLED" npx tsx scripts/import-inventory.ts
 elif [ -n "${DATABASE_URL:-}" ]; then

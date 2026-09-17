@@ -308,6 +308,31 @@ async function main(): Promise<void> {
     });
   }
 
+  // --- rows that left the sheet --------------------------------------------
+  // The catalog file is the source of truth for what this supplier sells, so
+  // anything of theirs no longer in it has to go — otherwise a line deleted
+  // from the workbook (a shop consumable, a part that turned out not to
+  // exist) would stay on sale forever. A part that appears on an order is
+  // only hidden, never deleted: order history must keep pointing at something.
+  const wanted = new Set(parts.map((p) => p.sku));
+  const mine = await db.part.findMany({
+    where: { supplierId: supplier.id },
+    select: { id: true, sku: true, name: true, _count: { select: { orderItems: true } } },
+  });
+  let pruned = 0;
+  let retired = 0;
+  for (const row of mine) {
+    if (wanted.has(row.sku)) continue;
+    if (row._count.orderItems > 0) {
+      await db.part.update({ where: { id: row.id }, data: { active: false, inStock: false } });
+      retired++;
+    } else {
+      await db.cartItem.deleteMany({ where: { partId: row.id } });
+      await db.part.delete({ where: { id: row.id } });
+      pruned++;
+    }
+  }
+
   // --- demo installer shops ------------------------------------------------
   // The seed ships four fictional garages with 555 phone numbers. Once real
   // card payments are on, a customer can pay for installation at a shop that
@@ -343,6 +368,9 @@ async function main(): Promise<void> {
   console.log(`  listed for sale: ${listed} (\$${((listedValue._sum.priceCents ?? 0) / 100).toLocaleString("en-US")})`);
   console.log(`  unlisted (no price / not for sale): ${parts.length - listed}`);
   console.log(`  kit component links: ${kitLinks}`);
+  if (pruned || retired) {
+    console.log(`  no longer in the sheet: ${pruned} deleted, ${retired} hidden (they appear on past orders)`);
+  }
   if (demoShopsHidden) {
     console.log(`  demo installer shops deactivated: ${demoShopsHidden} — add the real shop before offering installation`);
   }
