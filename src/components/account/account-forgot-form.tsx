@@ -5,7 +5,7 @@ import Link from "next/link";
 import { sendJson } from "./account-api";
 import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
 
-export function AccountForgotForm() {
+export function AccountForgotForm({ canEmail = false }: { canEmail?: boolean }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,10 +31,17 @@ export function AccountForgotForm() {
           If an account exists for <span className="font-semibold">{email}</span>, a reset link has
           been issued.
         </p>
-        {/* Nothing sends mail yet, so a locked-out customer cannot receive the
-            link. Point them at the number instead of leaving them stuck. */}
+        {/* With no mail provider configured a locked-out customer cannot
+            receive the link at all, so send them to a human instead of
+            leaving them staring at a promise nothing will keep. */}
         <p className="text-sm text-slate-700">
-          We can&rsquo;t email it to you just yet — call or text{" "}
+          {canEmail ? (
+            <>
+              Check your inbox, and your spam folder. Still nothing? Call or text{" "}
+            </>
+          ) : (
+            <>We can&rsquo;t email it to you just yet — call or text{" "}</>
+          )}
           <a
             href={`tel:${SHOP_PHONE_TEL}`}
             className="font-semibold text-brand-800 underline underline-offset-2"

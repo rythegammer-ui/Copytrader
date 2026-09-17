@@ -18,6 +18,7 @@ import type { PaymentProviderApi } from "@/lib/payments/provider";
 import { mockProvider } from "@/lib/payments/mock";
 import { stripeProvider } from "@/lib/payments/stripe";
 import { drawDownPart } from "@/lib/inventory";
+import { sendMail, siteUrl } from "@/lib/mail";
 
 /**
  * Stripe is usable only when the app can BOTH charge and confirm.
@@ -180,7 +181,53 @@ export async function handlePaymentSucceeded(input: PaymentEventInput): Promise<
     };
   }
 
+  // Receipt. Outside the transaction on purpose — a network call has no place
+  // holding one open — and only on the first confirm, so Stripe's retries do
+  // not email the customer repeatedly. Failure here never fails the payment.
+  if (result.ok && !result.duplicate) {
+    await sendOrderReceipt(input.intentId).catch((err) => {
+      console.error("[MAIL] receipt failed:", err instanceof Error ? err.message : err);
+    });
+  }
+
   return { ok: result.ok, duplicate: result.duplicate, error: result.error };
+}
+
+/**
+ * Email the buyer that their money went through and what happens next.
+ *
+ * This matters most for guests: they have no account to look the order up in,
+ * so this and the link they were given at checkout are all they have.
+ */
+async function sendOrderReceipt(intentId: string): Promise<void> {
+  const payment = await db.payment.findUnique({
+    where: { providerIntentId: intentId },
+    include: { order: { include: { items: true } } },
+  });
+  const order = payment?.order;
+  if (!order?.contactEmail) return;
+
+  const lines = order.items.map((i) => {
+    const install = i.installTotalCents > 0 ? ` (+ ${money(i.installTotalCents)} fitting)` : "";
+    return `  ${i.qty} x ${i.nameSnapshot} — ${money(i.lineTotalCents)}${install}`;
+  });
+  await sendMail({
+    to: order.contactEmail,
+    subject: `Order ${order.orderNumber} confirmed`,
+    text:
+      `Thanks — we've got your payment for order ${order.orderNumber}.\n\n` +
+      `${lines.join("\n")}\n\n` +
+      `Total paid: ${money(order.totalCents)}\n\n` +
+      `Shipping to:\n${order.shipName}\n${order.shipLine1}\n` +
+      `${order.shipCity}, ${order.shipState} ${order.shipZip}\n\n` +
+      `We're pulling and packing your parts now and will be in touch if anything needs confirming. ` +
+      `Questions about this order? Reply to this email or call the shop.\n\n` +
+      `${siteUrl()}`,
+  });
+}
+
+function money(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`;
 }
 
 /**

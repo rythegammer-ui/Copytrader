@@ -149,3 +149,34 @@ has ever appeared in a chat log, a screenshot, a commit, or a support ticket.
   a failed recording returns the original refund rather than issuing a second
   one. A provider call that does not confirm is never recorded as "failed",
   because an admin who is told a refund failed will retry it.
+
+---
+
+# Sending email
+
+Nothing is emailed until `RESEND_API_KEY` is set. Without it the app writes an
+in-app notification and logs a `[MAIL-STUB]` line, which means a customer who
+forgets their password is locked out: the reset link goes to a notification
+they can only read once signed in.
+
+| Variable | What it does |
+| --- | --- |
+| `RESEND_API_KEY` | Enables sending. Get one free at resend.com |
+| `MAIL_FROM` | Sender address. Defaults to Resend's shared `onboarding@resend.dev`, which works before you verify a domain |
+| `PUBLIC_BASE_URL` | Absolute site URL used for links in emails. Falls back to Vercel's production hostname |
+
+Set them alongside the Stripe keys and redeploy. Two emails go out today:
+
+- **Password reset** — the link, valid 30 minutes.
+- **Order confirmation** — sent once, after payment succeeds. Guests have no
+  account to check, so for them this and the link from checkout are the only
+  record they get.
+
+Mail never breaks what triggered it. A failed send is logged and swallowed, so
+a receipt that bounces cannot fail a payment, and the confirmation is sent only
+on the first confirmation of a payment, so Stripe's webhook retries do not mail
+the customer repeatedly.
+
+Send to your own address first. Until a domain is verified with Resend, the
+shared sender is fine for testing but will land in spam for real customers —
+verify your domain before relying on it.

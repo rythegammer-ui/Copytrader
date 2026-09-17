@@ -10,7 +10,16 @@
 const fs = require("fs");
 const path = require("path");
 
-const KEYS = ["DATABASE_URL", "SESSION_SECRET", "TAX_RATE_BPS", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"];
+const KEYS = [
+  "DATABASE_URL",
+  "SESSION_SECRET",
+  "TAX_RATE_BPS",
+  "STRIPE_SECRET_KEY",
+  "STRIPE_WEBHOOK_SECRET",
+  "RESEND_API_KEY",
+  "MAIL_FROM",
+  "PUBLIC_BASE_URL",
+];
 const env = {};
 for (const k of KEYS) if (process.env[k]) env[k] = process.env[k];
 if (!env.DATABASE_URL || !env.SESSION_SECRET) {
