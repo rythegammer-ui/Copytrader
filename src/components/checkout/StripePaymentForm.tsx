@@ -147,9 +147,16 @@ export function StripePaymentForm({
   return (
     <div className="card p-6">
       <h2 className="mb-4 text-lg font-bold text-slate-900">Card payment</h2>
-      <div ref={mountRef} className="min-h-[120px]">
-        {!ready && !error && <p className="text-sm text-slate-500">Loading secure payment form…</p>}
-      </div>
+      {/* The placeholder is a SIBLING, never a child of the mount node.
+          Stripe replaces the contents of whatever it mounts into, so any React
+          child here becomes a node React still thinks it owns but no longer
+          can remove — and the removeChild that follows takes the whole page
+          down with "Application error: a client-side exception has occurred".
+          Keep this div empty as far as React is concerned. */}
+      {!ready && !error && <p className="text-sm text-slate-500">Loading secure payment form…</p>}
+      {/* Always mounted and visible: Stripe needs real dimensions to lay its
+          iframe out, so this must not be hidden while it initialises. */}
+      <div ref={mountRef} className="min-h-[120px]" />
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <button
         type="button"
