@@ -89,16 +89,6 @@ export function AccountLoginForm() {
         </div>
       </form>
 
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <p className="font-semibold">Demo accounts</p>
-        <p className="mt-1">
-          <code className="font-mono">admin@demo.test</code> ·{" "}
-          <code className="font-mono">customer@demo.test</code>
-        </p>
-        <p className="mt-1">
-          Password: <code className="font-mono">password123</code>
-        </p>
-      </div>
     </div>
   );
 }

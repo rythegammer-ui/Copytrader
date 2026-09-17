@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { sendJson } from "./account-api";
+import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
 
 export function AccountForgotForm() {
   const [email, setEmail] = useState("");
@@ -28,8 +29,19 @@ export function AccountForgotForm() {
       <div className="card space-y-3 p-6">
         <p className="text-sm text-slate-700">
           If an account exists for <span className="font-semibold">{email}</span>, a reset link has
-          been issued. Check the <span className="font-semibold">server console</span> for the reset
-          link (demo — no real email is sent).
+          been issued.
+        </p>
+        {/* Nothing sends mail yet, so a locked-out customer cannot receive the
+            link. Point them at the number instead of leaving them stuck. */}
+        <p className="text-sm text-slate-700">
+          We can&rsquo;t email it to you just yet — call or text{" "}
+          <a
+            href={`tel:${SHOP_PHONE_TEL}`}
+            className="font-semibold text-brand-800 underline underline-offset-2"
+          >
+            {SHOP_PHONE_DISPLAY}
+          </a>{" "}
+          and we&rsquo;ll get you back into your account.
         </p>
         <Link href="/login" className="btn-secondary w-full">
           Back to sign in

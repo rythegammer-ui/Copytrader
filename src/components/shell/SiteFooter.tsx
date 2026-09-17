@@ -44,7 +44,6 @@ export function SiteFooter() {
               </a>
               .
             </li>
-            <li>Demo store — no real charges or shipments.</li>
           </ul>
         </div>
       </div>
