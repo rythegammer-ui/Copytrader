@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
 
@@ -16,9 +17,16 @@ import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
  * query anywhere degrades to a page that still has the header, the footer, a
  * retry button and the shop's phone number on it.
  *
- * `reset()` re-renders the segment. That is worth offering because the errors
- * this catches in practice are transient — a database waking from idle, or a
- * schema push running during a deploy — so trying again usually works.
+ * Retrying takes two calls, and `reset()` alone is not enough. In the App
+ * Router `reset()` only clears this boundary's error state; re-rendering then
+ * reads the same failed payload back out of the client router cache and throws
+ * again, so the button would appear to do nothing. `router.refresh()` is what
+ * refetches from the server. Refresh first, then clear, so the boundary drops
+ * only once fresh data is on its way.
+ *
+ * Offering a retry at all is worth it because the errors this catches in
+ * practice are transient — a database waking from idle, or a schema push
+ * running during a deploy.
  */
 export default function RouteError({
   error,
@@ -27,6 +35,8 @@ export default function RouteError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const router = useRouter();
+
   useEffect(() => {
     // The server only sends a digest to the browser; the message stays server
     // side. Logging here is what connects a customer's report to the server log.
@@ -43,7 +53,14 @@ export default function RouteError({
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <button type="button" onClick={reset} className="btn-primary">
+          <button
+            type="button"
+            onClick={() => {
+              router.refresh();
+              reset();
+            }}
+            className="btn-primary"
+          >
             Try again
           </button>
           <Link href="/parts" className="btn-secondary">

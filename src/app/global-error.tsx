@@ -11,14 +11,14 @@ import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL } from "@/lib/shop-contact";
  * Everything is inline-styled on purpose — a boundary that depends on the
  * stylesheet loading is a boundary that shows an unreadable page on exactly the
  * failure it exists to handle.
+ *
+ * Next's `reset` is deliberately unused here. It only clears error state and
+ * re-renders from the client router cache, which at this level means rebuilding
+ * the very layout that just failed from the same payload — a button that cannot
+ * work. A full reload genuinely refetches everything, and the home link is the
+ * escape hatch for when the reload lands on the same failure.
  */
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   return (
     <html lang="en">
       <body
@@ -44,7 +44,7 @@ export default function GlobalError({
           </p>
           <button
             type="button"
-            onClick={reset}
+            onClick={() => window.location.reload()}
             style={{
               marginTop: "8px",
               padding: "10px 20px",
@@ -56,8 +56,13 @@ export default function GlobalError({
               cursor: "pointer",
             }}
           >
-            Try again
+            Reload the page
           </button>
+          <p style={{ marginTop: "16px", fontSize: "0.875rem" }}>
+            <a href="/" style={{ color: "#1d4ed8", fontWeight: 600 }}>
+              Go to the home page
+            </a>
+          </p>
           <p style={{ marginTop: "28px", fontSize: "0.875rem", color: "#475569" }}>
             Parts are always available by phone:{" "}
             <a href={`tel:${SHOP_PHONE_TEL}`} style={{ color: "#1d4ed8", fontWeight: 600 }}>

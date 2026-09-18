@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SiteHeader } from "@/components/shell/SiteHeader";
 import { SiteFooter } from "@/components/shell/SiteFooter";
+import { SiteAnalytics } from "@/components/shell/SiteAnalytics";
 
 export const metadata: Metadata = {
   title: {
@@ -21,8 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="flex-1">{children}</main>
         <SiteFooter />
         {/* Page-view and traffic counts, so the shop can see which parts the
-            Marketplace links actually bring people to. No cookies, no PII. */}
-        <Analytics />
+            Marketplace links actually bring people to. Wrapped, not bare:
+            SiteAnalytics scrubs the reset and order-access tokens that this
+            app carries in URLs before any event is sent. */}
+        <SiteAnalytics />
       </body>
     </html>
   );
